@@ -1,0 +1,17 @@
+{
+  "worktrees": {
+    "wt-1775817997721-1": {
+      "branch": "voltaic-egg",
+      "path": "d:\\PROGRAMMING\\PORTFOLIO-2026\\.kilo\\worktrees\\voltaic-egg",
+      "parentBranch": "main",
+      "createdAt": "2026-04-10T10:46:37.721Z",
+      "remote": "origin"
+    }
+  },
+  "sessions": {
+    "ses_288ffbcb7ffe1qyS2mJbfj6Wh9": {
+      "worktreeId": "wt-1775817997721-1",
+      "createdAt": "2026-04-10T10:46:39.498Z"
+    }
+  }
+}
