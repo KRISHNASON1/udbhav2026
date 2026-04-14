@@ -15,9 +15,7 @@ import Lenis from 'lenis';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { initCubeViewer }    from './cube.js';
-import { initAnalogClock3D } from './clock.js';
-import { initGlobe3D }       from './globe.js';
+
 import { initHeroBgShader }  from './shader-bg.js';
 import './analytics.js'; // Initialize Vercel Analytics and Speed Insights
 
@@ -386,42 +384,6 @@ revealEl(cornerRight, cornersStart + 90, 18);
 // ─────────────────────────────────────────────────────────────────
 const canvas1El = document.querySelector('.canvas1');
 
-// ── State flag to prevent repeat triggers ─────────────────
-let bentoVisible = false;
-
-// ── Stagger bento cards in (blur→clear) ──────────────────────────
-function revealBentoCards() {
-  const cards = Array.from(document.querySelectorAll('#section2 .bento-card'));
-  cards.forEach((card, i) => {
-    setTimeout(() => card.classList.add('bento-revealed'), i * 90);
-  });
-}
-
-// ── Reset bento cards to hidden state ────────────────────────────
-function hideBentoCards() {
-  const cards = Array.from(document.querySelectorAll('#section2 .bento-card'));
-  cards.forEach(card => card.classList.remove('bento-revealed'));
-}
-
-// ── Show section2 + stagger bento cards ──────────────────────────
-function showSection2() {
-  const s2 = document.getElementById('section2');
-  if (!s2) return;
-  s2.style.opacity        = '1';
-  s2.style.pointerEvents  = 'auto';
-  // Cards blur-in with stagger after section2 fade (35ms CSS transition)
-  setTimeout(revealBentoCards, 60);
-}
-
-// ── Hide section2 + reset bento cards ────────────────────────────
-function hideSection2() {
-  const s2 = document.getElementById('section2');
-  if (!s2) return;
-  s2.style.opacity        = '0';
-  s2.style.pointerEvents  = 'none';
-  hideBentoCards();
-}
-
 const dissolveST = gsap.fromTo(
   material.uniforms.uDissolve,
   { value: 1 },         // canvas transparent — dark hero bg shows
@@ -435,19 +397,8 @@ const dissolveST = gsap.fromTo(
       pin:        true,
       scrub:      0.6,
       pinSpacing: true,
-      anticipatePin: 1,
-
-      // ── onUpdate: fires every scrub frame, works in all browsers ──
-      onUpdate: (self) => {
-        if (self.progress >= 0.98 && !bentoVisible) {
-          bentoVisible = true;
-          showSection2();
-        } else if (self.progress < 0.02 && bentoVisible) {
-          bentoVisible = false;
-          hideSection2();
-        }
-      },
-    },
+      anticipatePin: 1
+    }
   }
 );
 
@@ -563,33 +514,31 @@ const navPill = document.getElementById('navPill');
     onLeaveBack: toDark,
   });
 
-  // ── Section 4 (Skills — black bg) → revert navbar to dark glass ──────────
-  // Also covers the marquee ribbon section (4.5) which is also black.
-  // onLeave is intentionally NOT toLight here — the next sections are also black.
-  const skillsEl = document.getElementById('skillsSection');
-  if (skillsEl) {
+  // ── About Udbhav + FAQ → keep navbar dark ──
+  const aboutEl = document.getElementById('udbhavAbout');
+  const faqEl   = document.getElementById('faqSection');
+
+  if (aboutEl) {
     ScrollTrigger.create({
-      trigger: skillsEl,
-      start:   'top 72px',
-      end:     'bottom 72px',
-      onEnter:     toDark,
-      onLeaveBack: toLight,   // scrolling back up into work (white bg) → light
-      onLeave:     toDark,    // scrolling into marquee / glimpse (also black) → stay dark
+      trigger: aboutEl,
+      start: 'top 5%',
+      end: 'bottom 5%',
+      onEnter: toDark,
+      onLeaveBack: toLight,
       onEnterBack: toDark,
+      onLeave: toDark
     });
   }
 
-  // ── Section 5 (Glimpse of Me — black bg) → keep navbar dark ─────────────
-  const glimpseEl = document.getElementById('glimpseSection');
-  if (glimpseEl) {
+  if (faqEl) {
     ScrollTrigger.create({
-      trigger: glimpseEl,
-      start:   'top 72px',
-      end:     'bottom 72px',
-      onEnter:     toDark,
-      onLeaveBack: toDark,   // marquee above is also black
-      onLeave:     toDark,   // anything after is also dark
+      trigger: faqEl,
+      start: 'top 5%',
+      end: 'bottom 5%',
+      onEnter: toDark,
+      onLeaveBack: toDark,
       onEnterBack: toDark,
+      onLeave: toDark
     });
   }
 })();
@@ -924,174 +873,6 @@ document.querySelectorAll('.nav-link').forEach(link => {
 // No separate scroll trigger needed here.
 
 
-// ─────────────────────────────────────────────────────────────────
-// BENTO — Philosophy subtext roll on card hover
-// ─────────────────────────────────────────────────────────────────
-(function initPhilSubtext() {
-  const card = document.getElementById('cardPhilosophy');
-  const clip = document.getElementById('philSubClip');
-  if (!card || !clip) return;
-
-  card.addEventListener('mouseenter', () => clip.classList.add('hovered'));
-  card.addEventListener('mouseleave', () => clip.classList.remove('hovered'));
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// BENTO — Philosophy tabs (Motion / Type / Feedback / Craft)
-// ─────────────────────────────────────────────────────────────────
-(function initPhilTabs() {
-  const tabs    = document.querySelectorAll('.phil-tab');
-  const content = document.getElementById('philContent');
-  const heading = document.getElementById('philHeading');
-  const desc    = document.getElementById('philDesc');
-  if (!tabs.length || !content || !heading || !desc) return;
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      if (tab.classList.contains('active')) return;
-
-      // Swap active state
-      tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
-
-      // Remove animation class, update text, re-add to retrigger
-      content.classList.remove('animating');
-      // Force reflow so animation restarts
-      void content.offsetWidth;
-      heading.textContent = tab.dataset.heading;
-      desc.textContent    = tab.dataset.desc;
-      content.classList.add('animating');
-
-      // Clean up class after animation completes
-      content.addEventListener('animationend', () => {
-        content.classList.remove('animating');
-      }, { once: true });
-    });
-  });
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// GLIMPSE SECTION — Age in days (DOB 29-10-2007)
-// Updates both the inline bio span and the stat card value.
-// setInterval recalculates every 60 s — the day count flips
-// automatically when midnight passes with no extra scheduling logic.
-// ─────────────────────────────────────────────────────────────────
-(function initAgeDays() {
-  const DOB = new Date('2007-10-29T00:00:00'); // 29 Oct 2007
-
-  function updateAge() {
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const days     = Math.floor((Date.now() - DOB.getTime()) / msPerDay)
-                         .toLocaleString('en-IN'); // e.g. "6,744"
-    const bioSpan  = document.getElementById('ageDays');
-    const statSpan = document.getElementById('ageStatDays');
-    if (bioSpan)  bioSpan.textContent  = days;
-    if (statSpan) statSpan.textContent = days;
-  }
-
-  updateAge();                       // run immediately on load
-  setInterval(updateAge, 60_000);    // re-check every minute — zero scheduling needed
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// BENTO SECTION — Live identity time (Card 1)
-// ─────────────────────────────────────────────────────────────────
-(function initIdentityTime() {
-  const el = document.getElementById('identityTime');
-  if (!el) return;
-  function tick() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    el.textContent = `${h}:${m}:${s}`;
-  }
-  tick();
-  setInterval(tick, 1000);
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// BENTO SECTION — 3D Analog Clock (Three.js) — Card 2
-// Replaces 2D canvas clock with premium metallic 3D clock
-// ─────────────────────────────────────────────────────────────────
-initAnalogClock3D();
-
-// ─────────────────────────────────────────────────────────────────
-// BENTO SECTION — Timezone Selector (Card 5)
-// ─────────────────────────────────────────────────────────────────
-(function initTimezone() {
-  const rows = document.querySelectorAll('.tz-row');
-  const timeEls = {
-    'Europe/London': document.getElementById('tzTimeUK'),
-    'Asia/Kolkata':  document.getElementById('tzTimeIN'),
-    'America/New_York': document.getElementById('tzTimeUS'),
-  };
-
-  function updateTimes() {
-    for (const [tz, el] of Object.entries(timeEls)) {
-      if (!el) continue;
-      const t = new Date().toLocaleTimeString('en-US', {
-        timeZone: tz,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      });
-      el.textContent = t;
-    }
-  }
-
-  updateTimes();
-  setInterval(updateTimes, 1000);
-
-  rows.forEach(row => {
-    row.addEventListener('click', () => {
-      rows.forEach(r => r.classList.remove('tz-row--active'));
-      row.classList.add('tz-row--active');
-    });
-  });
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// BENTO SECTION — Email copy to clipboard (Card 3)
-// ─────────────────────────────────────────────────────────────────
-(function initEmailCopy() {
-  const btn     = document.getElementById('emailCopyBtn');
-  const clip    = document.getElementById('emailHintClip');
-  const emailEl = btn?.querySelector('.email-address');
-  if (!btn || !clip || !emailEl) return;
-
-  btn.addEventListener('click', async () => {
-    if (clip.classList.contains('copied')) return;
-
-    try {
-      await navigator.clipboard.writeText(emailEl.textContent.trim());
-      clip.classList.add('copied');
-      setTimeout(() => clip.classList.remove('copied'), 1500);
-    } catch {
-      // Fallback
-      const ta = document.createElement('textarea');
-      ta.value = emailEl.textContent.trim();
-      ta.style.position = 'fixed'; ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      clip.classList.add('copied');
-      setTimeout(() => clip.classList.remove('copied'), 1500);
-    }
-  });
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// BENTO SECTION — WebGL Globe via cobe (Card 4)
-// Replaces 2D canvas globe with interactive 3D WebGL sphere
-// ─────────────────────────────────────────────────────────────────
-initGlobe3D();
-
-// ── Init Three.js FBX cube in the identity card ──────────────────
-initCubeViewer();
 
 // ─────────────────────────────────────────────────────────────────
 // WORK SECTION — Infinite-loop GSAP drag slider
@@ -1275,364 +1056,6 @@ initCubeViewer();
 })();
 
 // ─────────────────────────────────────────────────────────────────
-// SECTION 4 — Skills: scroll-driven orb rotation + badge entrance
-//
-// Orb rotation:
-//   Scroll DOWN → rotate LEFT  (CCW = negative degrees)
-//   Scroll UP   → rotate RIGHT (CW  = positive degrees)
-//
-// Badge entrance: staggered fade+slide in when section enters view.
-// ─────────────────────────────────────────────────────────────────
-(function initSkillsSection() {
-  const orb    = document.getElementById('skillsOrb');
-  const section = document.getElementById('skillsSection');
-  if (!orb || !section) return;
-
-  let orbDeg   = 0;   // accumulated rotation degrees
-  let firstHit = false;
-
-  // ── Orb: scroll-driven rotation via wheel event ──────────────────
-  // Down scroll → negative delta → CCW (left) rotation
-  // Up   scroll → positive delta → CW (right) rotation
-  window.addEventListener('wheel', (e) => {
-    if (!firstHit) {
-      orb.classList.add('gsap-active'); // stops CSS float animation
-      firstHit = true;
-    }
-
-    // Clamp per-event delta (higher cap = more travel per fast scroll)
-    const delta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 120);
-
-    // Scroll DOWN (deltaY > 0) → orbDeg DECREASES (CCW = left)
-    // Scroll UP   (deltaY < 0) → orbDeg INCREASES (CW  = right)
-    orbDeg -= delta * 0.22;
-
-    gsap.to(orb, {
-      rotation: orbDeg,
-      duration: 1.2,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    });
-  }, { passive: true });
-
-  // ── Skills header: fade-in on scroll into view ────────────────────
-  const header = section.querySelector('.skills-header');
-  const orbWrap = section.querySelector('.skills-orb-wrap');
-  if (header) {
-    gsap.fromTo(header,
-      { opacity: 0, y: 40, filter: 'blur(8px)' },
-      {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        duration: 1.0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 80%',
-          once: true,
-        },
-      }
-    );
-  }
-
-  // ── Badge stagger entrance (ScrollTrigger IntersectionObserver) ───
-  const badges = Array.from(section.querySelectorAll('.skill-badge'));
-  if (!badges.length) return;
-
-  // Use IntersectionObserver for performance — fires once when grid enters view
-  const gridEl = section.querySelector('.skills-grid');
-  if (!gridEl) return;
-
-  let badgesRevealed = false;
-
-  const observer = new IntersectionObserver((entries) => {
-    if (badgesRevealed) return;
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        badgesRevealed = true;
-        observer.disconnect();
-
-        badges.forEach((badge, i) => {
-          setTimeout(() => badge.classList.add('badge-visible'), i * 42);
-        });
-      }
-    });
-  }, { threshold: 0.15 });
-
-  observer.observe(gridEl);
-})();
-
-
-// ─────────────────────────────────────────────────────────────────
-// SECTION 4.5 — Infinite Marquee Ribbon  (v2 — velocity lerp)
-//
-// Velocity-lerped GSAP ticker animation:
-//   currentVelocity exponentially lerps toward FULL_SPEED each frame,
-//   giving a smooth natural acceleration on page load.
-//   Marquee runs continuously — no hover pause.
-// ─────────────────────────────────────────────────────────────────
-(function initMarquee() {
-  const section = document.getElementById('marqueeSection');
-  const track   = document.getElementById('marqueeTrack');
-  if (!section || !track) return;
-
-  // Prevent velocity spikes after tab switch / sleep
-  gsap.ticker.lagSmoothing(0);
-
-  const FULL_SPEED = 1.4;   // px/frame cruise speed at 60 fps
-  const LERP_ALPHA = 0.062; // exponential ease factor
-
-  let offsetX         = 0;
-  let loopWidth       = 0;   // half of total scrollWidth = one copy's width
-  let currentVelocity = 0;   // starts at 0, ramps up smoothly on first frames
-
-  function measure() {
-    loopWidth = track.scrollWidth / 2;
-  }
-
-  // Continuous ticker — always runs, no pause on hover
-  gsap.ticker.add(() => {
-    if (loopWidth <= 0) return;
-
-    // Smooth acceleration from 0 → FULL_SPEED on first frames
-    currentVelocity += (FULL_SPEED - currentVelocity) * LERP_ALPHA;
-
-    if (Math.abs(currentVelocity) < 0.001) return;
-
-    offsetX -= currentVelocity;
-    if (offsetX <= -loopWidth) offsetX += loopWidth; // seamless loop
-
-    gsap.set(track, { x: offsetX });
-  });
-
-  requestAnimationFrame(() => requestAnimationFrame(measure));
-  window.addEventListener('resize', () => requestAnimationFrame(measure));
-})();
-
-
-// ─────────────────────────────────────────────────────────────────
-// SECTION 5 — Glimpse of Me
-//
-// Photo auto-swap engine:
-//   · 3 photos stacked in .glimpse-frame via position:absolute
-//   · Transition: clip-path inset() — incoming slides up from bottom,
-//     outgoing clips up — premium editorial reveal, no crossfade.
-//   · Ken Burns: each active photo slowly drifts to scale(1.0) over 4s.
-//   · Progress bar: GSAP tween from 0% to 100% over HOLD_MS, resets on swap.
-//   · Dot click → interrupt timer, go to target index, restart timer.
-//   · Section entrance: GSAP ScrollTrigger stagger fade for left content.
-// ─────────────────────────────────────────────────────────────────
-(function initGlimpse() {
-  const section  = document.getElementById('glimpseSection');
-  if (!section) return;
-
-  const photos      = Array.from(section.querySelectorAll('.glimpse-photo'));
-  const dots        = Array.from(section.querySelectorAll('.glimpse-dot'));
-  const counterEl   = document.getElementById('glimpseCounterCur');
-  const progressBar = document.getElementById('glimpseProgressBar');
-
-  if (!photos.length) return;
-
-  const TOTAL    = photos.length;
-  const HOLD_MS  = 3500;       // ms each photo displays before next swap
-  const DUR_IN   = 0.85;       // seconds for incoming clip-path reveal
-  const DUR_OUT  = 0.65;       // seconds for outgoing clip-path close
-
-  let current    = 0;
-  let autoTimer  = null;
-  let progressTw = null;       // reference to the running progress tween
-
-  // ── Initial state setup ───────────────────────────────────────────
-  // All photos clipped to hidden; first photo already set via CSS class.
-  // Set them explicitly so GSAP has clean start values.
-  photos.forEach((ph, i) => {
-    if (i === 0) {
-      gsap.set(ph, { clipPath: 'inset(0% 0% 0% 0%)', zIndex: 2 });
-      ph.classList.add('is-kenburns'); // start Ken Burns on first
-    } else {
-      gsap.set(ph, { clipPath: 'inset(100% 0% 0% 0%)', zIndex: 0 });
-    }
-  });
-
-  // ── Animate progress bar from left→right over HOLD_MS ─────────────
-  function startProgress() {
-    if (progressBar) {
-      if (progressTw) progressTw.kill();
-      gsap.set(progressBar, { scaleX: 0, transformOrigin: 'left center' });
-      progressTw = gsap.to(progressBar, {
-        scaleX: 1,
-        duration: HOLD_MS / 1000,
-        ease: 'none',
-      });
-    }
-  }
-
-  // ── Update dot state + counter display ────────────────────────────
-  function updateUI(idx) {
-    dots.forEach((d, i) => {
-      const isActive = i === idx;
-      d.classList.toggle('glimpse-dot--active', isActive);
-      d.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    });
-    if (counterEl) {
-      counterEl.textContent = String(idx + 1).padStart(2, '0');
-    }
-  }
-
-  // ── Core transition: go from `current` to `next` ──────────────────
-  function goTo(next) {
-    if (next === current) return;
-    const prev = current;
-    current    = next;
-
-    const phIn  = photos[next];
-    const phOut = photos[prev];
-
-    // Bring incoming above outgoing
-    gsap.set(phIn,  { zIndex: 3, clipPath: 'inset(100% 0% 0% 0%)' });
-    gsap.set(phOut, { zIndex: 2 });
-
-    // Remove Ken Burns from outgoing
-    phOut.classList.remove('is-kenburns');
-
-    // Animate IN — clip reveals upward (bottom inset slides to 0%)
-    gsap.to(phIn, {
-      clipPath: 'inset(0% 0% 0% 0%)',
-      duration: DUR_IN,
-      ease: 'power3.inOut',
-      onComplete: () => {
-        // Settle z-indexes after transition
-        gsap.set(phIn,  { zIndex: 2 });
-        gsap.set(phOut, { zIndex: 0, clipPath: 'inset(100% 0% 0% 0%)' });
-        // Start Ken Burns on fresh photo
-        phIn.classList.add('is-kenburns');
-      },
-    });
-
-    // Animate OUT — clip closes upward simultaneously
-    gsap.to(phOut, {
-      clipPath: 'inset(0% 0% 100% 0%)',
-      duration: DUR_OUT,
-      ease: 'power2.in',
-    });
-
-    updateUI(next);
-    startProgress();
-  }
-
-  // ── Auto-advance timer ────────────────────────────────────────────
-  function startTimer() {
-    clearInterval(autoTimer);
-    autoTimer = setInterval(() => {
-      goTo((current + 1) % TOTAL);
-    }, HOLD_MS);
-  }
-
-  // ── Dot click → jump to that photo and restart timer ─────────────
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const idx = parseInt(dot.dataset.idx, 10);
-      if (idx === current) return;
-      clearInterval(autoTimer);
-      goTo(idx);
-      startTimer();
-    });
-  });
-
-  // ── ScrollTrigger: section entrance — stagger left content ────────
-  const leftEls = Array.from(section.querySelectorAll(
-    '.glimpse-eyebrow, .glimpse-heading, .glimpse-bio, ' +
-    '.glimpse-stats, .glimpse-social-bar'
-  ));
-
-  if (leftEls.length) {
-    gsap.fromTo(leftEls,
-      { opacity: 0, y: 36, filter: 'blur(6px)' },
-      {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.10,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 75%',
-          once: true,
-        },
-      }
-    );
-  }
-
-  // Right side frame entrance
-  const frame = document.getElementById('glimpseFrame');
-  if (frame) {
-    gsap.fromTo(frame,
-      { opacity: 0, y: 50, scale: 0.97 },
-      {
-        opacity: 1, y: 0, scale: 1,
-        duration: 1.1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 70%',
-          once: true,
-        },
-        delay: 0.2,
-      }
-    );
-  }
-
-  // ── Boot ──────────────────────────────────────────────────────────
-  updateUI(0);
-  startProgress();
-  startTimer();
-})();
-
-// ─────────────────────────────────────────────────────────────────
-// SECTION 6 — Testimonials entrance animations
-// ─────────────────────────────────────────────────────────────────
-(function initTestimonials() {
-  const section = document.getElementById('testimonialsSection');
-  if (!section) return;
-
-  // Left column: stagger each child element in
-  const leftEls = section.querySelectorAll(
-    '.testi-eyebrow, .testi-heading, .testi-desc, .testi-stats, .testi-actions'
-  );
-  if (leftEls.length) {
-    gsap.fromTo(leftEls,
-      { opacity: 0, y: 30, filter: 'blur(4px)' },
-      {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.09,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 75%',
-          once: true,
-        },
-      }
-    );
-  }
-
-  // Right column: cascade cards in
-  section.querySelectorAll('.testi-card').forEach((card, i) => {
-    gsap.fromTo(card,
-      { opacity: 0, y: 40, scale: 0.97 },
-      {
-        opacity: 1, y: 0, scale: 1,
-        duration: 0.85,
-        ease: 'power3.out',
-        delay: i * 0.12,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 68%',
-          once: true,
-        },
-      }
-    );
-  });
-})();
-
 // ─────────────────────────────────────────────────────────────────
 // CINEMATIC FOOTER — GSAP ScrollTrigger animations + Magnetic pills
 // ─────────────────────────────────────────────────────────────────
@@ -1806,4 +1229,24 @@ initCubeViewer();
     requestAnimationFrame(animUaEther);
   }
   animUaEther();
+})();
+
+// ─────────────────────────────────────────────────────────────────
+// FAQ section — Accordion logic
+// ─────────────────────────────────────────────────────────────────
+(function initFaq() {
+  const questions = document.querySelectorAll('.faq-question');
+  if (!questions.length) return;
+
+  questions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      
+      // Close all other accordions first (optional but keeps things clean)
+      questions.forEach(q => q.setAttribute('aria-expanded', 'false'));
+      
+      // Toggle the clicked one
+      btn.setAttribute('aria-expanded', !isExpanded);
+    });
+  });
 })();
