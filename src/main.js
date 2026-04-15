@@ -1250,3 +1250,182 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
   });
 })();
+
+// ─────────────────────────────────────────────────────────────────
+// PROBLEM DOMAINS — 3D tilted carousel + hover popup
+// Carousel rotates on the Y axis while tilted on X (-20deg).
+// On hover: rotation pauses, card glows, popup appears above card.
+// Popup is fixed-position (outside 3D context) to avoid z-index issues.
+// ─────────────────────────────────────────────────────────────────
+(function initProblemDomains() {
+  const carousel  = document.getElementById('pdCarousel');
+  const scene     = document.getElementById('pdScene');
+  const popupEl   = document.getElementById('pdPopupFloat');
+  if (!carousel || !popupEl) return;
+
+  // Popup sub-elements
+  const popupIcon  = document.getElementById('pdPopupIcon');
+  const popupBadge = document.getElementById('pdPopupBadge');
+  const popupTitle = document.getElementById('pdPopupTitle');
+  const popupDesc  = document.getElementById('pdPopupDesc');
+  const popupTags  = document.getElementById('pdPopupTags');
+
+  const cards = Array.from(carousel.querySelectorAll('.pd-card'));
+
+  let angle      = 0;
+  let paused     = false;
+  let activeCard = null;
+  let rafId      = null;
+  let running    = true;
+
+  const SPEED = 0.28; // degrees per frame @ ~60 fps
+  const TILT  = -10;  // rotateX degrees (tilted axis)
+
+  // ── Animation tick ─────────────────────────────────────────────
+  function tick() {
+    if (!paused) {
+      angle = (angle + SPEED) % 360;
+      carousel.style.transform = `rotateX(${TILT}deg) rotateY(${angle}deg)`;
+    }
+    if (running) rafId = requestAnimationFrame(tick);
+  }
+
+  // ── Popup helpers ───────────────────────────────────────────────
+  function positionPopup(card) {
+    const rect  = card.getBoundingClientRect();
+    const popW  = 285;
+    const vw    = window.innerWidth;
+
+    // Centre horizontally above the card's bounding rect
+    let left = rect.left + rect.width / 2;
+    // Clamp so popup never goes off-screen
+    left = Math.max(popW / 2 + 12, Math.min(vw - popW / 2 - 12, left));
+
+    // top: card's top edge in viewport; CSS translateY(-100%) raises popup above it
+    popupEl.style.left = `${left}px`;
+    popupEl.style.top  = `${rect.top - 14}px`;
+  }
+
+  function showPopup(card) {
+    const d = card.dataset;
+
+    // Inject per-card color tokens into popup CSS vars
+    const clrRgb  = (card.style.getPropertyValue('--clr-rgb') || '168,85,247').trim();
+    const clrSolid = (card.style.getPropertyValue('--clr') || '#a855f7').trim();
+    popupEl.style.setProperty('--pd-clr-rgb',   clrRgb);
+    popupEl.style.setProperty('--pd-clr-solid', clrSolid);
+
+    // Populate content
+    popupIcon.textContent  = d.icon  || '';
+    popupBadge.textContent = `Domain ${d.id || ''}`;
+    popupTitle.textContent = d.name  || '';
+    popupDesc.textContent  = d.desc  || '';
+    popupTags.innerHTML    = (d.tags || '').split(',')
+      .map(t => `<span>${t.trim()}</span>`).join('');
+
+    positionPopup(card);
+    popupEl.setAttribute('aria-hidden', 'false');
+    popupEl.classList.add('active');
+  }
+
+  function hidePopup() {
+    popupEl.classList.remove('active');
+    popupEl.setAttribute('aria-hidden', 'true');
+  }
+
+  // ── Card event handlers ─────────────────────────────────────────
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      paused     = true;
+      activeCard = card;
+      card.classList.add('is-active');
+      showPopup(card);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      paused     = false;
+      activeCard = null;
+      card.classList.remove('is-active');
+      hidePopup();
+    });
+  });
+
+  // ── Pause when section scrolls out of view (performance) ────────
+  if ('IntersectionObserver' in window && scene) {
+    const obs = new IntersectionObserver(([entry]) => {
+      running = entry.isIntersecting;
+      if (running && !rafId) rafId = requestAnimationFrame(tick);
+      else if (!running && rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    }, { threshold: 0.05 });
+    obs.observe(scene);
+  }
+
+  // Start
+  rafId = requestAnimationFrame(tick);
+})();
+
+// ─────────────────────────────────────────────────────────────────
+// SCHEDULE — Phase accordion (opens on hover, closes on mouse leave)
+// ─────────────────────────────────────────────────────────────────
+(function initSchedule() {
+  const triggers = document.querySelectorAll('.sch-trigger');
+  if (!triggers.length) return;
+
+  triggers.forEach(btn => {
+    // Open on hover
+    btn.addEventListener('mouseenter', () => {
+      btn.setAttribute('aria-expanded', 'true');
+    });
+
+    // Close when mouse leaves the whole phase card
+    const phase = btn.closest('.sch-phase');
+    if (phase) {
+      phase.addEventListener('mouseleave', () => {
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    // Keep click toggle for touch / keyboard accessibility
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+})();
+
+// ─────────────────────────────────────────────────────────────────
+// MARQUEE RIBBON — scroll-velocity speed boost
+// ─────────────────────────────────────────────────────────────────
+(function initMarquee() {
+  const track = document.getElementById('marqueeTrack');
+  if (!track) return;
+
+  const BASE_DURATION = 24; // seconds — must match CSS @keyframes animation-duration
+  let lastScrollY = window.scrollY;
+  let currentRate = 1;
+  let decayTimer  = null;
+
+  function applyRate(rate) {
+    track.style.animationDuration = `${(BASE_DURATION / rate).toFixed(2)}s`;
+  }
+
+  function decayToNormal() {
+    if (currentRate <= 1.05) { currentRate = 1; applyRate(1); return; }
+    currentRate = currentRate * 0.88 + 1 * 0.12;
+    applyRate(currentRate);
+    decayTimer = setTimeout(decayToNormal, 32);
+  }
+
+  window.addEventListener('scroll', () => {
+    const y     = window.scrollY;
+    const delta = Math.abs(y - lastScrollY);
+    lastScrollY = y;
+
+    const boost = Math.min(1 + delta * 0.14, 4);
+    if (boost > currentRate) currentRate = boost;
+    applyRate(currentRate);
+
+    clearTimeout(decayTimer);
+    decayTimer = setTimeout(decayToNormal, 80);
+  }, { passive: true });
+})();

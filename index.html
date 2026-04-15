@@ -63,7 +63,6 @@
             </a>
             <div class="more-dropdown" id="moreDropdown" role="menu">
               <div class="md-grid">
-                <!-- Left: feature card -->
                 <a href="/playground.html" class="md-feature" role="menuitem" tabindex="-1">
                   <div class="md-feature__bg-icon" aria-hidden="true">
                     <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
@@ -71,7 +70,6 @@
                   <span class="md-feature__title">Winner</span>
                   <span class="md-feature__desc">Hackathon winners &amp; achievements</span>
                 </a>
-                <!-- Right: item list -->
                 <div class="md-items">
                   <a href="/links.html" class="md-item" role="menuitem" tabindex="-1">
                     <div class="md-item__icon">
@@ -109,10 +107,8 @@
         <!-- Separator -->
         <div class="nav-pill-sep" aria-hidden="true"></div>
 
-
-
-        <!-- Book a Call gradient button -->
-        <a href="/book-a-call.html" class="btn-cta" id="bookCallBtn">Register Now</a>
+        <!-- Register button -->
+        <a href="/book-a-call.html" class="btn-cta" id="bookCallBtn">Register</a>
 
       </div>
 
@@ -383,6 +379,447 @@
     </div>
 
   </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       PROBLEM DOMAINS — 3D Tilted Carousel
+       ══════════════════════════════════════════════════════════════════ -->
+  <section class="pd-section" id="problemDomains" aria-label="Problem Domains">
+
+    <!-- Ethereal background -->
+    <div class="ua-ethereal-root" aria-hidden="true">
+      <svg class="ua-ethereal-svg" aria-hidden="true">
+        <defs>
+          <filter id="uaEtherFilter2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+            <feBlend in="SourceGraphic" mode="overlay" result="blend"/>
+            <feComposite in="blend" in2="SourceGraphic"/>
+          </filter>
+        </defs>
+      </svg>
+      <div class="ua-ethereal-inner">
+        <div class="ua-ethereal-shadow"></div>
+      </div>
+    </div>
+    <div class="ua-ethereal-noise"  aria-hidden="true"></div>
+    <div class="ua-ethereal-vignette" aria-hidden="true"></div>
+
+    <div class="pd-bg-glow"  aria-hidden="true"></div>
+    <div class="pd-bg-grid"  aria-hidden="true"></div>
+
+    <!-- Section header — split layout -->
+    <div class="pd-header">
+      <div class="pd-header-left">
+        <span class="pd-pre-label">PROBLEM DOMAIN</span>
+      </div>
+      <div class="pd-header-right">
+        <h2 class="pd-title">Choose Your <em>Battlefield</em></h2>
+        <p class="pd-subtitle">8 domains. Real-world problems. 15 minutes to lock in your challenge.</p>
+      </div>
+    </div>
+
+    <!-- 3D Scene -->
+    <div class="pd-scene" id="pdScene" aria-hidden="true">
+      <div class="pd-carousel" id="pdCarousel">
+
+        <div class="pd-card" style="--clr:#f43f5e;--clr-rgb:244,63,94;"
+             data-id="01" data-icon="🏥"
+             data-name="HealthTech &amp; MedTech"
+             data-desc="Tackle real challenges in healthcare delivery, remote diagnostics, patient monitoring, and medical data management."
+             data-tags="Remote Health,Diagnostics,Patient Data,Wearables">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">01</span>
+            <div class="pd-card-icon" aria-hidden="true">🏥</div>
+            <h3 class="pd-card-name">HealthTech &amp;<br>MedTech</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#a855f7;--clr-rgb:168,85,247;"
+             data-id="02" data-icon="🤖"
+             data-name="AI/ML &amp; Data Science"
+             data-desc="Build intelligent systems that learn, predict, and automate — from NLP to computer vision and predictive analytics."
+             data-tags="NLP,Computer Vision,Predictive AI,Neural Nets">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">02</span>
+            <div class="pd-card-icon" aria-hidden="true">🤖</div>
+            <h3 class="pd-card-name">AI/ML &amp;<br>Data Science</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#22d3ee;--clr-rgb:34,211,238;"
+             data-id="03" data-icon="🏙️"
+             data-name="Smart Cities &amp; IoT"
+             data-desc="Design connected solutions for urban infrastructure — smart traffic, waste management, energy grids, and public safety systems."
+             data-tags="IoT Sensors,Traffic AI,Energy Grid,Urban Infra">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">03</span>
+            <div class="pd-card-icon" aria-hidden="true">🏙️</div>
+            <h3 class="pd-card-name">Smart Cities<br>&amp; IoT</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#22c55e;--clr-rgb:34,197,94;"
+             data-id="04" data-icon="🌱"
+             data-name="Sustainability &amp; GreenTech"
+             data-desc="Engineer eco-friendly solutions targeting climate change, carbon tracking, clean energy, and sustainable agriculture."
+             data-tags="Carbon Track,Clean Energy,AgriTech,Climate AI">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">04</span>
+            <div class="pd-card-icon" aria-hidden="true">🌱</div>
+            <h3 class="pd-card-name">Sustainability<br>&amp; GreenTech</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#f59e0b;--clr-rgb:245,158,11;"
+             data-id="05" data-icon="📚"
+             data-name="EdTech &amp; Skilling"
+             data-desc="Reimagine how people learn — adaptive platforms, vernacular language tools, and AI-powered career guidance for the next billion."
+             data-tags="Adaptive Learn,Vernacular AI,Career Path,AR / VR">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">05</span>
+            <div class="pd-card-icon" aria-hidden="true">📚</div>
+            <h3 class="pd-card-name">EdTech &amp;<br>Skilling</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#3b82f6;--clr-rgb:59,130,246;"
+             data-id="06" data-icon="💰"
+             data-name="FinTech &amp; Web3"
+             data-desc="Build the future of finance — DeFi apps, smart contracts, digital wallets, fraud detection, and financial inclusion tools."
+             data-tags="DeFi,Smart Contracts,Digital Wallet,Fraud AI">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">06</span>
+            <div class="pd-card-icon" aria-hidden="true">💰</div>
+            <h3 class="pd-card-name">FinTech &amp;<br>Web3</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#f97316;--clr-rgb:249,115,22;"
+             data-id="07" data-icon="🔐"
+             data-name="CyberSecurity &amp; Privacy"
+             data-desc="Defend digital systems against evolving threats — zero-trust architectures, threat intelligence, and privacy-first solutions."
+             data-tags="Zero Trust,Threat Intel,Privacy Tools,Secure Comms">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">07</span>
+            <div class="pd-card-icon" aria-hidden="true">🔐</div>
+            <h3 class="pd-card-name">CyberSecurity<br>&amp; Privacy</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+        <div class="pd-card" style="--clr:#ec4899;--clr-rgb:236,72,153;"
+             data-id="08" data-icon="🌾"
+             data-name="Social Impact &amp; Rural Tech"
+             data-desc="Bridge the urban-rural divide — digital governance, farmer tech, women safety systems, and accessibility solutions for all."
+             data-tags="Digital Gov,AgriTech,Women Safety,Accessibility">
+          <div class="pd-card-face">
+            <div class="pd-card-glow" aria-hidden="true"></div>
+            <span class="pd-card-num">08</span>
+            <div class="pd-card-icon" aria-hidden="true">🌾</div>
+            <h3 class="pd-card-name">Social Impact<br>&amp; Rural Tech</h3>
+            <span class="pd-card-hint">Hover to explore</span>
+          </div>
+        </div>
+
+      </div><!-- /.pd-carousel -->
+    </div><!-- /.pd-scene -->
+
+    <!-- Floating popup — lives outside 3D context to avoid z-index issues -->
+    <div class="pd-popup-float" id="pdPopupFloat" aria-live="polite" aria-hidden="true">
+      <div class="pd-popup-top">
+        <span class="pd-popup-icon" id="pdPopupIcon"></span>
+        <span class="pd-popup-badge" id="pdPopupBadge"></span>
+      </div>
+      <h4 class="pd-popup-title" id="pdPopupTitle"></h4>
+      <p  class="pd-popup-desc"  id="pdPopupDesc"></p>
+      <div class="pd-popup-tags" id="pdPopupTags"></div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SCHEDULE SECTION — 24-Hour Timeline
+       ══════════════════════════════════════════════════════════════════ -->
+  <section class="sch-section" id="scheduleSection" aria-label="Event Schedule">
+
+    <div class="sch-container">
+
+      <!-- Header -->
+      <div class="sch-header">
+        <span class="sch-pre-label">25 – 26 APRIL 2026</span>
+        <h2 class="sch-title">The <em>Schedule</em></h2>
+        <p class="sch-subtitle">24 hours. 4 phases. Every minute counts.</p>
+      </div>
+
+      <!-- Phases -->
+      <div class="sch-phases" id="schPhases">
+
+        <!-- ─── Phase 1 ─── -->
+        <div class="sch-phase">
+          <button class="sch-trigger" aria-expanded="false" aria-controls="sch-ph1-body" id="sch-ph1">
+            <div class="sch-trigger-left">
+              <span class="sch-phase-num">01</span>
+              <div>
+                <span class="sch-phase-timerange">8:00 AM – 11:00 AM</span>
+                <h3 class="sch-phase-name">Arrival &amp; Kickoff</h3>
+              </div>
+            </div>
+            <div class="sch-trigger-right">
+              <span class="sch-event-count">3 events</span>
+              <span class="sch-trigger-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </span>
+            </div>
+          </button>
+          <div class="sch-body" id="sch-ph1-body" aria-labelledby="sch-ph1" role="region">
+            <div class="sch-timeline">
+              <div class="sch-event">
+                <span class="sch-event-time">8:00 – 9:30 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Doors Open</span><span class="sch-badge sch-badge--main">Main Event</span></div>
+                  <p class="sch-event-desc">Registration, check-in &amp; participant on-boarding.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">10:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Kickoff</span><span class="sch-badge sch-badge--main">Main Event</span></div>
+                  <p class="sch-event-desc">Official orientation session &amp; welcome ceremony.</p>
+                </div>
+              </div>
+              <div class="sch-event sch-event--last">
+                <span class="sch-event-time">10:45 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--critical"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">PS Drop</span><span class="sch-badge sch-badge--critical">Critical</span></div>
+                  <p class="sch-event-desc">Problem statement announcement &amp; team lock-in. 15 minutes to choose your battlefield.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Phase 2 ─── -->
+        <div class="sch-phase">
+          <button class="sch-trigger" aria-expanded="false" aria-controls="sch-ph2-body" id="sch-ph2">
+            <div class="sch-trigger-left">
+              <span class="sch-phase-num">02</span>
+              <div>
+                <span class="sch-phase-timerange">11:00 AM – 8:00 PM</span>
+                <h3 class="sch-phase-name">The Build</h3>
+              </div>
+            </div>
+            <div class="sch-trigger-right">
+              <span class="sch-event-count">5 events</span>
+              <span class="sch-trigger-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </span>
+            </div>
+          </button>
+          <div class="sch-body" id="sch-ph2-body" aria-labelledby="sch-ph2" role="region">
+            <div class="sch-timeline">
+              <div class="sch-event">
+                <span class="sch-event-time">11:00 AM – 1:00 PM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Build Sprint 1</span><span class="sch-badge sch-badge--build">Build · 2H</span></div>
+                  <p class="sch-event-desc">Hacking begins — thinking &amp; planning phase. Lay your foundation.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">1:00 – 2:00 PM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--break"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Lunch Break</span><span class="sch-badge sch-badge--break">Break</span></div>
+                  <p class="sch-event-desc">Fuel up — meal break provided on-site.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">2:00 – 5:00 PM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Build Sprint 2</span><span class="sch-badge sch-badge--build">Build · 3H</span></div>
+                  <p class="sch-event-desc">Deep work mode. No distractions — pure execution.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">5:00 – 6:00 PM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--fun"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Strategy Pivot</span><span class="sch-badge sch-badge--fun">Mentor + Fun</span></div>
+                  <p class="sch-event-desc">Direction pitch + mentor interaction + snacks &amp; fun activity.</p>
+                </div>
+              </div>
+              <div class="sch-event sch-event--last">
+                <span class="sch-event-time">6:00 – 8:00 PM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Build Sprint 3</span><span class="sch-badge sch-badge--build">Build · 2H</span></div>
+                  <p class="sch-event-desc">Grind mode. Push hard before the dinner break.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Phase 3 ─── -->
+        <div class="sch-phase">
+          <button class="sch-trigger" aria-expanded="false" aria-controls="sch-ph3-body" id="sch-ph3">
+            <div class="sch-trigger-left">
+              <span class="sch-phase-num">03</span>
+              <div>
+                <span class="sch-phase-timerange">8:00 PM – 7:00 AM</span>
+                <h3 class="sch-phase-name">Midnight Push</h3>
+              </div>
+            </div>
+            <div class="sch-trigger-right">
+              <span class="sch-event-count">4 events</span>
+              <span class="sch-trigger-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </span>
+            </div>
+          </button>
+          <div class="sch-body" id="sch-ph3-body" aria-labelledby="sch-ph3" role="region">
+            <div class="sch-timeline">
+              <div class="sch-event">
+                <span class="sch-event-time">8:00 PM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--break"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Power Dinner</span><span class="sch-badge sch-badge--break">Break</span></div>
+                  <p class="sch-event-desc">Dinner break — recharge before the long night ahead.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">9:00 PM – 2:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Build Sprint 4</span><span class="sch-badge sch-badge--build">Build · 5H</span></div>
+                  <p class="sch-event-desc">Midnight push — longest sprint of the event. Optional midnight snack provided.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">2:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--critical"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Demo Pitch</span><span class="sch-badge sch-badge--critical">Critical</span></div>
+                  <p class="sch-event-desc">Pitch round + GitHub submission deadline. No extensions granted.</p>
+                </div>
+              </div>
+              <div class="sch-event sch-event--last">
+                <span class="sch-event-time">3:00 – 7:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Final Sprint</span><span class="sch-badge sch-badge--build">Build · 4H</span></div>
+                  <p class="sch-event-desc">Last stand — final build phase before submissions open at dawn.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Phase 4 ─── -->
+        <div class="sch-phase">
+          <button class="sch-trigger" aria-expanded="false" aria-controls="sch-ph4-body" id="sch-ph4">
+            <div class="sch-trigger-left">
+              <span class="sch-phase-num">04</span>
+              <div>
+                <span class="sch-phase-timerange">7:00 AM – 11:00 AM</span>
+                <h3 class="sch-phase-name">The Finale</h3>
+              </div>
+            </div>
+            <div class="sch-trigger-right">
+              <span class="sch-event-count">5 events</span>
+              <span class="sch-trigger-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </span>
+            </div>
+          </button>
+          <div class="sch-body" id="sch-ph4-body" aria-labelledby="sch-ph4" role="region">
+            <div class="sch-timeline">
+              <div class="sch-event">
+                <span class="sch-event-time">7:00 – 8:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--submit"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Final Pitch</span><span class="sch-badge sch-badge--submit">Submission</span></div>
+                  <p class="sch-event-desc">GitHub + deck + live link submission. All deliverables locked in.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">8:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--break"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Breakfast</span><span class="sch-badge sch-badge--break">Break</span></div>
+                  <p class="sch-event-desc">Recharge before the verdict — last meal of the hackathon.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">8:30 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--critical"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Results Drop</span><span class="sch-badge sch-badge--critical">Critical</span></div>
+                  <p class="sch-event-desc">Results announced — eliminated teams dismissed. Finalists proceed.</p>
+                </div>
+              </div>
+              <div class="sch-event">
+                <span class="sch-event-time">9:00 – 10:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot"></div><div class="sch-event-line"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Grand Presentation</span><span class="sch-badge sch-badge--main">Main Event</span></div>
+                  <p class="sch-event-desc">Final PPT presentation round before the judges.</p>
+                </div>
+              </div>
+              <div class="sch-event sch-event--last">
+                <span class="sch-event-time">10:30 – 11:00 AM</span>
+                <div class="sch-event-track"><div class="sch-event-dot sch-event-dot--finale"></div></div>
+                <div class="sch-event-content">
+                  <div class="sch-event-top"><span class="sch-event-name">Closing Ceremony</span><span class="sch-badge sch-badge--finale">Finale</span></div>
+                  <p class="sch-event-desc">Prize distribution &amp; grand finale. UDBHAV'26 comes to an end.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.sch-phases -->
+    </div><!-- /.sch-container -->
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 4.5 — INFINITE MARQUEE RIBBON
+       Full-width black section · skewed red ribbon · scrolling text loop
+       ══════════════════════════════════════════════════════════════════ -->
+  <section class="marquee-section" id="marqueeSection" aria-hidden="true">
+
+    <!-- Background ribbon — blank, tilted opposite direction, red shadow bleed from above -->
+    <div class="marquee-ribbon-bg" aria-hidden="true"></div>
+
+    <!-- Red ribbon — skewed left (-3deg), scrolling text inside -->
+    <div class="marquee-ribbon">
+      <div class="marquee-track" id="marqueeTrack">
+        <!-- First copy -->
+        <span class="marquee-text">HACK THE FUTURE ✦ 24 HOURS ✦ BUILD BOLD ✦ UDBHAV'26 ✦ SAGE UNIVERSITY ✦ SHIP OR GO HOME ✦ INNOVATE NOW ✦ APRIL 2026 ✦ SOLVE. BUILD. WIN. ✦&nbsp;</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="marquee-text" aria-hidden="true">HACK THE FUTURE ✦ 24 HOURS ✦ BUILD BOLD ✦ UDBHAV'26 ✦ SAGE UNIVERSITY ✦ SHIP OR GO HOME ✦ INNOVATE NOW ✦ APRIL 2026 ✦ SOLVE. BUILD. WIN. ✦&nbsp;</span>
+      </div>
+    </div>
+
+  </section>
+
   <!-- ══════════════════════════════════════════════════════════════════
        FAQ SECTION
        ══════════════════════════════════════════════════════════════════ -->
@@ -513,9 +950,7 @@
 
     </div><!-- /.faq-container -->
   </section>
-
-
-  <!-- ── Bottom Corner Labels ───────────────────────────────────────────────── -->
+<!-- ── Bottom Corner Labels ───────────────────────────────────────────────── -->
   <div class="corner-labels">
     <div class="corner-label corner-left" id="cornerLeft">
       <svg class="corner-icon corner-icon--green" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -558,7 +993,7 @@
       <div class="cf-grid-bg" aria-hidden="true"></div>
 
       <!-- Giant background text -->
-      <div class="cf-giant-text" id="cfGiantText" aria-hidden="true">VEDANSH</div>
+      <div class="cf-giant-text" id="cfGiantText" aria-hidden="true">UDBHAV'26</div>
 
       <!-- ── 1. Diagonal Marquee (top of footer) ── -->
       <div class="cf-marquee-wrap" aria-hidden="true">
@@ -588,37 +1023,11 @@
 
         <div class="cf-links" id="cfLinks">
 
-          <!-- Primary CTA pills -->
+          <!-- Single Register CTA -->
           <div class="cf-primary-pills">
-            <a href="https://wa.me/918829841257"
-               target="_blank" rel="noopener noreferrer"
+            <a href="/book-a-call.html"
                class="cf-pill cf-pill--primary js-magnetic"
-               id="cfBtnWhatsApp">
-              <svg class="cf-pill-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-              WhatsApp Me
-            </a>
-
-            <a href="mailto:contact.vedanshh@gmail.com"
-               class="cf-pill cf-pill--primary js-magnetic"
-               id="cfBtnEmail">
-              <svg class="cf-pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
-              Send Email
-            </a>
-          </div>
-
-          <!-- Secondary text link pills -->
-          <div class="cf-secondary-pills">
-            <a href="https://github.com/py-kalki" target="_blank" rel="noopener noreferrer"
-               class="cf-pill cf-pill--ghost js-magnetic" id="cfBtnGitHub">GitHub</a>
-            <a href="https://www.linkedin.com/in/vedanshdanot" target="_blank" rel="noopener noreferrer"
-               class="cf-pill cf-pill--ghost js-magnetic" id="cfBtnLinkedIn">LinkedIn</a>
-            <a href="https://www.instagram.com/i.pvt_vedansh?igsh=MXkyZXdwY25qbm52cw==" target="_blank" rel="noopener noreferrer"
-               class="cf-pill cf-pill--ghost js-magnetic" id="cfBtnInstagram">Instagram</a>
+               id="cfBtnRegister">Register</a>
           </div>
 
         </div>
@@ -628,14 +1037,14 @@
       <div class="cf-bottom-bar">
 
         <!-- Copyright -->
-        <p class="cf-copyright">© 2026 Vedansh Danot. All rights reserved.</p>
+        <p class="cf-copyright">© 2026 UDBHAV'26. All rights reserved.</p>
 
         <!-- Crafted-with badge -->
         <div class="cf-badge">
           <span class="cf-badge-text">Crafted with</span>
           <span class="cf-heart" aria-hidden="true">❤</span>
           <span class="cf-badge-text">by</span>
-          <span class="cf-badge-name">Vedansh</span>
+          <span class="cf-badge-name">UDBHAV'26</span>
         </div>
 
         <!-- Back to top -->
