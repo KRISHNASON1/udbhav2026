@@ -1365,67 +1365,112 @@ document.querySelectorAll('.nav-link').forEach(link => {
 })();
 
 // ─────────────────────────────────────────────────────────────────
-// SCHEDULE — Phase accordion (opens on hover, closes on mouse leave)
+// SCHEDULE — GSAP ScrollTrigger scroll-in / scroll-out animations
+// Items slide IN when scrolling down to them, stay visible as you
+// continue scrolling down, but fade OUT when scrolling back UP.
 // ─────────────────────────────────────────────────────────────────
-(function initSchedule() {
-  const triggers = document.querySelectorAll('.sch-trigger');
-  if (!triggers.length) return;
+(function initScheduleGSAP() {
+  const section = document.getElementById('scheduleSection');
+  if (!section) return;
 
-  triggers.forEach(btn => {
-    // Open on hover
-    btn.addEventListener('mouseenter', () => {
-      btn.setAttribute('aria-expanded', 'true');
-    });
+  // Phase labels: slide in on scroll-down, fade on scroll-back-up
+  const phaseBlocks = section.querySelectorAll('.sch-phase-block');
+  phaseBlocks.forEach((block) => {
+    const label = block.querySelector('.sch-phase-label');
+    if (!label) return;
 
-    // Close when mouse leaves the whole phase card
-    const phase = btn.closest('.sch-phase');
-    if (phase) {
-      phase.addEventListener('mouseleave', () => {
-        btn.setAttribute('aria-expanded', 'false');
-      });
-    }
+    gsap.fromTo(label,
+      { opacity: 0, x: -40 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: block,
+          start: 'top 82%',
+          // play  = fade in  (scroll down, enters from bottom)
+          // none  = stay put (scroll down past it)
+          // none  = stay put (scroll up, re-enters from top)
+          // reverse = fade out (scroll up, leaves at the bottom)
+          toggleActions: 'play none none reverse',
+        }
+      }
+    );
+  });
 
-    // Keep click toggle for touch / keyboard accessibility
-    btn.addEventListener('click', () => {
-      const isOpen = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!isOpen));
-    });
+  // Schedule items: same logic — stay visible scrolling down, fade scrolling up
+  const items = section.querySelectorAll('[data-sch-item]');
+  items.forEach((item, i) => {
+    const delay = (i % 5) * 0.05;
+
+    gsap.fromTo(item,
+      { opacity: 0, x: -28, y: 6 },
+      {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        duration: 0.65,
+        ease: 'power2.out',
+        delay,
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        }
+      }
+    );
   });
 })();
 
 // ─────────────────────────────────────────────────────────────────
-// MARQUEE RIBBON — scroll-velocity speed boost
+// GEMINI SVG LINES — scroll-driven path-drawing effect
+//
+// How it works (same mechanism as framer-motion's pathLength):
+//   • Each <path> has pathLength="1" which normalises its length to 1 unit
+//   • CSS sets stroke-dasharray: 1  →  one dash = the full path
+//   • stroke-dashoffset controls how much is hidden:
+//       offset  1.0 = fully hidden
+//       offset  0.0 = fully drawn
+//       offset -0.2 = overdrawing 20% past the end (ensures clean finish)
+//   • GSAP ScrollTrigger with scrub animates from per-path initial offset
+//     to -0.2 as the section scrolls through the viewport
 // ─────────────────────────────────────────────────────────────────
-(function initMarquee() {
-  const track = document.getElementById('marqueeTrack');
-  if (!track) return;
+(function initGeminiEffect() {
+  const section = document.getElementById('geminiSection');
+  if (!section) return;
 
-  const BASE_DURATION = 24; // seconds — must match CSS @keyframes animation-duration
-  let lastScrollY = window.scrollY;
-  let currentRate = 1;
-  let decayTimer  = null;
+  const paths = section.querySelectorAll('.gemini-path');
 
-  function applyRate(rate) {
-    track.style.animationDuration = `${(BASE_DURATION / rate).toFixed(2)}s`;
-  }
+  // Set initial dashoffset values from data attributes BEFORE first paint
+  // so there's no flash of fully-drawn paths
+  paths.forEach(path => {
+    const init = parseFloat(path.dataset.init ?? '1');
+    path.style.strokeDashoffset = init;
+  });
 
-  function decayToNormal() {
-    if (currentRate <= 1.05) { currentRate = 1; applyRate(1); return; }
-    currentRate = currentRate * 0.88 + 1 * 0.12;
-    applyRate(currentRate);
-    decayTimer = setTimeout(decayToNormal, 32);
-  }
+  // Single pinned timeline — section stays fixed in viewport while scroll
+  // accumulates in the pinSpacing spacer (the "ghost scroll" effect).
+  // All paths animate in parallel (position 0) driven by one ScrollTrigger.
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: section,
+      start: 'top top',      // pin fires when section reaches viewport top
+      end: '+=2500',         // 2500px of ghost scroll = animation distance
+      pin: true,             // freeze section in place while scrolling
+      pinSpacing: true,      // GSAP inserts a spacer to keep page flow intact
+      scrub: 0.6,            // smooth scrub feel
+      anticipatePin: 1,      // prevents jitter when pin engages
+    }
+  });
 
-  window.addEventListener('scroll', () => {
-    const y     = window.scrollY;
-    const delta = Math.abs(y - lastScrollY);
-    lastScrollY = y;
-
-    const boost = Math.min(1 + delta * 0.14, 4);
-    if (boost > currentRate) currentRate = boost;
-    applyRate(currentRate);
-
-    clearTimeout(decayTimer);
-    decayTimer = setTimeout(decayToNormal, 80);
-  }, { passive: true });
+  paths.forEach(path => {
+    const init = parseFloat(path.dataset.init ?? '1');
+    tl.fromTo(
+      path,
+      { strokeDashoffset: init },
+      { strokeDashoffset: -0.2, ease: 'none' },
+      0  // all paths start at the same moment in the timeline
+    );
+  });
 })();

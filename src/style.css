@@ -2615,11 +2615,31 @@ body {
 .pd-card-icon {
   position: relative;
   z-index: 1;
-  font-size: 2.5rem;
-  line-height: 1;
-  margin-bottom: 0.2rem;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.35rem;
+  border-radius: 14px;
+  overflow: hidden;
   filter: drop-shadow(0 0 10px rgba(var(--clr-rgb), 0.5));
   transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1.5px solid rgba(var(--clr-rgb), 0.35);
+  box-shadow: 0 0 20px rgba(var(--clr-rgb), 0.18);
+}
+
+.pd-card-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.7) brightness(0.85);
+  transition: filter 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  mix-blend-mode: luminosity;
+}
+
+.pd-card.is-active .pd-card-icon img {
+  filter: saturate(1.1) brightness(1.05);
+  mix-blend-mode: normal;
+  transform: scale(1.06);
 }
 
 .pd-card-name {
@@ -2798,7 +2818,7 @@ body {
   .pd-card:nth-child(6) { transform: rotateY(225deg) translateZ(240px); }
   .pd-card:nth-child(7) { transform: rotateY(270deg) translateZ(240px); }
   .pd-card:nth-child(8) { transform: rotateY(315deg) translateZ(240px); }
-  .pd-card-icon { font-size: 1.9rem; }
+  .pd-card-icon { width: 56px; height: 56px; }
   .pd-card-name { font-size: 0.78rem; }
   .pd-popup-float { display: none; } /* disable popup on mobile — no hover */
 }
@@ -3958,4 +3978,400 @@ body {
   .cf-bottom-bar   { padding: 1.2rem 1.5rem 1.8rem; flex-direction: column; align-items: center; text-align: center; }
   .cf-copyright    { order: 3; }
   .cf-badge        { order: 1; }
+}
+
+
+/* ============================================================================
+   SCHEDULE — Full Open Timeline (GSAP scroll-driven)
+   ============================================================================ */
+
+.sch-timeline-full { display: flex; flex-direction: column; gap: 0; }
+
+.sch-phase-block {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0 2.5rem;
+  padding: 3rem 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  align-items: start;
+}
+.sch-phase-block:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
+
+.sch-phase-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  position: sticky;
+  top: 120px;
+}
+.sch-phase-label .sch-phase-num {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 3.5rem;
+  line-height: 1;
+  color: rgba(255,255,255,0.08);
+  letter-spacing: -0.02em;
+  transition: color 0.4s;
+}
+.sch-phase-block:hover .sch-phase-label .sch-phase-num { color: rgba(255,255,255,0.22); }
+
+.sch-phase-meta { display: flex; flex-direction: column; gap: 0.3rem; padding-top: 0.35rem; }
+
+.sch-phase-timerange {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+}
+
+.sch-phase-name {
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.sch-events-column { display: flex; flex-direction: column; gap: 0; }
+
+/* Each row starts invisible — GSAP animates it in */
+.sch-item {
+  display: grid;
+  grid-template-columns: 130px 20px 1fr;
+  gap: 0 1rem;
+  align-items: flex-start;
+  padding: 1.1rem 0;
+  opacity: 0;
+  transform: translateX(-24px);
+  will-change: opacity, transform;
+}
+.sch-item + .sch-item { border-top: 1px solid rgba(255,255,255,0.04); }
+
+.sch-item-time {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.3);
+  padding-top: 0.22rem;
+  white-space: nowrap;
+}
+
+.sch-item-track { display: flex; flex-direction: column; align-items: center; padding-top: 0.28rem; }
+
+.sch-item-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  border: 1.5px solid rgba(255,255,255,0.4);
+  flex-shrink: 0;
+}
+.sch-item-dot--critical { background: #ef4444; border-color: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.7); }
+.sch-item-dot--break    { background: rgba(251,191,36,0.4); border-color: rgba(251,191,36,0.8); }
+.sch-item-dot--fun      { background: rgba(167,139,250,0.4); border-color: rgba(167,139,250,0.8); }
+.sch-item-dot--submit   { background: rgba(52,211,153,0.4); border-color: rgba(52,211,153,0.8); }
+.sch-item-dot--finale   { background: #f59e0b; border-color: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.7); }
+
+.sch-item-line { width: 1px; flex-grow: 1; min-height: 22px; background: rgba(255,255,255,0.07); margin-top: 4px; }
+
+.sch-item-content { display: flex; flex-direction: column; gap: 0.3rem; padding-bottom: 0.8rem; }
+.sch-item-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+
+.sch-item-name {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: -0.01em;
+}
+.sch-item-desc {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .sch-phase-block { grid-template-columns: 1fr; gap: 1rem 0; padding: 2rem 0; }
+  .sch-phase-label { position: static; }
+  .sch-phase-label .sch-phase-num { font-size: 2.4rem; }
+  .sch-item { grid-template-columns: 80px 18px 1fr; gap: 0 0.7rem; }
+  .sch-item-time { font-size: 0.6rem; }
+}
+
+
+/* ============================================================================
+   SPONSORS SECTION — Pyramid Layout
+   ============================================================================ */
+
+.sponsors-section {
+  position: relative;
+  background: #000000;
+  color: #ffffff;
+  padding: 120px 0 110px;
+  z-index: 16;
+  overflow: hidden;
+}
+.sponsors-bg-glow {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(255,255,255,0.02) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(255,255,255,0.012) 0%, transparent 60%);
+}
+.sponsors-bg-grid {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-size: 55px 55px;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.018) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+.sponsors-container { position: relative; z-index: 2; max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+
+.sponsors-header { text-align: center; margin-bottom: 5rem; }
+.sponsors-pre-label {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-family: var(--font-ui); font-size: 0.6rem; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 1.4rem;
+}
+.sponsors-pre-label::before, .sponsors-pre-label::after {
+  content: ''; display: block; width: 28px; height: 1px; background: rgba(255,255,255,0.15);
+}
+
+/* "Our" uses Fraunces italic — same pattern as other section headings */
+.sponsors-title {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 400; letter-spacing: -0.03em;
+  line-height: 1; margin: 0 0 0.9rem; color: rgba(255,255,255,0.75);
+}
+.sponsors-title em {
+  font-family: var(--font-fraunces, 'Fraunces', serif);
+  font-style: italic;
+  font-weight: 300;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+.sponsors-subtitle { font-family: var(--font-ui); font-size: 0.92rem; color: rgba(255,255,255,0.38); margin: 0; }
+
+.sponsors-tier { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
+.sponsors-tier-label {
+  font-family: var(--font-ui); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.22);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.sponsors-tier-label::before, .sponsors-tier-label::after {
+  content: ''; display: block; height: 1px; background: rgba(255,255,255,0.12); width: 30px;
+}
+.sponsors-row { display: flex; justify-content: center; gap: 1.5rem; width: 100%; }
+
+.sponsor-card {
+  position: relative; border-radius: 20px; overflow: hidden;
+  background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+  transition: border-color 0.4s, background 0.4s, transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s;
+  cursor: default;
+}
+.sponsor-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.04); }
+.sponsor-card__inner { display: flex; align-items: center; justify-content: center; }
+.sponsor-card__logo-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.8rem; text-align: center;
+}
+.sponsor-card__logo-placeholder { display: flex; align-items: center; justify-content: center; opacity: 0.7; }
+.sponsor-card__name {
+  font-family: var(--font-ui); font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.5);
+}
+.sponsor-card__tagline {
+  font-family: var(--font-ui); font-size: 0.65rem;
+  color: rgba(255,255,255,0.22); letter-spacing: 0.06em;
+}
+
+/* Title tier — brightest in the pyramid */
+.sponsors-tier--title .sponsors-tier-label { color: rgba(255,255,255,0.45); }
+.sponsors-tier--title .sponsors-tier-label::before,
+.sponsors-tier--title .sponsors-tier-label::after { background: rgba(255,255,255,0.2); }
+.sponsor-card--title {
+  width: 100%; max-width: 520px;
+  border-color: rgba(255,255,255,0.18);
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 60%);
+  box-shadow: 0 0 50px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.sponsor-card--title:hover {
+  border-color: rgba(255,255,255,0.38);
+  box-shadow: 0 0 80px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.sponsor-card--title .sponsor-card__inner { padding: 3rem 2.5rem; }
+.sponsor-card--title .sponsor-card__name { font-size: 1.05rem; color: rgba(255,255,255,0.75); }
+
+/* Gold tier — medium brightness */
+.sponsors-tier--gold .sponsors-tier-label { color: rgba(255,255,255,0.32); }
+.sponsors-tier--gold .sponsors-tier-label::before,
+.sponsors-tier--gold .sponsors-tier-label::after { background: rgba(255,255,255,0.1); }
+.sponsor-card--gold {
+  width: 100%; max-width: 280px;
+  border-color: rgba(255,255,255,0.1);
+  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+}
+.sponsor-card--gold:hover { border-color: rgba(255,255,255,0.25); box-shadow: 0 0 40px rgba(255,255,255,0.04); }
+.sponsor-card--gold .sponsor-card__inner { padding: 2.2rem 2rem; }
+.sponsor-card--gold .sponsor-card__name { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+
+/* Supporting tier — subtlest */
+.sponsor-card--supporting { flex: 1; max-width: 200px; border-color: rgba(255,255,255,0.06); }
+.sponsor-card--supporting:hover { border-color: rgba(255,255,255,0.18); box-shadow: 0 0 30px rgba(255,255,255,0.03); }
+.sponsor-card--supporting .sponsor-card__inner { padding: 1.8rem 1.5rem; }
+.sponsor-card--supporting .sponsor-card__name { font-size: 0.72rem; color: rgba(255,255,255,0.38); }
+
+@media (max-width: 768px) {
+  .sponsors-row--2 { flex-direction: column; align-items: center; }
+  .sponsors-row--3 { flex-wrap: wrap; justify-content: center; }
+  .sponsor-card--gold { max-width: 100%; width: 100%; }
+  .sponsor-card--supporting { max-width: 44%; flex: 0 0 44%; }
+  .sponsor-card--title { max-width: 100%; }
+}
+
+
+/* ============================================================================
+   GEMINI SVG LINES EFFECT
+   Scroll-driven path-drawing animation (ported from Aceternity UI)
+   pathLength="1" on SVG elements normalises dasharray/dashoffset to [0..1]
+   so GSAP can animate strokeDashoffset exactly like framer-motion's pathLength
+   ============================================================================ */
+
+.gemini-section {
+  position: relative;
+  /* 100vh — GSAP pin adds the extra scroll space via pinSpacing */
+  height: 100vh;
+  background: #000000;
+  overflow: hidden;
+  z-index: 15;
+}
+
+/* ── Inner container — fills the pinned viewport ── */
+.gemini-sticky {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ── Text block — centred vertically in the pinned viewport ── */
+.gemini-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  text-align: center;
+  pointer-events: none;
+  padding: 0 1.5rem;
+  width: 100%;
+}
+
+.gemini-pre-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 1.2rem;
+}
+
+.gemini-title {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin: 0 0 1rem;
+  /* Gradient from near-white to mid-grey — matches original */
+  background: linear-gradient(to bottom, #f5f5f5 20%, rgba(200,200,200,0.55) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* The italic word uses Fraunces — same pattern as other headings on the site */
+.gemini-title em {
+  font-family: var(--font-fraunces, 'Fraunces', serif);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.gemini-desc {
+  font-family: var(--font-ui);
+  font-size: clamp(0.78rem, 1.5vw, 1.1rem);
+  color: rgba(255,255,255,0.38);
+  margin: 2rem 0 0;
+  line-height: 1.6;
+}
+
+/* ── CTA button layer — centred in the full pinned viewport ── */
+.gemini-cta-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 7rem;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.gemini-cta-btn {
+  pointer-events: all;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.6rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.92);
+  color: #000000;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.25s, transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+}
+
+.gemini-cta-btn:hover {
+  background: #ffffff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+/* ── SVG — fills the full pinned section ── */
+.gemini-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Animated paths ── */
+/* pathLength="1" is set as an HTML attribute on each path.
+   This normalises the path length to 1 so that:
+     stroke-dasharray: 1  → "one dash spanning the entire path"
+     stroke-dashoffset: 0 → fully drawn
+     stroke-dashoffset: 1 → fully hidden
+     stroke-dashoffset: -0.2 → overdrawing by 20% (past the end)
+   GSAP animates stroke-dashoffset from the per-path initial value (0.8–1.0)
+   down to -0.2, exactly replicating framer-motion's pathLength motion value. */
+.gemini-path {
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1; /* will be overridden per-path by JS before first render */
+}
+
+@media (max-width: 768px) {
+  .gemini-cta-layer { padding-top: 5rem; }
 }
