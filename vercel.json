@@ -1,14 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)\\.html", "destination": "/$1.html" },
+    { "source": "/admin/login", "destination": "/admin/login.html" },
+    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" },
+    { "source": "/admin/registrations", "destination": "/admin/registrations.html" },
+    { "source": "/register", "destination": "/register.html" },
     { "source": "/(.*)", "destination": "/404.html" }
   ]
 }

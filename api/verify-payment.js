@@ -30,9 +30,10 @@
 import crypto from 'crypto';
 import { connectDB }    from './lib/mongodb.js';
 import { Registration } from './models/Registration.js';
-import { Team }         from './models/Team.js';
 
-const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+const KEY_SECRET    = process.env.RAZORPAY_KEY_SECRET;
+const BASE_AMOUNT   = 800;
+const MENTOR_ADDON  = 300;
 
 // ── Simple helpers ──────────────────────────────────────────────────────────
 const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim());
@@ -56,14 +57,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, teamCode } = req.body || {};
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, formData } = req.body || {};
 
     // ── 1. Verify Razorpay signature ────────────────────────────────────────
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({ success: false, error: 'Missing payment verification data.' });
     }
-    if (!teamCode) {
-      return res.status(400).json({ success: false, error: 'Team code is required.' });
+    if (!formData) {
+      return res.status(400).json({ success: false, error: 'Missing registration data.' });
     }
     if (!KEY_SECRET) {
       return res.status(500).json({ success: false, error: 'Server configuration error.' });
@@ -79,21 +80,26 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Payment verification failed. Please contact support.' });
     }
 
-    // ── 2. Connect to MongoDB ───────────────────────────────────────────────
-    await connectDB();
+    // ── 2. Validate form data ───────────────────────────────────────────────
+    if (!(formData.teamName    || '').trim()) return res.status(400).json({ success: false, error: 'Team name is required.' });
+    if (!(formData.collegeName || '').trim()) return res.status(400).json({ success: false, error: 'College name is required.' });
+    if (!(formData.branch      || '').trim()) return res.status(400).json({ success: false, error: 'Branch is required.' });
+    if (!(formData.yearOfStudy || '').trim()) return res.status(400).json({ success: false, error: 'Year of study is required.' });
 
-    // ── 3. Look up the team by code ────────────────────────────────────────
-    const team = await Team.findOne({ code: teamCode.trim().toUpperCase() });
-    if (!team) {
-      return res.status(404).json({ success: false, error: 'Invalid team code.' });
+    const leaderErr = validateMember(formData.leader, 'Leader');
+    if (leaderErr) return res.status(400).json({ success: false, error: leaderErr });
+
+    const members = Array.isArray(formData.members) ? formData.members : [];
+    for (let i = 0; i < members.length; i++) {
+      const err = validateMember(members[i], `Member ${i + 2}`);
+      if (err) return res.status(400).json({ success: false, error: err });
     }
-    if (team.paymentStatus === 'paid') {
-      return res.status(200).json({
-        success: true,
-        id: team.registrationId || team._id.toString(),
-        message: 'Already registered.',
-      });
-    }
+
+    // Server-authoritative amount
+    const totalAmount = formData.mentorSession ? BASE_AMOUNT + MENTOR_ADDON : BASE_AMOUNT;
+
+    // ── 3. Connect to MongoDB ───────────────────────────────────────────────
+    await connectDB();
 
     // ── 4. Check for duplicate payment ID ──────────────────────────────────
     const existing = await Registration.findOne({ razorpayPaymentId: razorpay_payment_id });
@@ -107,18 +113,22 @@ export default async function handler(req, res) {
 
     // ── 5. Save registration with paymentStatus: 'paid' ────────────────────
     const registration = await Registration.create({
-      teamName:    team.teamName,
-      collegeName: team.collegeName,
-      branch:      team.branch,
-      yearOfStudy: '',  // not stored in Team model
+      teamName:    formData.teamName.trim(),
+      collegeName: formData.collegeName.trim(),
+      branch:      formData.branch.trim(),
+      yearOfStudy: String(formData.yearOfStudy),
       leader: {
-        name:  team.leader.name,
-        email: team.leader.email,
-        phone: team.leader.phone,
+        name:  formData.leader.name.trim(),
+        email: formData.leader.email.trim().toLowerCase(),
+        phone: formData.leader.phone.trim(),
       },
-      members:           [],  // optional — not stored in Team model
-      mentorSession:     team.mentorSession,
-      totalAmount:       team.totalAmount,
+      members: members.map((m) => ({
+        name:  m.name.trim(),
+        email: m.email.trim().toLowerCase(),
+        phone: m.phone.trim(),
+      })),
+      mentorSession:     Boolean(formData.mentorSession),
+      totalAmount,
       paymentStatus:     'paid',
       razorpayOrderId:   razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
@@ -126,13 +136,7 @@ export default async function handler(req, res) {
       userAgent: req.headers['user-agent'] || null,
     });
 
-    // ── 6. Mark team as paid ────────────────────────────────────────────────
-    await Team.findByIdAndUpdate(team._id, {
-      paymentStatus: 'paid',
-      registrationId: registration._id.toString(),
-    });
-
-    console.log(`[/api/verify-payment] ✅ Registration saved: ${registration._id} | Team: ${team.teamName} | Code: ${team.code}`);
+    console.log(`[/api/verify-payment] ✅ Registration saved: ${registration._id} | Team: ${formData.teamName}`);
 
     return res.status(200).json({
       success: true,
