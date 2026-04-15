@@ -1416,6 +1416,25 @@
           const data = await res.json();
 
           if (data.success) {
+            // Also store in localStorage for admin panel
+            try {
+              const REG_KEY = 'udbhav_registrations';
+              const existingRegs = JSON.parse(localStorage.getItem(REG_KEY) || '[]');
+              existingRegs.unshift({
+                id: 'reg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                teamName: name || 'Individual',
+                leaderName: name || 'Anonymous',
+                email: email,
+                phone: '',
+                college: '',
+                members: [],
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                message: msg,
+              });
+              localStorage.setItem(REG_KEY, JSON.stringify(existingRegs));
+            } catch (_) {}
+
             // Hide form, show success
             form.style.display = 'none';
             if (successEl) successEl.classList.add('is-visible');

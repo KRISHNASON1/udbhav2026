@@ -3,11 +3,11 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Vercel Serverless Function — POST /api/create-order
  *
- * Creates a Razorpay Order server-side (amount is set here, never trusted
- * from the client). Returns the order_id + publishable key to the frontend.
+ * Creates a Razorpay Order server-side. Amount is calculated here based on
+ * mentorSession flag — never trusted from the client.
  *
  * Request body (JSON):
- *   { mentorSession: boolean }
+ *   { mentorSession: boolean, teamName: string, leaderName: string, leaderEmail: string }
  *
  * Response:
  *   200 { success: true, orderId, amount, currency, key }
@@ -16,11 +16,12 @@
  */
 
 import Razorpay from 'razorpay';
-import { connectDB } from './lib/mongodb.js';
-import { Team }      from './models/Team.js';
 
 const KEY_ID     = process.env.RAZORPAY_KEY_ID;
 const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+
+const BASE_AMOUNT   = 800;   // ₹800
+const MENTOR_ADDON  = 300;   // ₹300
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,36 +40,26 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { teamCode } = req.body || {};
+    const { mentorSession, teamName, leaderName, leaderEmail } = req.body || {};
 
-    if (!teamCode) {
-      return res.status(400).json({ success: false, error: 'Team code is required.' });
+    if (!teamName || !leaderName || !leaderEmail) {
+      return res.status(400).json({ success: false, error: 'Team name, leader name, and leader email are required.' });
     }
 
-    // Look up the team — amount is authoritative from DB, never from client
-    await connectDB();
-    const team = await Team.findOne({ code: teamCode.trim().toUpperCase() });
-
-    if (!team) {
-      return res.status(404).json({ success: false, error: 'Invalid team code.' });
-    }
-    if (team.paymentStatus === 'paid') {
-      return res.status(400).json({ success: false, error: 'This team has already paid.' });
-    }
-
-    const amountPaisa = team.totalAmount * 100;  // convert ₹ to paise
+    // Amount is authoritative — server decides based on mentorSession flag
+    const totalAmount   = mentorSession ? BASE_AMOUNT + MENTOR_ADDON : BASE_AMOUNT;
+    const amountPaisa   = totalAmount * 100;  // convert ₹ to paise
 
     const razorpay = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
 
     const order = await razorpay.orders.create({
       amount:   amountPaisa,
       currency: 'INR',
-      receipt:  `udbhav26_${team.code}_${Date.now()}`,
+      receipt:  `udbhav26_${Date.now()}`,
       notes: {
-        event:     "UDBHAV'26 Round 2",
-        teamCode:  team.code,
-        teamName:  team.teamName,
-        mentorSession: team.mentorSession ? 'yes' : 'no',
+        event:         "UDBHAV'26 Round 2",
+        teamName:      teamName,
+        mentorSession: mentorSession ? 'yes' : 'no',
       },
     });
 
@@ -78,23 +69,19 @@ export default async function handler(req, res) {
       amount:   order.amount,
       currency: order.currency,
       key:      KEY_ID,
-      // Return team info so frontend can prefill Razorpay
-      team: {
-        name:  team.teamName,
-        leader: {
-          name:  team.leader.name,
-          email: team.leader.email,
-          phone: team.leader.phone,
-        },
-        mentorSession: team.mentorSession,
-      },
     });
 
   } catch (err) {
     console.error('[/api/create-order] Razorpay error:', err);
+    console.error('[/api/create-order] Error details:', {
+      message: err.message,
+      statusCode: err.statusCode,
+      error: err.error,
+    });
     return res.status(500).json({
       success: false,
       error: 'Could not create payment order. Please try again.',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined,
     });
   }
 }

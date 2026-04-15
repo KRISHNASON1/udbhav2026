@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UDBHAV'26 Admin Panel — Login" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Login — UDBHAV'26</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --clr-bg: #080808;
+      --clr-white: #ffffff;
+      --clr-grey: #888888;
+      --clr-green: #4ade80;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-ui: 'Inter', sans-serif;
+      --font-fraunces: 'Fraunces', serif;
+    }
+
+    html { background: #000; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--clr-bg);
+      color: var(--clr-white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+
+    /* ── Ethereal background ── */
+    .ethereal-root { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; }
+    .ethereal-filter-svg { position: absolute; width: 0; height: 0; pointer-events: none; overflow: visible; }
+    .ethereal-inner { position: absolute; inset: -100px; filter: url(#etherFilter) blur(4px); will-change: filter; }
+    .ethereal-shadow { width: 100%; height: 100%; background-color: rgba(128, 128, 128, 1); mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png'); mask-size: cover; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png'); -webkit-mask-size: cover; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; }
+    .ethereal-noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: url("https://framerusercontent.com/images/g0QcWrxr87K0ufOxIUFBakwYA8.png"); background-size: 240px; background-repeat: repeat; opacity: 0.5; }
+    .ethereal-vignette { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0,0,0,0.72) 0%, transparent 70%), radial-gradient(ellipse 90% 60% at 50% 100%, rgba(0,0,0,0.85) 0%, transparent 70%), linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.65) 100%); }
+
+    /* ── Grain overlay ── */
+    .grain-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      pointer-events: none; opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px; mix-blend-mode: overlay;
+    }
+
+    /* ── Login Card ── */
+    .login-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 420px;
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 2.8rem 2.4rem 2.4rem;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.5),
+        0 4px 16px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      opacity: 0;
+      transform: translateY(30px) scale(0.96);
+      animation: cardIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Logo area */
+    .login-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2.2rem;
+    }
+
+    .login-logo img {
+      height: 36px;
+      width: auto;
+      opacity: 0.9;
+    }
+
+    .login-logo-text {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      letter-spacing: 0.08em;
+      color: var(--clr-white);
+      line-height: 1;
+    }
+
+    .login-logo-sub {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Form */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .login-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .login-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 0.9rem 1.1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.22s, background 0.22s, box-shadow 0.22s;
+    }
+
+    .login-input::placeholder { color: rgba(255,255,255,0.2); }
+
+    .login-input:focus {
+      border-color: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.09);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
+    }
+
+    .login-input.is-error {
+      border-color: rgba(248,113,113,0.5);
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.08);
+      animation: inputShake 0.4s ease;
+    }
+
+    @keyframes inputShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .login-error {
+      font-size: 0.75rem;
+      color: #f87171;
+      min-height: 1rem;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .login-error.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .login-submit {
+      width: 100%;
+      padding: 0.95rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 14px;
+      background: #fff;
+      color: #111;
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.2s, opacity 0.25s;
+    }
+
+    .login-submit:hover:not(:disabled) {
+      background: #f0f0f0;
+      box-shadow: 0 8px 28px rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    .login-submit:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .login-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .login-footer {
+      margin-top: 1.8rem;
+      text-align: center;
+    }
+
+    .login-footer a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .login-footer a:hover {
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── Decorative accent line ── */
+    .login-accent {
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--clr-green), rgba(74,222,128,0.2));
+      border-radius: 3px;
+      margin: 0 auto 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ethereal background -->
+  <div class="ethereal-root" aria-hidden="true">
+    <svg class="ethereal-filter-svg" aria-hidden="true">
+      <defs>
+        <filter id="etherFilter" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence id="etherTurb" result="undulation" numOctaves="2" baseFrequency="0.0005,0.002" seed="3" type="turbulence" />
+          <feColorMatrix id="etherHueRotate" in="undulation" type="hueRotate" values="0" />
+          <feColorMatrix in="dist" result="circulation" type="matrix" values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0" />
+          <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100" result="dist" />
+          <feDisplacementMap in="dist" in2="undulation" scale="100" result="output" />
+        </filter>
+      </defs>
+    </svg>
+    <div class="ethereal-inner"><div class="ethereal-shadow"></div></div>
+  </div>
+  <div class="ethereal-noise" aria-hidden="true"></div>
+  <div class="ethereal-vignette" aria-hidden="true"></div>
+  <div class="grain-overlay" aria-hidden="true"></div>
+
+  <!-- Login card -->
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="/logo.png" alt="UDBHAV'26 logo" />
+        <span class="login-logo-text">UDBHAV'26</span>
+        <span class="login-logo-sub">Admin Panel</span>
+      </div>
+
+      <div class="login-accent"></div>
+
+      <form class="login-form" id="loginForm" novalidate>
+        <div class="login-field">
+          <label class="login-label" for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            class="login-input"
+            placeholder="Enter username"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="login-field">
+          <label class="login-label" for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="login-input"
+            placeholder="Enter password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <div class="login-error" id="loginError" role="alert" aria-live="polite"></div>
+
+        <button type="submit" class="login-submit" id="loginBtn">Sign In</button>
+      </form>
+
+      <div class="login-footer">
+        <a href="/">← Back to UDBHAV'26</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AdminAuth } from '/src/admin.js';
+
+    // If already logged in, redirect to dashboard
+    if (AdminAuth.isAuthenticated()) {
+      window.location.href = '/admin/dashboard.html';
+    }
+
+    // Ethereal hue animation
+    const hueEl = document.getElementById('etherHueRotate');
+    let hue = 0;
+    const DEG = 360 / (5.84 * 60);
+    function animEther() {
+      hue = (hue + DEG) % 360;
+      if (hueEl) hueEl.setAttribute('values', hue.toFixed(2));
+      requestAnimationFrame(animEther);
+    }
+    animEther();
+
+    // Login form
+    const form     = document.getElementById('loginForm');
+    const uInput   = document.getElementById('username');
+    const pInput   = document.getElementById('password');
+    const errorEl  = document.getElementById('loginError');
+    const loginBtn = document.getElementById('loginBtn');
+
+    // Clear errors on typing
+    [uInput, pInput].forEach(el => {
+      el.addEventListener('input', () => {
+        el.classList.remove('is-error');
+        errorEl.textContent = '';
+        errorEl.classList.remove('visible');
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = uInput.value.trim();
+      const password = pInput.value.trim();
+
+      if (!username || !password) {
+        errorEl.textContent = 'Please fill in all fields.';
+        errorEl.classList.add('visible');
+        if (!username) uInput.classList.add('is-error');
+        if (!password) pInput.classList.add('is-error');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in…';
+
+      // Small delay for feel
+      setTimeout(() => {
+        const ok = AdminAuth.login(username, password);
+        if (ok) {
+          window.location.href = '/admin/dashboard.html';
+        } else {
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Sign In';
+          errorEl.textContent = 'Invalid username or password.';
+          errorEl.classList.add('visible');
+          uInput.classList.add('is-error');
+          pInput.classList.add('is-error');
+        }
+      }, 400);
+    });
+  </script>
+
+</body>
+</html>
