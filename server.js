@@ -9,6 +9,10 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+// ── Load environment variables ───────────────────────────────────────────────
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -100,4 +104,8 @@ app.use((req, res) => {
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`✅ UDBHAV'26 server running on port ${PORT}`);
+  console.log(`📦 Environment check:`);
+  console.log(`   - MONGODB_URI: ${process.env.MONGODB_URI ? '✓ Set' : '✗ Missing'}`);
+  console.log(`   - RAZORPAY_KEY_ID: ${process.env.RAZORPAY_KEY_ID ? '✓ Set' : '✗ Missing'}`);
+  console.log(`   - RAZORPAY_KEY_SECRET: ${process.env.RAZORPAY_KEY_SECRET ? '✓ Set' : '✗ Missing'}`);
 });

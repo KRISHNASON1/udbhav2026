@@ -73,9 +73,15 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('[/api/create-order] Razorpay error:', err);
+    console.error('[/api/create-order] Error details:', {
+      message: err.message,
+      statusCode: err.statusCode,
+      error: err.error,
+    });
     return res.status(500).json({
       success: false,
       error: 'Could not create payment order. Please try again.',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined,
     });
   }
 }
