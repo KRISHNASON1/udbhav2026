@@ -39,19 +39,39 @@ const TeamSchema = new mongoose.Schema(
     mentorSession: { type: Boolean, default: false },
     totalAmount:   { type: Number, required: true },   // ₹800 or ₹1100
 
-    // ── Status ────────────────────────────────────────────────────────────
+    // ── Payment Status ────────────────────────────────────────────────────
     paymentStatus: {
       type: String,
       enum: ['pending', 'paid'],
       default: 'pending',
     },
     registrationId: { type: String, default: null }, // MongoDB _id from Registration collection after payment
+
+    // ── PS Drop Selection ─────────────────────────────────────────────────
+    psSelectionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:  'ProblemStatement',
+      default: null,
+    },
+    psSelectedAt: { type: Date, default: null },
   },
   {
     timestamps: true,
     collection: 'teams',
   }
 );
+
+// ── Indexes ──────────────────────────────────────────────────────────────────
+// code already has unique+index declared inline above.
+
+// Filter teams by payment status (admin payments view, PS drop guard)
+TeamSchema.index({ paymentStatus: 1 });
+
+// Lookup which teams selected a given PS (admin PS stats, slot queries)
+TeamSchema.index({ psSelectionId: 1 }, { sparse: true });
+
+// Combined: paid teams that haven't selected a PS yet (PS drop eligibility)
+TeamSchema.index({ paymentStatus: 1, psSelectionId: 1 });
 
 export const Team =
   mongoose.models.Team || mongoose.model('Team', TeamSchema);

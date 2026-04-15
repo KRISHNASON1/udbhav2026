@@ -9,22 +9,36 @@
 
 // ═══════════════════════════════════════════════════════════════════
 // AUTH
+// Credentials are validated SERVER-SIDE via /api/admin/login.
+// No credentials are stored in this file.
 // ═══════════════════════════════════════════════════════════════════
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'udbhav2026';
-const AUTH_KEY   = 'udbhav_admin_token';
-const AUTH_TIME  = 'udbhav_admin_time';
+const AUTH_KEY    = 'udbhav_admin_token';
+const AUTH_TIME   = 'udbhav_admin_time';
 const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
 
 export const AdminAuth = {
-  login(username, password) {
-    if (username === ADMIN_USER && password === ADMIN_PASS) {
-      const token = btoa(`${Date.now()}-${Math.random().toString(36).slice(2)}`);
-      localStorage.setItem(AUTH_KEY, token);
-      localStorage.setItem(AUTH_TIME, Date.now().toString());
-      return true;
+  /**
+   * Sends credentials to the server for validation.
+   * On success, stores the returned token in localStorage.
+   * @returns {Promise<{ ok: boolean, error?: string }>}
+   */
+  async login(username, password) {
+    try {
+      const res  = await fetch('/api/admin/login', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (data.success && data.token) {
+        localStorage.setItem(AUTH_KEY,  data.token);
+        localStorage.setItem(AUTH_TIME, Date.now().toString());
+        return { ok: true };
+      }
+      return { ok: false, error: data.error || 'Invalid credentials.' };
+    } catch (err) {
+      return { ok: false, error: 'Network error. Please try again.' };
     }
-    return false;
   },
 
   logout() {
@@ -41,6 +55,11 @@ export const AdminAuth = {
       return false;
     }
     return true;
+  },
+
+  /** Returns the stored token for use in X-Admin-Secret header. */
+  getToken() {
+    return localStorage.getItem(AUTH_KEY) || '';
   },
 
   guard() {

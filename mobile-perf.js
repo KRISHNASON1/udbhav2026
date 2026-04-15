@@ -132,4 +132,60 @@
     });
   }
 
+  /* ── 10. ADMIN SIDEBAR: hamburger toggle on tablet/mobile               */
+  const adminHamburger = document.querySelector('.admin-mobile-hamburger');
+  const adminSidebar   = document.querySelector('.admin-sidebar');
+  const adminOverlay   = document.querySelector('.admin-sidebar-overlay');
+
+  if (adminHamburger && adminSidebar) {
+    adminHamburger.addEventListener('click', function () {
+      const isOpen = adminSidebar.classList.toggle('is-open');
+      adminHamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (adminOverlay) adminOverlay.classList.toggle('is-visible', isOpen);
+    });
+    if (adminOverlay) {
+      adminOverlay.addEventListener('click', function () {
+        adminSidebar.classList.remove('is-open');
+        adminOverlay.classList.remove('is-visible');
+        adminHamburger.setAttribute('aria-expanded', 'false');
+      });
+    }
+  }
+
+  /* ── 11. GSAP MOBILE GUARD
+          On touch devices, GSAP scroll animations may not fire correctly.
+          Force all elements that start at opacity:0 (from GSAP initial states)
+          to become visible via a small delay fallback.                     */
+  if (isTouch) {
+    const GSAP_TIMEOUT = 1200; // ms — if GSAP hasn't run by now, reveal anyway
+    setTimeout(function () {
+      const selectors = [
+        '.hero-name', '.hero-eyebrow', '.hero-subtitle',
+        '.hero-name .letter',           // letter-split elements
+        '.ua-header', '.ua-strips', '.ua-cta-row',
+        '.pd-header', '.sch-header', '.faq-header',
+        '.ps-pre__eyebrow', '.ps-pre__title', '.ps-pre__subtitle',
+        '.ps-countdown', '.ps-pre__note-block',
+      ];
+      selectors.forEach(function (sel) {
+        document.querySelectorAll(sel).forEach(function (el) {
+          if (getComputedStyle(el).opacity === '0') {
+            el.style.opacity    = '1';
+            el.style.transform  = 'none';
+            el.style.filter     = 'none';
+            el.style.transition = 'opacity 0.4s ease';
+          }
+        });
+      });
+    }, GSAP_TIMEOUT);
+  }
+
+  /* ── 12. CURSOR MOUSE-GLOW: disable on touch                           */
+  if (isTouch) {
+    const mouseGlow = document.getElementById('mouseGlow');
+    if (mouseGlow) mouseGlow.style.display = 'none';
+    // Prevent mousemove handlers from touching invalid elements
+    document.documentElement.classList.add('is-touch-device');
+  }
+
 })();

@@ -46,6 +46,16 @@ const RegistrationSchema = new mongoose.Schema(
     razorpayOrderId:   { type: String, default: null },
     razorpayPaymentId: { type: String, default: null },
 
+    // ── Team Code (generated after payment confirmation) ─────────────────
+    teamCode: {
+      type:   String,
+      default: null,
+      unique:  true,
+      sparse:  true,   // allows multiple null values
+      uppercase: true,
+      trim:   true,
+    },
+
     // ── Meta ────────────────────────────────────────────────────────────
     ipAddress:   { type: String, default: null },
     userAgent:   { type: String, default: null },
@@ -55,6 +65,23 @@ const RegistrationSchema = new mongoose.Schema(
     collection: 'registrations',
   }
 );
+
+// ── Indexes ──────────────────────────────────────────────────────────────────
+// teamCode already has unique+sparse index declared inline above.
+// These compound/single-field indexes cover the admin query patterns.
+
+// Fast lookup by payment status (admin dashboard filter, paid count)
+RegistrationSchema.index({ paymentStatus: 1 });
+
+// Fast duplicate check in register.js (teamName + leader email)
+RegistrationSchema.index({ teamName: 1, 'leader.email': 1 });
+
+// Razorpay order/payment ID lookup (webhook + verify-payment)
+RegistrationSchema.index({ razorpayOrderId: 1 }, { sparse: true });
+RegistrationSchema.index({ razorpayPaymentId: 1 }, { sparse: true });
+
+// Sort by creation date (admin registrations table default order)
+RegistrationSchema.index({ createdAt: -1 });
 
 // Prevent re-compiling model on hot-reload (Vercel / Next.js pattern)
 export const Registration =

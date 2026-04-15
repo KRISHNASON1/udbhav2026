@@ -366,20 +366,19 @@
       loginBtn.disabled = true;
       loginBtn.textContent = 'Signing in…';
 
-      // Small delay for feel
-      setTimeout(() => {
-        const ok = AdminAuth.login(username, password);
-        if (ok) {
+      // Validate server-side
+      AdminAuth.login(username, password).then(result => {
+        if (result.ok) {
           window.location.href = '/admin/dashboard.html';
         } else {
           loginBtn.disabled = false;
           loginBtn.textContent = 'Sign In';
-          errorEl.textContent = 'Invalid username or password.';
+          errorEl.textContent = result.error || 'Invalid username or password.';
           errorEl.classList.add('visible');
           uInput.classList.add('is-error');
           pInput.classList.add('is-error');
         }
-      }, 400);
+      });
     });
   </script>
 

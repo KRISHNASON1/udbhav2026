@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UDBHAV'26 Admin — Winners" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Winners — UDBHAV'26 Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --clr-bg:     #080808;
+      --clr-gold:   #f59e0b;
+      --clr-silver: #94a3b8;
+      --clr-bronze: #cd7c2f;
+      --clr-white:  #ffffff;
+      --clr-grey:   #888;
+      --clr-green:  #4ade80;
+      --clr-red:    #f87171;
+      --clr-blue:   #60a5fa;
+      --clr-amber:  #fbbf24;
+      --clr-purple: #a78bfa;
+      --font-ui:    'Inter', sans-serif;
+      --font-disp:  'Bebas Neue', sans-serif;
+      --sidebar-w:  260px;
+    }
+
+    html { background: #000; }
+    body { font-family: var(--font-ui); background: var(--clr-bg); color: #fff; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+
+    .grain-overlay { position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px; mix-blend-mode: overlay; }
+
+    /* ═════════════════════ SIDEBAR ═════════════════════ */
+    .admin-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w); background: rgba(12,12,12,0.95); border-right: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(30px); z-index: 50; display: flex; flex-direction: column; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+    .sidebar-header { padding: 1.5rem 1.4rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.75rem; }
+    .sidebar-logo { height: 28px; opacity: 0.85; }
+    .sidebar-brand { display: flex; flex-direction: column; gap: 0.1rem; }
+    .sidebar-brand-name { font-family: var(--font-disp); font-size: 1.2rem; letter-spacing: 0.06em; color: #fff; line-height: 1; }
+    .sidebar-brand-sub { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+    .sidebar-nav { flex: 1; padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 0.25rem; overflow-y: auto; }
+    .sidebar-nav-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.2); padding: 0.8rem 0.6rem 0.4rem; }
+    .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.8rem; border-radius: 10px; text-decoration: none; font-size: 0.84rem; font-weight: 500; color: rgba(255,255,255,0.5); transition: all 0.2s; }
+    .sidebar-link:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+    .sidebar-link.active { background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; }
+    .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
+    .sidebar-link.active svg { opacity: 1; }
+    .sidebar-link .coming-tag { margin-left: auto; font-size: 0.58rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 6px; background: rgba(251,191,36,0.12); color: var(--clr-amber); border: 1px solid rgba(251,191,36,0.2); }
+    .sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .sidebar-logout { display: flex; align-items: center; gap: 0.65rem; width: 100%; padding: 0.7rem 0.8rem; border: none; border-radius: 10px; background: rgba(248,113,113,0.08); color: var(--clr-red); font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .sidebar-logout:hover { background: rgba(248,113,113,0.15); }
+    .sidebar-logout svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .sidebar-overlay { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.6); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .sidebar-overlay.is-visible { opacity: 1; pointer-events: auto; }
+
+    /* ═════════════════════ MAIN ═════════════════════ */
+    .admin-main { margin-left: var(--sidebar-w); min-height: 100vh; }
+    .admin-topbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: rgba(8,8,8,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .sidebar-toggle { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; }
+    .sidebar-toggle:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-toggle svg { width: 18px; height: 18px; }
+    .topbar-title { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .topbar-breadcrumb { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 0.15rem; }
+    .topbar-actions { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
+
+    /* ═════════════════════ BUTTONS ═════════════════════ */
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.2rem; border-radius: 11px; border: 1px solid transparent; font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .btn--primary { background: rgba(255,255,255,0.88); color: #111; }
+    .btn--primary:hover { background: #fff; }
+    .btn--ghost { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.08); }
+    .btn--ghost:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+    .btn--gold { background: rgba(245,158,11,0.12); color: var(--clr-gold); border-color: rgba(245,158,11,0.28); }
+    .btn--gold:hover { background: rgba(245,158,11,0.22); }
+    .btn--green { background: rgba(74,222,128,0.1); color: var(--clr-green); border-color: rgba(74,222,128,0.22); }
+    .btn--green:hover { background: rgba(74,222,128,0.2); }
+    .btn--red { background: rgba(248,113,113,0.1); color: var(--clr-red); border-color: rgba(248,113,113,0.22); }
+    .btn--red:hover { background: rgba(248,113,113,0.2); }
+    .btn--sm { padding: 0.42rem 0.9rem; font-size: 0.76rem; border-radius: 9px; }
+    .btn--sm svg { width: 14px; height: 14px; }
+
+    .admin-content { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* ═════════════════════ PUBLICATION BANNER ═════════════════════ */
+    .pub-banner {
+      border-radius: 16px; padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      border: 1px solid;
+    }
+    .pub-banner--draft {
+      background: rgba(251,191,36,0.06); border-color: rgba(251,191,36,0.18);
+    }
+    .pub-banner--live {
+      background: rgba(74,222,128,0.06); border-color: rgba(74,222,128,0.22);
+    }
+    .pub-banner-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pub-banner--draft .pub-banner-icon { background: rgba(251,191,36,0.12); color: var(--clr-amber); }
+    .pub-banner--live  .pub-banner-icon { background: rgba(74,222,128,0.12); color: var(--clr-green); }
+    .pub-banner-icon svg { width: 20px; height: 20px; }
+    .pub-banner-text { flex: 1; min-width: 0; }
+    .pub-banner-title { font-size: 0.9rem; font-weight: 800; }
+    .pub-banner--draft .pub-banner-title { color: var(--clr-amber); }
+    .pub-banner--live  .pub-banner-title { color: var(--clr-green); }
+    .pub-banner-sub { font-size: 0.76rem; color: rgba(255,255,255,0.38); margin-top: 0.2rem; }
+    .pub-banner-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    /* Pulsing live dot */
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--clr-green); display: inline-block; animation: pulseDot 1.5s ease infinite; margin-right: 4px; }
+    @keyframes pulseDot { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+    /* ═════════════════════ WINNERS EDITOR ═════════════════════ */
+    .editor-layout { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* Individual winner card */
+    .winner-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .winner-card:hover { border-color: rgba(255,255,255,0.12); }
+
+    /* Gold / Silver / Bronze accent */
+    .winner-card[data-rank-type="1st"] { border-color: rgba(245,158,11,0.3); }
+    .winner-card[data-rank-type="2nd"] { border-color: rgba(148,163,184,0.28); }
+    .winner-card[data-rank-type="3rd"] { border-color: rgba(205,124,47,0.28); }
+
+    .winner-card-header {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: grab; user-select: none;
+    }
+    .winner-card-header:active { cursor: grabbing; }
+    .winner-drag-handle { color: rgba(255,255,255,0.2); flex-shrink: 0; }
+    .winner-drag-handle svg { width: 16px; height: 16px; }
+
+    .winner-rank-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 52px; height: 32px; border-radius: 8px;
+      font-family: var(--font-disp); font-size: 1rem; letter-spacing: 0.04em; flex-shrink: 0;
+    }
+    .rank--1st   { background: rgba(245,158,11,0.15); color: var(--clr-gold);   border: 1px solid rgba(245,158,11,0.3); }
+    .rank--2nd   { background: rgba(148,163,184,0.1); color: var(--clr-silver); border: 1px solid rgba(148,163,184,0.25); }
+    .rank--3rd   { background: rgba(205,124,47,0.12); color: var(--clr-bronze); border: 1px solid rgba(205,124,47,0.28); }
+    .rank--track { background: rgba(167,139,250,0.1); color: var(--clr-purple); border: 1px solid rgba(167,139,250,0.25); }
+
+    .winner-header-title { flex: 1; font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.75); }
+    .winner-header-team  { font-size: 0.78rem; color: rgba(255,255,255,0.35); margin-left: auto; }
+    .winner-remove-btn {
+      width: 28px; height: 28px; border: none; border-radius: 7px; background: rgba(248,113,113,0.07);
+      color: rgba(248,113,113,0.5); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s;
+    }
+    .winner-remove-btn:hover { background: rgba(248,113,113,0.18); color: var(--clr-red); }
+    .winner-remove-btn svg { width: 14px; height: 14px; }
+
+    .collapse-btn {
+      width: 28px; height: 28px; border: none; border-radius: 7px; background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .collapse-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .collapse-btn svg { width: 13px; height: 13px; transition: transform 0.25s; }
+    .winner-card.collapsed .collapse-btn svg { transform: rotate(-90deg); }
+
+    .winner-card-body { padding: 1.2rem; }
+    .winner-card.collapsed .winner-card-body { display: none; }
+
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .field-grid--3 { grid-template-columns: 1fr 1fr 1fr; }
+    .field-span-2 { grid-column: 1 / -1; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+    .form-label .req { color: var(--clr-red); }
+    .form-input {
+      padding: 0.62rem 0.85rem;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; color: #fff; font-family: var(--font-ui); font-size: 0.84rem;
+      outline: none; transition: border-color 0.2s, background 0.2s; width: 100%;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.18); }
+    .form-input:focus { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.07); }
+
+    /* Rank select */
+    .rank-select {
+      -webkit-appearance: none; appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.75rem center;
+      padding-right: 2.2rem;
+    }
+    .rank-select option { background: #111; }
+
+    /* Add winner button */
+    .add-winner-row {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+    }
+    .add-winner-btn {
+      display: flex; align-items: center; gap: 0.7rem;
+      width: 100%; padding: 1rem 1.2rem;
+      background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(255,255,255,0.1);
+      border-radius: 16px; color: rgba(255,255,255,0.35); font-family: var(--font-ui); font-size: 0.84rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .add-winner-btn:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.65); }
+    .add-winner-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* Quick-add rank buttons */
+    .quick-add-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .quick-btn {
+      padding: 0.4rem 0.9rem; border-radius: 9px; border: 1px solid; font-family: var(--font-ui); font-size: 0.76rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .quick-btn--1st   { background: rgba(245,158,11,0.08); color: var(--clr-gold);   border-color: rgba(245,158,11,0.2); }
+    .quick-btn--1st:hover  { background: rgba(245,158,11,0.18); }
+    .quick-btn--2nd   { background: rgba(148,163,184,0.07); color: var(--clr-silver); border-color: rgba(148,163,184,0.2); }
+    .quick-btn--2nd:hover  { background: rgba(148,163,184,0.15); }
+    .quick-btn--3rd   { background: rgba(205,124,47,0.08); color: var(--clr-bronze); border-color: rgba(205,124,47,0.2); }
+    .quick-btn--3rd:hover  { background: rgba(205,124,47,0.18); }
+    .quick-btn--track { background: rgba(167,139,250,0.08); color: var(--clr-purple); border-color: rgba(167,139,250,0.2); }
+    .quick-btn--track:hover  { background: rgba(167,139,250,0.16); }
+
+    /* ═════════════════════ PREVIEW PANEL ═════════════════════ */
+    .preview-card {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px; overflow: hidden;
+    }
+    .preview-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.4rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .preview-title { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .preview-body { padding: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .preview-entry {
+      display: flex; align-items: center; gap: 0.85rem;
+      padding: 0.7rem 1rem; border-radius: 12px;
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    }
+    .preview-entry-rank { font-family: var(--font-disp); font-size: 0.95rem; min-width: 56px; flex-shrink: 0; }
+    .preview-entry-info { flex: 1; min-width: 0; }
+    .preview-entry-team { font-size: 0.84rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .preview-entry-ps   { font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .preview-entry-prize { font-size: 0.8rem; font-weight: 700; color: var(--clr-gold); flex-shrink: 0; }
+
+    .preview-placeholder { font-size: 0.82rem; color: rgba(255,255,255,0.22); text-align: center; padding: 2rem; }
+
+    /* ═════════════════════ TOAST ═════════════════════ */
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 500; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
+    .toast { display: flex; align-items: center; gap: 0.7rem; padding: 0.78rem 1.1rem; background: rgba(18,18,18,0.97); border-radius: 13px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); font-size: 0.83rem; font-weight: 500; color: #fff; opacity: 0; transform: translateY(12px); transition: opacity 0.25s, transform 0.25s cubic-bezier(0.16,1,0.3,1); pointer-events: auto; max-width: 340px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .toast--success { border-color: rgba(74,222,128,0.3); }
+    .toast--success svg { color: var(--clr-green); }
+    .toast--error { border-color: rgba(248,113,113,0.3); }
+    .toast--error svg { color: var(--clr-red); }
+    .toast--info { border-color: rgba(245,158,11,0.3); }
+    .toast--info svg { color: var(--clr-gold); }
+
+    /* ═════════════════════ CONFIRM OVERLAY ═════════════════════ */
+    .confirm-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .confirm-overlay.is-open { opacity: 1; pointer-events: auto; }
+    .confirm-panel { width: 90%; max-width: 400px; background: rgba(14,14,14,0.99); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 1.8rem; transform: scale(0.94); transition: transform 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .confirm-overlay.is-open .confirm-panel { transform: scale(1); }
+    .confirm-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem; }
+    .confirm-icon svg { width: 22px; height: 22px; }
+    .confirm-title { font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
+    .confirm-sub { font-size: 0.82rem; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 1.4rem; }
+    .confirm-actions { display: flex; gap: 0.75rem; }
+    .confirm-actions .btn { flex: 1; justify-content: center; }
+
+    /* ═════════════════════ RESPONSIVE ═════════════════════ */
+    @media (max-width: 860px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.is-open { transform: translateX(0); }
+      .admin-main { margin-left: 0; }
+      .sidebar-toggle { display: flex; }
+      .admin-content { padding: 1.2rem; }
+    }
+    @media (max-width: 640px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .field-grid--3 { grid-template-columns: 1fr 1fr; }
+      .admin-topbar { padding: 0.9rem 1.2rem; }
+    }
+
+    .admin-content > * { opacity: 0; transform: translateY(14px); animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .admin-content > *:nth-child(1) { animation-delay: 0.04s; }
+    .admin-content > *:nth-child(2) { animation-delay: 0.1s; }
+    .admin-content > *:nth-child(3) { animation-delay: 0.16s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <img src="/logo.png" alt="Logo" class="sidebar-logo" />
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-name">UDBHAV'26</span>
+        <span class="sidebar-brand-sub">Admin Panel</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="sidebar-nav-label">Main</span>
+      <a href="/admin/dashboard.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="/admin/registrations.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Registrations
+      </a>
+      <a href="/admin/problem-statements.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Problem Statements
+      </a>
+      <a href="/admin/payments.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Payments
+      </a>
+      <a href="/admin/ps-stats.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        PS Stats
+      </a>
+      <a href="/admin/winners.html" class="sidebar-link active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        Winners
+      </a>
+
+      <span class="sidebar-nav-label" style="margin-top:0.5rem;">Coming Soon</span>
+      <a href="#" class="sidebar-link" onclick="event.preventDefault();">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Teams <span class="coming-tag">Soon</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-logout" id="logoutBtn">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">Winners</div>
+          <div class="topbar-breadcrumb">Admin / Winners</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn--ghost btn--sm" id="saveDraftBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Draft
+        </button>
+        <button class="btn btn--gold" id="publishBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          Publish Winners
+        </button>
+        <button class="btn btn--red btn--sm" id="unpublishBtn" style="display:none;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          Unpublish
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content" id="mainContent">
+
+      <!-- Publication status banner -->
+      <div id="pubBanner" class="pub-banner pub-banner--draft">
+        <div class="pub-banner-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        </div>
+        <div class="pub-banner-text">
+          <div class="pub-banner-title" id="bannerTitle">Draft Mode</div>
+          <div class="pub-banner-sub" id="bannerSub">Winners page shows ???? placeholders. Fill in details and publish when ready.</div>
+        </div>
+        <div class="pub-banner-actions" id="bannerActions"></div>
+      </div>
+
+      <!-- Editor + Preview layout -->
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start;">
+
+        <!-- Left: Editor -->
+        <div>
+          <!-- Quick add bar -->
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;">
+            <span style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.3);">Quick Add:</span>
+            <div class="quick-add-btns">
+              <button class="quick-btn quick-btn--1st" data-rank="1st" data-label="1st Place">🥇 1st Place</button>
+              <button class="quick-btn quick-btn--2nd" data-rank="2nd" data-label="2nd Place">🥈 2nd Place</button>
+              <button class="quick-btn quick-btn--3rd" data-rank="3rd" data-label="3rd Place">🥉 3rd Place</button>
+              <button class="quick-btn quick-btn--track" data-rank="Special" data-label="Special Prize">⭐ Special Prize</button>
+            </div>
+          </div>
+
+          <!-- Winner cards container -->
+          <div class="editor-layout" id="editorLayout">
+            <!-- Cards injected here -->
+          </div>
+
+          <!-- Add custom -->
+          <button class="add-winner-btn" id="addCustomBtn" style="margin-top:1rem;">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Custom Winner / Track Prize
+          </button>
+        </div>
+
+        <!-- Right: Live Preview -->
+        <div style="position:sticky;top:80px;">
+          <div class="preview-card">
+            <div class="preview-header">
+              <span class="preview-title">Live Preview</span>
+              <span style="font-size:0.7rem;color:rgba(255,255,255,0.25);">What /winners will show</span>
+            </div>
+            <div class="preview-body" id="previewBody">
+              <div class="preview-placeholder">No winners added yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+
+  <!-- Confirm Publish Modal -->
+  <div class="confirm-overlay" id="confirmPublish">
+    <div class="confirm-panel">
+      <div class="confirm-icon" style="background:rgba(245,158,11,0.12);color:var(--clr-gold);">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <div class="confirm-title">Publish Winners?</div>
+      <div class="confirm-sub">This will make the winners page <strong style="color:#fff;">LIVE</strong> for all visitors. Make sure all details are correct before proceeding.</div>
+      <div class="confirm-actions">
+        <button class="btn btn--ghost" id="cancelPublish">Cancel</button>
+        <button class="btn btn--gold" id="confirmPublishBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          Publish Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Unpublish Modal -->
+  <div class="confirm-overlay" id="confirmUnpublish">
+    <div class="confirm-panel">
+      <div class="confirm-icon" style="background:rgba(248,113,113,0.1);color:var(--clr-red);">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      </div>
+      <div class="confirm-title">Unpublish Winners?</div>
+      <div class="confirm-sub">The winners page will revert to showing ???? placeholders. Your saved data will be preserved — you can re-publish at any time.</div>
+      <div class="confirm-actions">
+        <button class="btn btn--ghost" id="cancelUnpublish">Cancel</button>
+        <button class="btn btn--red" id="confirmUnpublishBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          Unpublish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // ── Auth ──────────────────────────────────────────────────────────────────
+    function getAdminToken() {
+      return sessionStorage.getItem('adminSecret')
+        || sessionStorage.getItem('adminToken')
+        || localStorage.getItem('adminSecret')
+        || localStorage.getItem('adminToken')
+        || '';
+    }
+    function apiHeaders() { return { 'Content-Type': 'application/json', 'x-admin-secret': getAdminToken() }; }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+    const toastCont = document.getElementById('toastContainer');
+    function showToast(msg, type = 'info') {
+      const icons = {
+        success: `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+        error:   `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+        info:    `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+      };
+      const t = document.createElement('div');
+      t.className = `toast toast--${type}`;
+      t.innerHTML = `${icons[type]}<span>${msg}</span>`;
+      toastCont.appendChild(t);
+      requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3500);
+    }
+
+    // ── Sidebar ───────────────────────────────────────────────────────────────
+    const sidebar = document.getElementById('adminSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+      sidebar.classList.toggle('is-open');
+      sidebarOverlay.classList.toggle('is-visible');
+    });
+    sidebarOverlay?.addEventListener('click', () => {
+      sidebar.classList.remove('is-open');
+      sidebarOverlay.classList.remove('is-visible');
+    });
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+      sessionStorage.clear();
+      localStorage.removeItem('adminSecret');
+      localStorage.removeItem('adminToken');
+      window.location.href = '/admin/login.html';
+    });
+
+    // ═══════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════
+    let currentWinners   = [];
+    let isPublished      = false;
+    let publishedAt      = null;
+    let savedAt          = null;
+    let cardIdCounter    = 0;
+
+    // ═══════════════════════════════════════════════════════
+    // RANK HELPERS
+    // ═══════════════════════════════════════════════════════
+    function rankCls(rank) {
+      const r = (rank || '').toLowerCase();
+      if (r === '1st') return 'rank--1st';
+      if (r === '2nd') return 'rank--2nd';
+      if (r === '3rd') return 'rank--3rd';
+      return 'rank--track';
+    }
+
+    function rankTypeAttr(rank) {
+      const r = (rank || '').toLowerCase();
+      if (r === '1st') return '1st';
+      if (r === '2nd') return '2nd';
+      if (r === '3rd') return '3rd';
+      return 'track';
+    }
+
+    function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ═══════════════════════════════════════════════════════
+    // BUILD WINNER CARD DOM
+    // ═══════════════════════════════════════════════════════
+    function buildCard(data = {}, expanded = true) {
+      const id   = ++cardIdCounter;
+      const rank = data.rank || '1st';
+
+      const card = document.createElement('div');
+      card.className = `winner-card${expanded ? '' : ' collapsed'}`;
+      card.dataset.cardId = id;
+      card.dataset.rankType = rankTypeAttr(rank);
+
+      card.innerHTML = `
+        <div class="winner-card-header">
+          <span class="winner-drag-handle">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </span>
+          <span class="winner-rank-badge ${rankCls(rank)}" data-rank-badge="${id}">${esc(rank)} Place</span>
+          <span class="winner-header-title" data-header-label="${id}">${esc(data.label || rank + ' Place')}</span>
+          <span class="winner-header-team" data-header-team="${id}">${esc(data.teamName || 'Team Name')}</span>
+          <button class="collapse-btn" data-collapse="${id}" title="Collapse">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button class="winner-remove-btn" data-remove="${id}" title="Remove entry">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="winner-card-body">
+          <div class="field-grid">
+            <div class="form-group">
+              <label class="form-label" for="rank_${id}">Rank <span class="req">*</span></label>
+              <select class="form-input rank-select" id="rank_${id}" data-field="rank">
+                <option value="1st"     ${rank==='1st'     ?'selected':''}>🥇 1st Place</option>
+                <option value="2nd"     ${rank==='2nd'     ?'selected':''}>🥈 2nd Place</option>
+                <option value="3rd"     ${rank==='3rd'     ?'selected':''}>🥉 3rd Place</option>
+                <option value="Special" ${rank==='Special' ?'selected':''}>⭐ Special Prize</option>
+                <option value="Custom"  ${!['1st','2nd','3rd','Special'].includes(rank)?'selected':''}>✏️ Custom…</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="label_${id}">Label / Prize Name</label>
+              <input type="text" class="form-input" id="label_${id}" data-field="label" value="${esc(data.label || '')}" placeholder="e.g. Best Sustainability Track" />
+            </div>
+          </div>
+          <div class="field-grid field-grid--3">
+            <div class="form-group">
+              <label class="form-label" for="teamName_${id}">Team Name <span class="req">*</span></label>
+              <input type="text" class="form-input" id="teamName_${id}" data-field="teamName" value="${esc(data.teamName || '')}" placeholder="Team name…" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="teamCode_${id}">Team Code</label>
+              <input type="text" class="form-input" id="teamCode_${id}" data-field="teamCode" value="${esc(data.teamCode || '')}" placeholder="UDB-XXXX" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prizeAmount_${id}">Prize Amount</label>
+              <input type="text" class="form-input" id="prizeAmount_${id}" data-field="prizeAmount" value="${esc(data.prizeAmount || '')}" placeholder="₹10,000" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:0.85rem;">
+            <label class="form-label" for="psTitle_${id}">Problem Statement Title</label>
+            <input type="text" class="form-input" id="psTitle_${id}" data-field="psTitle" value="${esc(data.psTitle || '')}" placeholder="PS title the team worked on…" />
+          </div>
+          <div class="field-grid" style="margin-top:0.85rem;">
+            <div class="form-group">
+              <label class="form-label" for="college_${id}">College</label>
+              <input type="text" class="form-input" id="college_${id}" data-field="college" value="${esc(data.college || '')}" placeholder="College name…" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="description_${id}">Short Blurb (optional)</label>
+              <input type="text" class="form-input" id="description_${id}" data-field="description" value="${esc(data.description || '')}" placeholder="One-line note…" />
+            </div>
+          </div>
+          <input type="hidden" data-field="order" value="${data.order ?? 0}" />
+        </div>`;
+
+      // Collapse toggle
+      card.querySelector(`[data-collapse="${id}"]`).addEventListener('click', () => {
+        card.classList.toggle('collapsed');
+      });
+
+      // Remove
+      card.querySelector(`[data-remove="${id}"]`).addEventListener('click', () => {
+        card.remove();
+        updatePreview();
+      });
+
+      // Live update header on input
+      card.querySelectorAll('[data-field]').forEach(el => {
+        el.addEventListener('input', () => {
+          const rankEl  = card.querySelector('[data-field="rank"]');
+          const teamEl  = card.querySelector('[data-field="teamName"]');
+          const labelEl = card.querySelector('[data-field="label"]');
+          const r = rankEl?.value || '1st';
+
+          // Update card accent
+          card.dataset.rankType = rankTypeAttr(r);
+          const badge = card.querySelector(`[data-rank-badge="${id}"]`);
+          if (badge) {
+            badge.className = `winner-rank-badge ${rankCls(r)}`;
+            badge.textContent = ['1st','2nd','3rd'].includes(r) ? r + ' Place' : r;
+          }
+          const hl = card.querySelector(`[data-header-label="${id}"]`);
+          if (hl) hl.textContent = labelEl?.value || (r + ' Place');
+          const ht = card.querySelector(`[data-header-team="${id}"]`);
+          if (ht) ht.textContent = teamEl?.value || 'Team Name';
+
+          updatePreview();
+        });
+      });
+
+      return card;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // COLLECT ALL WINNERS FROM DOM
+    // ═══════════════════════════════════════════════════════
+    function collectWinners() {
+      const cards = document.querySelectorAll('#editorLayout .winner-card');
+      return Array.from(cards).map((card, i) => {
+        const get = (field) => card.querySelector(`[data-field="${field}"]`)?.value || '';
+        return {
+          rank:        get('rank'),
+          label:       get('label'),
+          teamName:    get('teamName'),
+          teamCode:    get('teamCode'),
+          prizeAmount: get('prizeAmount'),
+          psTitle:     get('psTitle'),
+          college:     get('college'),
+          description: get('description'),
+          order:       i,
+        };
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // RENDER LIVE PREVIEW
+    // ═══════════════════════════════════════════════════════
+    function updatePreview() {
+      const w = collectWinners();
+      const preview = document.getElementById('previewBody');
+      if (!w.length) { preview.innerHTML = `<div class="preview-placeholder">No winners added yet</div>`; return; }
+
+      preview.innerHTML = w.map(e => {
+        const rankBadgeCls = rankCls(e.rank);
+        const rankText = ['1st','2nd','3rd'].includes(e.rank) ? e.rank + ' Place' : (e.rank || 'Special');
+        const teamDisplay = e.teamName || '????';
+        const psDisplay   = e.psTitle  || '—';
+        const prizeDisplay = e.prizeAmount || '';
+        return `<div class="preview-entry">
+          <span class="preview-entry-rank winner-rank-badge ${rankBadgeCls}" style="font-size:0.75rem;height:28px;min-width:64px;">${esc(rankText)}</span>
+          <div class="preview-entry-info">
+            <div class="preview-entry-team">${isPublished ? esc(teamDisplay) : '<span style="opacity:0.4;letter-spacing:0.15em;">????</span>'}</div>
+            <div class="preview-entry-ps">${isPublished ? esc(psDisplay)   : '<span style="opacity:0.3;">????</span>'}</div>
+          </div>
+          ${prizeDisplay ? `<div class="preview-entry-prize">${esc(prizeDisplay)}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // UPDATE BANNER
+    // ═══════════════════════════════════════════════════════
+    function updateBanner(published, pubAt) {
+      const banner = document.getElementById('pubBanner');
+      const title  = document.getElementById('bannerTitle');
+      const sub    = document.getElementById('bannerSub');
+      const publishBtn   = document.getElementById('publishBtn');
+      const unpublishBtn = document.getElementById('unpublishBtn');
+
+      if (published) {
+        banner.className = 'pub-banner pub-banner--live';
+        title.innerHTML  = `<span class="live-dot"></span> LIVE — Winners are public!`;
+        const dtStr = pubAt ? new Date(pubAt).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:true }) : '';
+        sub.textContent  = `Published ${dtStr}. The /winners page shows real data.`;
+        publishBtn.textContent   = '✓ Published';
+        publishBtn.disabled      = true;
+        unpublishBtn.style.display = '';
+      } else {
+        banner.className = 'pub-banner pub-banner--draft';
+        title.textContent = 'Draft Mode';
+        sub.textContent   = 'Winners page shows ???? placeholders. Fill in details and hit Publish when ready.';
+        publishBtn.disabled      = false;
+        publishBtn.innerHTML     = `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg> Publish Winners`;
+        unpublishBtn.style.display = 'none';
+      }
+
+      isPublished = published;
+      publishedAt = pubAt;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // LOAD DATA FROM SERVER
+    // ═══════════════════════════════════════════════════════
+    async function loadData() {
+      try {
+        const res  = await fetch('/api/admin/winners', { headers: apiHeaders() });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+
+        currentWinners = data.winners || [];
+        savedAt        = data.savedAt;
+
+        // Populate editor
+        const layout = document.getElementById('editorLayout');
+        layout.innerHTML = '';
+        currentWinners.forEach(w => layout.appendChild(buildCard(w, false)));
+
+        updateBanner(data.published, data.publishedAt);
+        updatePreview();
+      } catch (err) {
+        console.error('[loadData]', err);
+        showToast('Failed to load winners data', 'error');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // SAVE DRAFT
+    // ═══════════════════════════════════════════════════════
+    async function saveDraft() {
+      const btn = document.getElementById('saveDraftBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Saving…`;
+      try {
+        const winners = collectWinners();
+        const res  = await fetch('/api/admin/winners/save', {
+          method: 'POST', headers: apiHeaders(),
+          body: JSON.stringify({ winners }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        showToast('Draft saved — /winners still shows ????', 'info');
+      } catch (err) {
+        showToast('Save failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Draft`;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // PUBLISH
+    // ═══════════════════════════════════════════════════════
+    async function doPublish() {
+      document.getElementById('confirmPublish').classList.remove('is-open');
+      const btn = document.getElementById('publishBtn');
+      btn.disabled = true;
+      try {
+        const winners = collectWinners();
+        const res  = await fetch('/api/admin/winners/publish', {
+          method: 'POST', headers: apiHeaders(),
+          body: JSON.stringify({ winners }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        showToast('🏆 Winners are now LIVE!', 'success');
+        updateBanner(true, data.publishedAt);
+        updatePreview();
+      } catch (err) {
+        showToast('Publish failed: ' + err.message, 'error');
+        btn.disabled = false;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // UNPUBLISH
+    // ═══════════════════════════════════════════════════════
+    async function doUnpublish() {
+      document.getElementById('confirmUnpublish').classList.remove('is-open');
+      const btn = document.getElementById('unpublishBtn');
+      btn.disabled = true;
+      try {
+        const res  = await fetch('/api/admin/winners/unpublish', {
+          method: 'POST', headers: apiHeaders(),
+          body: JSON.stringify({}),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        showToast('Winners page reverted to ????', 'info');
+        updateBanner(false, null);
+        updatePreview();
+      } catch (err) {
+        showToast('Unpublish failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // EVENT BINDINGS
+    // ═══════════════════════════════════════════════════════
+    document.getElementById('saveDraftBtn')?.addEventListener('click', saveDraft);
+
+    document.getElementById('publishBtn')?.addEventListener('click', () => {
+      if (isPublished) return;
+      document.getElementById('confirmPublish').classList.add('is-open');
+    });
+    document.getElementById('cancelPublish')?.addEventListener('click', () => {
+      document.getElementById('confirmPublish').classList.remove('is-open');
+    });
+    document.getElementById('confirmPublishBtn')?.addEventListener('click', doPublish);
+    document.getElementById('confirmPublish')?.addEventListener('click', e => {
+      if (e.target === document.getElementById('confirmPublish')) document.getElementById('confirmPublish').classList.remove('is-open');
+    });
+
+    document.getElementById('unpublishBtn')?.addEventListener('click', () => {
+      document.getElementById('confirmUnpublish').classList.add('is-open');
+    });
+    document.getElementById('cancelUnpublish')?.addEventListener('click', () => {
+      document.getElementById('confirmUnpublish').classList.remove('is-open');
+    });
+    document.getElementById('confirmUnpublishBtn')?.addEventListener('click', doUnpublish);
+    document.getElementById('confirmUnpublish')?.addEventListener('click', e => {
+      if (e.target === document.getElementById('confirmUnpublish')) document.getElementById('confirmUnpublish').classList.remove('is-open');
+    });
+
+    // Quick-add buttons
+    document.querySelectorAll('.quick-btn[data-rank]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const layout = document.getElementById('editorLayout');
+        const card = buildCard({ rank: btn.dataset.rank, label: btn.dataset.label, order: layout.children.length });
+        layout.appendChild(card);
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        updatePreview();
+      });
+    });
+
+    document.getElementById('addCustomBtn')?.addEventListener('click', () => {
+      const layout = document.getElementById('editorLayout');
+      const card = buildCard({ rank: 'Special', label: 'Track Prize', order: layout.children.length });
+      layout.appendChild(card);
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      updatePreview();
+    });
+
+    // ═══════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════
+    loadData();
+  </script>
+</body>
+</html>

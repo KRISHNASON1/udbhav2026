@@ -1,16 +1,16 @@
 /**
  * api/verify-payment.js
  * ─────────────────────────────────────────────────────────────────────────────
- * Vercel Serverless Function — POST /api/verify-payment
+ * POST /api/verify-payment
  *
- * 1. Verifies Razorpay payment signature (HMAC-SHA256)
+ * 1. Verifies Razorpay signature (HMAC-SHA256)
  * 2. Saves the full registration to MongoDB with paymentStatus: 'paid'
+ * 3. Generates a unique team code (UDB-XXXX)
+ * 4. Sends confirmation email with team code (async, non-blocking to client)
  *
  * Request body (JSON):
  *   {
- *     razorpay_order_id,
- *     razorpay_payment_id,
- *     razorpay_signature,
+ *     razorpay_order_id, razorpay_payment_id, razorpay_signature,
  *     formData: {
  *       teamName, collegeName, branch, yearOfStudy,
  *       leader: { name, email, phone },
@@ -21,21 +21,22 @@
  *   }
  *
  * Response:
- *   200 { success: true, id: "<mongo _id>" }
- *   400 { success: false, error: "Payment verification failed." }
- *   500 { success: false, error: "Server error" }
+ *   200 { success: true, teamCode, teamName, amountPaid, wantsMentor }
+ *   400 { success: false, error }
+ *   500 { success: false, error }
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import crypto from 'crypto';
-import { connectDB }    from './lib/mongodb.js';
-import { Registration } from './models/Registration.js';
+import { connectDB }         from './lib/mongodb.js';
+import { Registration }      from './models/Registration.js';
+import { generateTeamCode }  from './lib/teamCode.js';
+import { sendTeamCodeEmail } from './lib/email.js';
 
-const KEY_SECRET    = process.env.RAZORPAY_KEY_SECRET;
-const BASE_AMOUNT   = 800;
-const MENTOR_ADDON  = 300;
+const KEY_SECRET   = process.env.RAZORPAY_KEY_SECRET;
+const BASE_AMOUNT  = 800;
+const MENTOR_ADDON = 300;
 
-// ── Simple helpers ──────────────────────────────────────────────────────────
 const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim());
 
 function validateMember(m, label) {
@@ -46,7 +47,6 @@ function validateMember(m, label) {
   return null;
 }
 
-// ── Handler ─────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, formData } = req.body || {};
 
-    // ── 1. Verify Razorpay signature ────────────────────────────────────────
+    // ── 1. Presence checks ──────────────────────────────────────────────────
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({ success: false, error: 'Missing payment verification data.' });
     }
@@ -70,17 +70,21 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: 'Server configuration error.' });
     }
 
-    const expectedSignature = crypto
+    // ── 2. Verify Razorpay HMAC-SHA256 signature ────────────────────────────
+    const expectedSig = crypto
       .createHmac('sha256', KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
 
-    if (expectedSignature !== razorpay_signature) {
-      console.warn('[/api/verify-payment] Signature mismatch — possible tampered request');
+    if (expectedSig !== razorpay_signature) {
+      console.warn('[verify-payment] Signature mismatch — possible tampered request', {
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+      });
       return res.status(400).json({ success: false, error: 'Payment verification failed. Please contact support.' });
     }
 
-    // ── 2. Validate form data ───────────────────────────────────────────────
+    // ── 3. Validate form data ───────────────────────────────────────────────
     if (!(formData.teamName    || '').trim()) return res.status(400).json({ success: false, error: 'Team name is required.' });
     if (!(formData.collegeName || '').trim()) return res.status(400).json({ success: false, error: 'College name is required.' });
     if (!(formData.branch      || '').trim()) return res.status(400).json({ success: false, error: 'Branch is required.' });
@@ -98,20 +102,26 @@ export default async function handler(req, res) {
     // Server-authoritative amount
     const totalAmount = formData.mentorSession ? BASE_AMOUNT + MENTOR_ADDON : BASE_AMOUNT;
 
-    // ── 3. Connect to MongoDB ───────────────────────────────────────────────
+    // ── 4. Connect & duplicate-payment guard ────────────────────────────────
     await connectDB();
 
-    // ── 4. Check for duplicate payment ID ──────────────────────────────────
     const existing = await Registration.findOne({ razorpayPaymentId: razorpay_payment_id });
     if (existing) {
+      // Idempotent — same payment ID seen before, return what was saved
       return res.status(200).json({
-        success: true,
-        id: existing._id.toString(),
-        message: 'Already registered.',
+        success:     true,
+        teamCode:    existing.teamCode,
+        teamName:    existing.teamName,
+        amountPaid:  existing.totalAmount,
+        wantsMentor: existing.mentorSession,
+        message:     'Already registered.',
       });
     }
 
-    // ── 5. Save registration with paymentStatus: 'paid' ────────────────────
+    // ── 5. Generate unique team code ────────────────────────────────────────
+    const teamCode = await generateTeamCode();
+
+    // ── 6. Save registration ────────────────────────────────────────────────
     const registration = await Registration.create({
       teamName:    formData.teamName.trim(),
       collegeName: formData.collegeName.trim(),
@@ -122,7 +132,7 @@ export default async function handler(req, res) {
         email: formData.leader.email.trim().toLowerCase(),
         phone: formData.leader.phone.trim(),
       },
-      members: members.map((m) => ({
+      members: members.map(m => ({
         name:  m.name.trim(),
         email: m.email.trim().toLowerCase(),
         phone: m.phone.trim(),
@@ -132,20 +142,35 @@ export default async function handler(req, res) {
       paymentStatus:     'paid',
       razorpayOrderId:   razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
+      teamCode,
       ipAddress: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || null,
       userAgent: req.headers['user-agent'] || null,
     });
 
-    console.log(`[/api/verify-payment] ✅ Registration saved: ${registration._id} | Team: ${formData.teamName}`);
+    console.log(`[verify-payment] ✅ Registered: ${registration._id} | Team: ${formData.teamName} | Code: ${teamCode}`);
 
+    // ── 7. Send email (async — do NOT await so client gets response fast) ───
+    sendTeamCodeEmail({
+      to:          formData.leader.email.trim().toLowerCase(),
+      teamName:    formData.teamName.trim(),
+      teamCode,
+      wantsMentor: Boolean(formData.mentorSession),
+      amountPaid:  totalAmount,
+    }).catch(err => console.error('[verify-payment] Email dispatch error:', err));
+
+    // ── 8. Respond immediately ──────────────────────────────────────────────
     return res.status(200).json({
-      success: true,
-      id: registration._id.toString(),
-      message: 'Registration confirmed!',
+      success:     true,
+      teamCode,
+      teamName:    formData.teamName.trim(),
+      amountPaid:  totalAmount,
+      wantsMentor: Boolean(formData.mentorSession),
+      leaderEmail: formData.leader.email.trim().toLowerCase(),
+      message:     'Registration confirmed!',
     });
 
   } catch (err) {
-    console.error('[/api/verify-payment] Error:', err);
+    console.error('[verify-payment] Error:', err);
 
     if (err.code === 11000) {
       return res.status(400).json({ success: false, error: 'This team is already registered.' });

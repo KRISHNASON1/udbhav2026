@@ -470,19 +470,87 @@
       </button>
     </div>
 
+    <!-- Mobile-only navbar pill (hidden on desktop) -->
     <div class="mobile-nav-pill" id="mobileNavPill">
-      <img src="/logo.png" alt="Logo" class="mobile-logo-img" />
-      <div class="mobile-nav-sep" aria-hidden="true"></div>
-      <span class="mobile-nav-name">VEDANSH DANOT</span>
-      <div class="mobile-nav-sep" aria-hidden="true"></div>
-      <button class="nav-menu-btn" id="menuBtnMobile" aria-label="Open menu" aria-expanded="false" style="padding:0;background:transparent;border:none;box-shadow:none;backdrop-filter:none;">
-        <svg class="menu-toggle-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
-          <path class="mti-path1" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"/>
-          <path d="M7 16 27 16"/>
-        </svg>
-      </button>
+      <a href="/" class="mobile-nav-logo" aria-label="UDBHAV'26 Home">
+        <img src="/logo.png" alt="UDBHAV'26" class="mobile-logo-img" />
+      </a>
+      <div class="mobile-nav-right">
+        <a href="/register.html" class="mobile-nav-cta" id="mobileRegisterBtn">Register</a>
+        <button class="mobile-hamburger" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenuDrawer">
+          <span class="mhb-line"></span>
+          <span class="mhb-line"></span>
+          <span class="mhb-line"></span>
+        </button>
+      </div>
     </div>
+
+    <!-- Mobile navigation drawer -->
+    <div class="mobile-menu-drawer" id="mobileMenuDrawer" aria-hidden="true">
+      <nav class="mmd-nav" aria-label="Mobile navigation">
+        <a href="/" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          <span class="mmd-link-text">Home</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/about.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <span class="mmd-link-text">About</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/schedule.html" class="mmd-link mmd-link--active">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          <span class="mmd-link-text">Schedule</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/problem-statement.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+          <span class="mmd-link-text">Problem Statement</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/winners.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></span>
+          <span class="mmd-link-text">Winners</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/code-of-conduct.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+          <span class="mmd-link-text">Code of Conduct</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/our-team.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="mmd-link-text">Our Team</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/sponsors.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/><path d="M8 17V5l12-2v12"/></svg></span>
+          <span class="mmd-link-text">Sponsors</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </nav>
+      <div class="mmd-footer">
+        <a href="/register.html" class="mmd-cta-btn">Register Now →</a>
+      </div>
+    </div>
+
   </nav>
+
+  <!-- Mobile nav hamburger controller -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var drawer = document.getElementById('mobileMenuDrawer');
+      var pill = document.getElementById('mobileNavPill');
+      if (!btn || !drawer) return;
+      function openMenu() { btn.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); drawer.classList.add('is-open'); drawer.setAttribute('aria-hidden','false'); document.body.classList.add('mobile-menu-open'); }
+      function closeMenu() { btn.classList.remove('is-open'); btn.setAttribute('aria-expanded','false'); drawer.classList.remove('is-open'); drawer.setAttribute('aria-hidden','true'); document.body.classList.remove('mobile-menu-open'); }
+      btn.addEventListener('click', function() { drawer.classList.contains('is-open') ? closeMenu() : openMenu(); });
+      drawer.querySelectorAll('.mmd-link').forEach(function(l) { l.addEventListener('click', closeMenu); });
+      window.addEventListener('resize', function() { if (window.innerWidth > 768) closeMenu(); });
+      if (pill) { pill.addEventListener('click', function(e) { if (e.target.closest('a, button')) return; window.location.href = '/'; }); }
+    })();
+  </script>
 
   <!-- Action Search Overlay -->
   <div id="menuOverlay" class="menu-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Command palette">

@@ -1,0 +1,19 @@
+User-agent: *
+
+# Block admin panel from all crawlers
+Disallow: /admin/
+Disallow: /api/
+
+# Allow all public pages
+Allow: /
+Allow: /register
+Allow: /ps
+Allow: /problem-statement
+Allow: /winners
+Allow: /code-of-conduct
+Allow: /schedule
+Allow: /our-team
+Allow: /sponsors
+Allow: /about
+
+Sitemap: https://udbhav26.in/sitemap.xml

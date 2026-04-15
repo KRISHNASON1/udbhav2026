@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UDBHAV'26 Admin — Problem Statements" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Problem Statements — UDBHAV'26 Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --clr-bg: #080808;
+      --clr-surface: #0f0f0f;
+      --clr-white: #ffffff;
+      --clr-grey: #888888;
+      --clr-green: #4ade80;
+      --clr-red: #f87171;
+      --clr-blue: #60a5fa;
+      --clr-amber: #fbbf24;
+      --clr-purple: #a78bfa;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-ui: 'Inter', sans-serif;
+      --sidebar-w: 260px;
+    }
+
+    html { background: #000; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--clr-bg);
+      color: var(--clr-white);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+
+    /* ── Grain overlay ── */
+    .grain-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      pointer-events: none; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px; mix-blend-mode: overlay;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       SIDEBAR
+       ═══════════════════════════════════════════════════════ */
+    .admin-sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: rgba(12,12,12,0.95);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(30px);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .sidebar-header {
+      padding: 1.5rem 1.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+
+    .sidebar-logo { height: 28px; width: auto; opacity: 0.85; }
+    .sidebar-brand { display: flex; flex-direction: column; gap: 0.1rem; }
+    .sidebar-brand-name { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 0.06em; color: var(--clr-white); line-height: 1; }
+    .sidebar-brand-sub { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .sidebar-nav-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.2); padding: 0.8rem 0.6rem 0.4rem; }
+
+    .sidebar-link {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.8rem; border-radius: 10px;
+      text-decoration: none; font-size: 0.84rem; font-weight: 500; color: rgba(255,255,255,0.5); transition: all 0.2s;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+    .sidebar-link.active { background: rgba(255,255,255,0.08); color: var(--clr-white); font-weight: 600; }
+    .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
+    .sidebar-link.active svg { opacity: 1; }
+    .sidebar-link .coming-tag {
+      margin-left: auto; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.06em;
+      padding: 0.15rem 0.5rem; border-radius: 6px;
+      background: rgba(251,191,36,0.12); color: var(--clr-amber); border: 1px solid rgba(251,191,36,0.2);
+    }
+
+    .sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .sidebar-logout {
+      display: flex; align-items: center; gap: 0.65rem; width: 100%; padding: 0.7rem 0.8rem;
+      border: none; border-radius: 10px; background: rgba(248,113,113,0.08); color: var(--clr-red);
+      font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    .sidebar-logout:hover { background: rgba(248,113,113,0.15); }
+    .sidebar-logout svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .sidebar-overlay { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.6); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .sidebar-overlay.is-visible { opacity: 1; pointer-events: auto; }
+
+    /* ═══════════════════════════════════════════════════════
+       MAIN CONTENT
+       ═══════════════════════════════════════════════════════ */
+    .admin-main { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+    .admin-topbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; background: rgba(8,8,8,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+
+    .sidebar-toggle {
+      display: none; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; background: rgba(255,255,255,0.04); color: var(--clr-grey); cursor: pointer; transition: all 0.2s;
+    }
+    .sidebar-toggle:hover { background: rgba(255,255,255,0.08); color: var(--clr-white); }
+    .sidebar-toggle svg { width: 18px; height: 18px; }
+
+    .topbar-title { font-size: 1.1rem; font-weight: 700; color: var(--clr-white); }
+    .topbar-breadcrumb { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 0.15rem; }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+
+    .admin-content { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* ═══════════════════════════════════════════════════════
+       BUTTONS
+       ═══════════════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.25rem; border-radius: 12px; border: 1px solid transparent;
+      font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+    .btn--primary { background: rgba(255,255,255,0.9); color: #111; border-color: transparent; }
+    .btn--primary:hover { background: #fff; }
+
+    .btn--ghost { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.08); }
+    .btn--ghost:hover { background: rgba(255,255,255,0.08); color: var(--clr-white); border-color: rgba(255,255,255,0.15); }
+
+    .btn--green { background: rgba(74,222,128,0.12); color: var(--clr-green); border-color: rgba(74,222,128,0.25); }
+    .btn--green:hover { background: rgba(74,222,128,0.2); }
+
+    .btn--red { background: rgba(248,113,113,0.12); color: var(--clr-red); border-color: rgba(248,113,113,0.25); }
+    .btn--red:hover { background: rgba(248,113,113,0.2); }
+
+    .btn--amber { background: rgba(251,191,36,0.12); color: var(--clr-amber); border-color: rgba(251,191,36,0.25); }
+    .btn--amber:hover { background: rgba(251,191,36,0.2); }
+
+    .btn--blue { background: rgba(96,165,250,0.12); color: var(--clr-blue); border-color: rgba(96,165,250,0.25); }
+    .btn--blue:hover { background: rgba(96,165,250,0.2); }
+
+    .btn--sm { padding: 0.45rem 0.9rem; font-size: 0.76rem; border-radius: 9px; }
+    .btn--sm svg { width: 14px; height: 14px; }
+
+    /* ═══════════════════════════════════════════════════════
+       DROP CONTROL CARD
+       ═══════════════════════════════════════════════════════ */
+    .drop-control-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .drop-control-header {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      padding: 1.4rem 1.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .drop-control-title-group { display: flex; flex-direction: column; gap: 0.25rem; }
+    .drop-control-title { font-size: 0.95rem; font-weight: 700; color: var(--clr-white); }
+    .drop-control-sub { font-size: 0.76rem; color: rgba(255,255,255,0.35); }
+
+    .drop-status-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 1rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;
+    }
+    .drop-status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .drop-status-pill.status--active   { background: rgba(74,222,128,0.12); color: var(--clr-green); border: 1px solid rgba(74,222,128,0.25); }
+    .drop-status-pill.status--active .drop-status-dot { background: var(--clr-green); animation: badgePulse 1.5s ease infinite; }
+    .drop-status-pill.status--pre-drop { background: rgba(251,191,36,0.12); color: var(--clr-amber); border: 1px solid rgba(251,191,36,0.25); }
+    .drop-status-pill.status--pre-drop .drop-status-dot { background: var(--clr-amber); }
+    .drop-status-pill.status--closed   { background: rgba(248,113,113,0.12); color: var(--clr-red); border: 1px solid rgba(248,113,113,0.25); }
+    .drop-status-pill.status--closed .drop-status-dot { background: var(--clr-red); }
+
+    @keyframes badgePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .drop-control-body {
+      padding: 1.4rem 1.6rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+
+    .form-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .form-input {
+      padding: 0.65rem 0.9rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: var(--clr-white);
+      font-family: var(--font-ui);
+      font-size: 0.84rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      width: 100%;
+    }
+    .form-input:focus { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.07); }
+    .form-input:invalid { border-color: rgba(248,113,113,0.4); }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+
+    .drop-control-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    /* ═══════════════════════════════════════════════════════
+       PS LIST SECTION
+       ═══════════════════════════════════════════════════════ */
+    .section-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .section-card-header {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+      padding: 1.2rem 1.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .section-card-title { font-size: 0.9rem; font-weight: 700; color: var(--clr-white); }
+
+    .ps-count-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 22px; height: 22px; padding: 0 7px;
+      border-radius: 99px; background: rgba(255,255,255,0.08);
+      font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.5);
+      margin-left: 0.5rem;
+    }
+
+    .ps-list {
+      padding: 0;
+      list-style: none;
+    }
+
+    .ps-item {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+    .ps-item:last-child { border-bottom: none; }
+    .ps-item:hover { background: rgba(255,255,255,0.02); }
+
+    .ps-order-badge {
+      display: flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.2);
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--clr-purple);
+      flex-shrink: 0;
+    }
+
+    .ps-info { min-width: 0; }
+    .ps-title { font-size: 0.9rem; font-weight: 700; color: var(--clr-white); margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ps-meta { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .ps-domain-tag {
+      display: inline-flex; align-items: center;
+      padding: 0.2rem 0.6rem; border-radius: 6px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em;
+      background: rgba(96,165,250,0.1); color: var(--clr-blue); border: 1px solid rgba(96,165,250,0.2);
+    }
+    .ps-slots-text { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+    .ps-slots-text strong { color: rgba(255,255,255,0.55); }
+    .ps-desc-preview { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px; }
+
+    .ps-actions { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+
+    .ps-item-action {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 8px; border: none;
+      background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .ps-item-action svg { width: 14px; height: 14px; }
+    .ps-item-action:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .ps-item-action--edit:hover { background: rgba(96,165,250,0.15); color: var(--clr-blue); }
+    .ps-item-action--delete:hover { background: rgba(248,113,113,0.15); color: var(--clr-red); }
+
+    /* Empty state */
+    .ps-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem;
+      padding: 4rem 2rem; text-align: center;
+    }
+    .ps-empty-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.2);
+    }
+    .ps-empty-icon svg { width: 24px; height: 24px; }
+    .ps-empty-title { font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.4); }
+    .ps-empty-sub { font-size: 0.8rem; color: rgba(255,255,255,0.2); max-width: 300px; line-height: 1.6; }
+
+    /* ═══════════════════════════════════════════════════════
+       MODAL
+       ═══════════════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.is-open { opacity: 1; pointer-events: auto; }
+
+    .modal-panel {
+      width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+      background: rgba(14,14,14,0.99);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 22px;
+      padding: 2rem;
+      transform: translateY(24px) scale(0.96);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .modal-overlay.is-open .modal-panel { transform: translateY(0) scale(1); }
+
+    .modal-header {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.75rem;
+    }
+    .modal-title-text { font-size: 1.25rem; font-weight: 800; color: var(--clr-white); }
+    .modal-subtitle { font-size: 0.78rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; }
+
+    .modal-close {
+      width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.1); border-radius: 9px;
+      background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--clr-white); }
+    .modal-close svg { width: 15px; height: 15px; }
+
+    .modal-body { display: flex; flex-direction: column; gap: 1.1rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .modal-footer {
+      display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+      margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════ */
+    .toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 500;
+      display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none;
+    }
+
+    .toast {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.85rem 1.2rem;
+      background: rgba(20,20,20,0.95);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      font-size: 0.84rem; font-weight: 500; color: var(--clr-white);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.25s, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: auto;
+      max-width: 340px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .toast--success { border-color: rgba(74,222,128,0.25); }
+    .toast--success svg { color: var(--clr-green); }
+    .toast--error { border-color: rgba(248,113,113,0.25); }
+    .toast--error svg { color: var(--clr-red); }
+    .toast--info { border-color: rgba(96,165,250,0.25); }
+    .toast--info svg { color: var(--clr-blue); }
+
+    /* ═══════════════════════════════════════════════════════
+       CONFIRM MODAL
+       ═══════════════════════════════════════════════════════ */
+    .confirm-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .confirm-overlay.is-open { opacity: 1; pointer-events: auto; }
+    .confirm-panel {
+      width: 90%; max-width: 400px;
+      background: rgba(14,14,14,0.99); border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px; padding: 1.8rem;
+      transform: scale(0.94); transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .confirm-overlay.is-open .confirm-panel { transform: scale(1); }
+    .confirm-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2);
+      display: flex; align-items: center; justify-content: center; color: var(--clr-red);
+      margin-bottom: 1.1rem;
+    }
+    .confirm-icon svg { width: 22px; height: 22px; }
+    .confirm-title { font-size: 1.1rem; font-weight: 800; color: var(--clr-white); margin-bottom: 0.5rem; }
+    .confirm-sub { font-size: 0.82rem; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 1.4rem; }
+    .confirm-actions { display: flex; gap: 0.75rem; }
+    .confirm-actions .btn { flex: 1; justify-content: center; }
+
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════ */
+    @media (max-width: 860px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.is-open { transform: translateX(0); }
+      .admin-main { margin-left: 0; }
+      .sidebar-toggle { display: flex; }
+      .admin-content { padding: 1.2rem; }
+      .drop-control-body { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .ps-item { grid-template-columns: 40px 1fr; }
+      .ps-actions { grid-column: 2; }
+      .form-row { grid-template-columns: 1fr; }
+      .admin-topbar { padding: 0.9rem 1.2rem; }
+    }
+
+    /* ── Page load animation ── */
+    .admin-content > * {
+      opacity: 0; transform: translateY(16px);
+      animation: fadeSlideIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .admin-content > *:nth-child(1) { animation-delay: 0.05s; }
+    .admin-content > *:nth-child(2) { animation-delay: 0.12s; }
+    .admin-content > *:nth-child(3) { animation-delay: 0.19s; }
+
+    @keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <img src="/logo.png" alt="Logo" class="sidebar-logo" />
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-name">UDBHAV'26</span>
+        <span class="sidebar-brand-sub">Admin Panel</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="sidebar-nav-label">Main</span>
+
+      <a href="/admin/dashboard.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+
+      <a href="/admin/registrations.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Registrations
+      </a>
+
+      <a href="/admin/problem-statements.html" class="sidebar-link active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Problem Statements
+      </a>
+
+      <a href="/admin/payments.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Payments
+      </a>
+
+      <a href="/admin/ps-stats.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        PS Stats
+      </a>
+
+      <a href="/admin/winners.html" class="sidebar-link">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        Winners
+      </a>
+
+      <span class="sidebar-nav-label" style="margin-top:0.5rem;">Coming Soon</span>
+
+      <a href="#" class="sidebar-link" onclick="event.preventDefault();">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Teams <span class="coming-tag">Soon</span>
+      </a>
+
+      <a href="#" class="sidebar-link" onclick="event.preventDefault();">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Schedule <span class="coming-tag">Soon</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-logout" id="logoutBtn">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="admin-main">
+
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">Problem Statements</div>
+          <div class="topbar-breadcrumb">Admin / Problem Statements</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn--primary" id="addPsBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Problem Statement
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content" id="mainContent">
+
+      <!-- ── DROP CONTROL ── -->
+      <div class="drop-control-card">
+        <div class="drop-control-header">
+          <div class="drop-control-title-group">
+            <div class="drop-control-title">PS Drop Control</div>
+            <div class="drop-control-sub">Manage when teams can view and select problem statements</div>
+          </div>
+          <div id="dropStatusPill" class="drop-status-pill status--pre-drop">
+            <span class="drop-status-dot"></span>
+            <span id="dropStatusLabel">Loading…</span>
+          </div>
+        </div>
+        <div class="drop-control-body">
+          <div class="form-group">
+            <label class="form-label" for="startTimeInput">Drop Start Time</label>
+            <input type="datetime-local" class="form-input" id="startTimeInput" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="endTimeInput">Drop End Time</label>
+            <input type="datetime-local" class="form-input" id="endTimeInput" />
+          </div>
+          <div class="drop-control-actions">
+            <button class="btn btn--ghost" id="saveScheduleBtn">
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Schedule
+            </button>
+            <button class="btn btn--green" id="startDropBtn">
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Start Drop
+            </button>
+            <button class="btn btn--red" id="stopDropBtn">
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              Stop Drop
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PS LIST ── -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <div style="display:flex;align-items:center;">
+            <span class="section-card-title">All Problem Statements</span>
+            <span class="ps-count-badge" id="psCountBadge">—</span>
+          </div>
+          <button class="btn btn--ghost btn--sm" id="refreshBtn">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+        <ul class="ps-list" id="psList">
+          <li class="ps-empty">
+            <div class="ps-empty-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="ps-empty-title">Loading problem statements…</div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── ADD / EDIT MODAL ── -->
+  <div class="modal-overlay" id="psModal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title-text" id="modalTitle">Add Problem Statement</div>
+          <div class="modal-subtitle">Fill in the details below. Teams will only see this after the drop starts.</div>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="Close">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="psOrder">PS Number <span style="color:var(--clr-red)">*</span></label>
+            <input type="number" class="form-input" id="psOrder" placeholder="e.g. 1" min="1" max="50" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="psDomain">Domain / Category</label>
+            <input type="text" class="form-input" id="psDomain" placeholder="e.g. FinTech, Healthcare" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="psTitle">Problem Statement Title <span style="color:var(--clr-red)">*</span></label>
+          <input type="text" class="form-input" id="psTitle" placeholder="Enter a concise, descriptive title…" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="psDescription">Full Problem Statement Description</label>
+          <textarea class="form-input form-textarea" id="psDescription" placeholder="Describe the problem in detail. You can use plain text or Markdown formatting. Include background context, requirements, expected outputs, and evaluation criteria…"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="psSlotsTotal">Max Teams (Slots)</label>
+          <input type="number" class="form-input" id="psSlotsTotal" placeholder="5" min="1" max="100" value="5" />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--ghost" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn--primary" id="modalSaveBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="modalSaveBtnLabel">Save Problem Statement</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONFIRM DELETE MODAL ── -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-panel">
+      <div class="confirm-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <div class="confirm-title">Delete Problem Statement?</div>
+      <div class="confirm-sub" id="confirmSubtext">This action cannot be undone. Any teams that have already selected this PS will need to re-select.</div>
+      <div class="confirm-actions">
+        <button class="btn btn--ghost" id="confirmCancelBtn">Cancel</button>
+        <button class="btn btn--red" id="confirmDeleteBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST CONTAINER ── -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script type="module">
+    // ── Admin Secret (stored in sessionStorage after login) ──────────────────
+    const ADMIN_SECRET = sessionStorage.getItem('adminSecret') || localStorage.getItem('adminSecret') || '';
+
+    // ── Auth Guard ─────────────────────────────────────────────────────────────
+    function getAdminToken() {
+      // Try multiple storage locations
+      return sessionStorage.getItem('adminSecret')
+        || sessionStorage.getItem('adminToken')
+        || localStorage.getItem('adminSecret')
+        || localStorage.getItem('adminToken')
+        || '';
+    }
+
+    const token = getAdminToken();
+    // Redirect to login if no session token exist
+    // Uncomment to enforce:
+    // if (!token) { window.location.href = '/admin/login.html'; }
+
+    function apiHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'x-admin-secret': getAdminToken(),
+      };
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+    const toastContainer = document.getElementById('toastContainer');
+
+    function showToast(message, type = 'info') {
+      const icons = {
+        success: `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+        error:   `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+        info:    `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+      };
+      const t = document.createElement('div');
+      t.className = `toast toast--${type}`;
+      t.innerHTML = `${icons[type] || icons.info}<span>${message}</span>`;
+      toastContainer.appendChild(t);
+      requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
+      setTimeout(() => {
+        t.classList.remove('show');
+        setTimeout(() => t.remove(), 300);
+      }, 3200);
+    }
+
+    // ── Sidebar toggle ────────────────────────────────────────────────────────
+    const sidebar        = document.getElementById('adminSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarToggle  = document.getElementById('sidebarToggle');
+
+    sidebarToggle?.addEventListener('click', () => {
+      sidebar.classList.toggle('is-open');
+      sidebarOverlay.classList.toggle('is-visible');
+    });
+    sidebarOverlay?.addEventListener('click', () => {
+      sidebar.classList.remove('is-open');
+      sidebarOverlay.classList.remove('is-visible');
+    });
+
+    // ── Logout ─────────────────────────────────────────────────────────────────
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+      sessionStorage.clear();
+      localStorage.removeItem('adminSecret');
+      localStorage.removeItem('adminToken');
+      window.location.href = '/admin/login.html';
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════
+    let psList   = [];
+    let dropConfig = null;
+    let editingOrder = null; // null = add mode, number = edit mode
+
+    // ═══════════════════════════════════════════════════════════
+    // FETCH DATA
+    // ═══════════════════════════════════════════════════════════
+    async function fetchData() {
+      try {
+        const res = await fetch('/api/admin/ps/stats', { headers: apiHeaders() });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        psList     = data.psList || [];
+        dropConfig = data.config || null;
+        renderDropStatus();
+        renderPsList();
+      } catch (err) {
+        console.error('[fetchData]', err);
+        showToast('Failed to load data. Check your admin secret.', 'error');
+        renderPsListEmpty('Could not load problem statements. Make sure you are logged in.');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // RENDER DROP STATUS
+    // ═══════════════════════════════════════════════════════════
+    function toLocalDatetimeValue(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      // Format to YYYY-MM-DDTHH:MM suitable for datetime-local input
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function computeDropStatus(cfg) {
+      if (!cfg) return 'pre-drop';
+      if (cfg.manualStatus) return cfg.manualStatus;
+      const now   = Date.now();
+      const start = cfg.startTime ? new Date(cfg.startTime).getTime() : Infinity;
+      const end   = cfg.endTime   ? new Date(cfg.endTime).getTime()   : 0;
+      if (now < start) return 'pre-drop';
+      if (now >= start && now <= end) return 'active';
+      return 'closed';
+    }
+
+    function renderDropStatus() {
+      const pill  = document.getElementById('dropStatusPill');
+      const label = document.getElementById('dropStatusLabel');
+      const start = document.getElementById('startTimeInput');
+      const end   = document.getElementById('endTimeInput');
+
+      const status = computeDropStatus(dropConfig);
+
+      const map = {
+        'pre-drop': { cls: 'status--pre-drop', text: 'Pre-Drop (Scheduled)' },
+        'active':   { cls: 'status--active',   text: 'LIVE — Drop Active'   },
+        'closed':   { cls: 'status--closed',   text: 'Closed'               },
+      };
+
+      const info = map[status] || map['pre-drop'];
+      pill.className  = `drop-status-pill ${info.cls}`;
+      label.textContent = info.text;
+
+      if (dropConfig) {
+        start.value = toLocalDatetimeValue(dropConfig.startTime);
+        end.value   = toLocalDatetimeValue(dropConfig.endTime);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // RENDER PS LIST
+    // ═══════════════════════════════════════════════════════════
+    function renderPsList() {
+      const list  = document.getElementById('psList');
+      const badge = document.getElementById('psCountBadge');
+      badge.textContent = psList.length;
+
+      if (psList.length === 0) {
+        renderPsListEmpty('No problem statements yet. Click "Add Problem Statement" to get started.');
+        return;
+      }
+
+      list.innerHTML = psList.map(ps => {
+        const slotsPct  = ps.slotsTotal > 0 ? Math.round((ps.slotsTaken / ps.slotsTotal) * 100) : 0;
+        const orderPad  = String(ps.order).padStart(2, '0');
+        const domainTag = ps.domain ? `<span class="ps-domain-tag">${escHtml(ps.domain)}</span>` : '';
+        const descPrev  = ps.description
+          ? `<div class="ps-desc-preview">${escHtml(ps.description.substring(0, 120))}${ps.description.length > 120 ? '…' : ''}</div>`
+          : '';
+        return `
+          <li class="ps-item" data-order="${ps.order}">
+            <div class="ps-order-badge">PS${orderPad}</div>
+            <div class="ps-info">
+              <div class="ps-title">${escHtml(ps.title)}</div>
+              <div class="ps-meta">
+                ${domainTag}
+                <span class="ps-slots-text"><strong>${ps.slotsTaken}</strong> / ${ps.slotsTotal} slots taken (${slotsPct}%)</span>
+              </div>
+              ${descPrev}
+            </div>
+            <div class="ps-actions">
+              <button class="ps-item-action ps-item-action--edit" title="Edit" data-action="edit" data-order="${ps.order}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="ps-item-action ps-item-action--delete" title="Delete" data-action="delete" data-order="${ps.order}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
+            </div>
+          </li>`;
+      }).join('');
+
+      // Delegate events
+      list.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const order  = parseInt(btn.dataset.order);
+          const action = btn.dataset.action;
+          if (action === 'edit')   openEditModal(order);
+          if (action === 'delete') openConfirmDelete(order);
+        });
+      });
+    }
+
+    function renderPsListEmpty(msg) {
+      const list  = document.getElementById('psList');
+      const badge = document.getElementById('psCountBadge');
+      badge.textContent = '0';
+      list.innerHTML = `
+        <li class="ps-empty">
+          <div class="ps-empty-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="ps-empty-title">No Problem Statements</div>
+          <div class="ps-empty-sub">${msg}</div>
+        </li>`;
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // DROP CONTROL
+    // ═══════════════════════════════════════════════════════════
+    document.getElementById('saveScheduleBtn')?.addEventListener('click', async () => {
+      const startVal = document.getElementById('startTimeInput').value;
+      const endVal   = document.getElementById('endTimeInput').value;
+
+      if (!startVal || !endVal) { showToast('Please fill in both start and end times.', 'error'); return; }
+
+      const btn = document.getElementById('saveScheduleBtn');
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/admin/ps/config', {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({
+            startTime: new Date(startVal).toISOString(),
+            endTime:   new Date(endVal).toISOString(),
+            manualStatus: null, // reset manual override when saving schedule
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed');
+        dropConfig = data.config;
+        renderDropStatus();
+        showToast('Drop schedule saved successfully.', 'success');
+      } catch (err) {
+        showToast('Error saving schedule: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('startDropBtn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('startDropBtn');
+      btn.disabled = true;
+      try {
+        const res  = await fetch('/api/admin/ps/start-drop', { method: 'POST', headers: apiHeaders() });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed');
+        showToast('🟢 PS Drop is now ACTIVE!', 'success');
+        await fetchData();
+      } catch (err) {
+        showToast('Error starting drop: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('stopDropBtn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('stopDropBtn');
+      btn.disabled = true;
+      try {
+        const res  = await fetch('/api/admin/ps/stop-drop', { method: 'POST', headers: apiHeaders() });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed');
+        showToast('🔴 PS Drop is now CLOSED.', 'info');
+        await fetchData();
+      } catch (err) {
+        showToast('Error stopping drop: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('refreshBtn')?.addEventListener('click', () => fetchData());
+
+    // ═══════════════════════════════════════════════════════════
+    // ADD / EDIT MODAL
+    // ═══════════════════════════════════════════════════════════
+    const psModal       = document.getElementById('psModal');
+    const modalTitle    = document.getElementById('modalTitle');
+    const modalSaveBtn  = document.getElementById('modalSaveBtn');
+    const modalSaveLbl  = document.getElementById('modalSaveBtnLabel');
+    const modalCancelBtn= document.getElementById('modalCancelBtn');
+    const modalClose    = document.getElementById('modalClose');
+
+    function openAddModal() {
+      editingOrder = null;
+      modalTitle.textContent = 'Add Problem Statement';
+      modalSaveLbl.textContent = 'Save Problem Statement';
+      document.getElementById('psOrder').value       = '';
+      document.getElementById('psOrder').disabled    = false;
+      document.getElementById('psTitle').value       = '';
+      document.getElementById('psDomain').value      = '';
+      document.getElementById('psDescription').value = '';
+      document.getElementById('psSlotsTotal').value  = '5';
+      psModal.classList.add('is-open');
+      document.getElementById('psTitle').focus();
+    }
+
+    function openEditModal(order) {
+      const ps = psList.find(p => p.order === order);
+      if (!ps) return;
+      editingOrder = order;
+      modalTitle.textContent = `Edit PS ${String(order).padStart(2, '0')}`;
+      modalSaveLbl.textContent = 'Update Problem Statement';
+      document.getElementById('psOrder').value       = ps.order;
+      document.getElementById('psOrder').disabled    = true; // can't change order on edit
+      document.getElementById('psTitle').value       = ps.title;
+      document.getElementById('psDomain').value      = ps.domain || '';
+      document.getElementById('psDescription').value = ps.description || '';
+      document.getElementById('psSlotsTotal').value  = ps.slotsTotal;
+      psModal.classList.add('is-open');
+      document.getElementById('psTitle').focus();
+    }
+
+    function closeModal() {
+      psModal.classList.remove('is-open');
+    }
+
+    document.getElementById('addPsBtn')?.addEventListener('click', openAddModal);
+    modalCancelBtn?.addEventListener('click', closeModal);
+    modalClose?.addEventListener('click', closeModal);
+    psModal?.addEventListener('click', e => { if (e.target === psModal) closeModal(); });
+
+    modalSaveBtn?.addEventListener('click', async () => {
+      const order       = parseInt(document.getElementById('psOrder').value);
+      const title       = document.getElementById('psTitle').value.trim();
+      const domain      = document.getElementById('psDomain').value.trim();
+      const description = document.getElementById('psDescription').value.trim();
+      const slotsTotal  = parseInt(document.getElementById('psSlotsTotal').value) || 5;
+
+      if (!title) { showToast('Title is required.', 'error'); document.getElementById('psTitle').focus(); return; }
+      if (!editingOrder && (!order || isNaN(order))) { showToast('PS number is required.', 'error'); document.getElementById('psOrder').focus(); return; }
+
+      modalSaveBtn.disabled = true;
+      modalSaveLbl.textContent = editingOrder ? 'Updating…' : 'Saving…';
+
+      try {
+        let res, data;
+        if (editingOrder) {
+          // PATCH update
+          res  = await fetch('/api/admin/ps/update-ps', {
+            method: 'PATCH',
+            headers: apiHeaders(),
+            body: JSON.stringify({ order: editingOrder, title, domain, description, slotsTotal }),
+          });
+          data = await res.json();
+          if (!res.ok) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+          showToast(`PS ${String(editingOrder).padStart(2,'0')} updated successfully.`, 'success');
+        } else {
+          // POST add
+          res  = await fetch('/api/admin/ps/add-ps', {
+            method: 'POST',
+            headers: apiHeaders(),
+            body: JSON.stringify({ order, title, domain, description, slotsTotal }),
+          });
+          data = await res.json();
+          if (!res.ok) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+          showToast(`PS ${String(order).padStart(2,'0')} added successfully!`, 'success');
+        }
+
+        closeModal();
+        await fetchData();
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        modalSaveBtn.disabled = false;
+        modalSaveLbl.textContent = editingOrder ? 'Update Problem Statement' : 'Save Problem Statement';
+      }
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // CONFIRM DELETE
+    // ═══════════════════════════════════════════════════════════
+    const confirmOverlay  = document.getElementById('confirmOverlay');
+    const confirmSubtext  = document.getElementById('confirmSubtext');
+    const confirmDeleteBtn= document.getElementById('confirmDeleteBtn');
+    const confirmCancelBtn= document.getElementById('confirmCancelBtn');
+    let deletingOrder = null;
+
+    function openConfirmDelete(order) {
+      const ps = psList.find(p => p.order === order);
+      if (!ps) return;
+      deletingOrder = order;
+      confirmSubtext.textContent = `You are about to permanently delete "PS ${String(order).padStart(2,'0')} — ${ps.title}". This cannot be undone.`;
+      confirmOverlay.classList.add('is-open');
+    }
+
+    confirmCancelBtn?.addEventListener('click', () => { confirmOverlay.classList.remove('is-open'); deletingOrder = null; });
+    confirmOverlay?.addEventListener('click', e => { if (e.target === confirmOverlay) { confirmOverlay.classList.remove('is-open'); deletingOrder = null; } });
+
+    confirmDeleteBtn?.addEventListener('click', async () => {
+      if (!deletingOrder) return;
+      confirmDeleteBtn.disabled = true;
+      confirmDeleteBtn.textContent = 'Deleting…';
+      try {
+        const res  = await fetch('/api/admin/ps/delete-ps', {
+          method: 'DELETE',
+          headers: apiHeaders(),
+          body: JSON.stringify({ order: deletingOrder }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+        showToast(`PS ${String(deletingOrder).padStart(2,'0')} deleted.`, 'info');
+        confirmOverlay.classList.remove('is-open');
+        deletingOrder = null;
+        await fetchData();
+      } catch (err) {
+        showToast('Error deleting: ' + err.message, 'error');
+      } finally {
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.innerHTML = `<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete`;
+      }
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════
+    fetchData();
+  </script>
+</body>
+</html>

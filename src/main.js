@@ -1,13 +1,12 @@
 /**
  * PORTFOLIO HERO — main.js
  * ─────────────────────────────────────────────────────────────────
- * Merge of:
- *   • Original: Three.js dissolve shader (black→transparent on scroll)
- *   • Original: Lenis smooth scroll → drives uDissolve uniform
- *   • New:      GSAP + ScrollTrigger for hero parallax
- *   • New:      Letter-by-letter name animation on load
- *   • New:      Mouse-tracking radial glow (lerped RAF)
- *   • New:      Staggered entrance for badge, subtitle, corner labels
+ * Resolved Merge:
+ * • Three.js dissolve shader (desktop only)
+ * • Lenis smooth scroll (desktop only)
+ * • GSAP + ScrollTrigger for hero parallax & pinning
+ * • Custom Cursor & Mouse-tracking radial glow (desktop only)
+ * • Staggered entrance animations
  * ─────────────────────────────────────────────────────────────────
  */
 
@@ -16,57 +15,75 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { initHeroBgShader }  from './shader-bg.js';
-import './analytics.js'; // Initialize Vercel Analytics and Speed Insights
+import { initHeroBgShader } from './shader-bg.js';
+import './analytics.js'; 
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ─────────────────────────────────────────────────────────────────
-// Hero background shader (ring-wave GLSL, behind all hero content)
-// ─────────────────────────────────────────────────────────────────
-initHeroBgShader(document.getElementById('heroShaderBg'));
+// ── Device Detection ─────────────────────────────────────────────
+const IS_TOUCH = window.matchMedia('(hover: none)').matches;
+const IS_MOBILE = IS_TOUCH || window.innerWidth <= 768;
 
-// ─────────────────────────────────────────────────────────────────
-// Mobile nav pill — tap anywhere (except menu btn) → go home
-// ─────────────────────────────────────────────────────────────────
+// ── Hero Background Shader ───────────────────────────────────────
+if (!IS_TOUCH) {
+  initHeroBgShader(document.getElementById('heroShaderBg'));
+}
+
+// ── Mobile Nav Pill ──────────────────────────────────────────────
 (function initMobileNavPillHome() {
-  const pill    = document.getElementById('mobileNavPill');
-  const menuBtn = document.getElementById('menuBtnMobile');
+  const pill = document.getElementById('mobileNavPill');
   if (!pill) return;
 
-  pill.style.cursor = 'pointer';
   pill.addEventListener('click', (e) => {
-    // Don't intercept clicks on the menu toggle button
-    if (menuBtn && (e.target === menuBtn || menuBtn.contains(e.target))) return;
+    const interactive = e.target.closest('a, button');
+    if (interactive) return;
     window.location.href = '/';
   });
 })();
 
-// ─────────────────────────────────────────────────────────────────
-// Custom cursor — DISABLED (using default browser cursor for better UX)
-// ─────────────────────────────────────────────────────────────────
-// initCursor removed — no custom cursor JS needed
+// ── Custom Cursor ────────────────────────────────────────────────
+(function initCursor() {
+  if (IS_TOUCH) return; 
+  const arrow = document.getElementById('cursorArrow');
+  if (!arrow) return;
 
+  document.addEventListener('mousemove', (e) => {
+    arrow.style.left = e.clientX + 'px';
+    arrow.style.top  = e.clientY + 'px';
+  });
 
+  const targets = 'a, button, [role="button"], .nav-link, .btn-cta, .nav-menu-btn, .icon-btn, .dropdown-item';
+  document.querySelectorAll(targets).forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      if (!arrow.classList.contains('is-name-hover')) arrow.classList.add('is-hovering');
+    });
+    el.addEventListener('mouseleave', () => arrow.classList.remove('is-hovering'));
+  });
 
-// ─────────────────────────────────────────────────────────────────
-// Lenis smooth scroll
-// ─────────────────────────────────────────────────────────────────
-const lenis = new Lenis({ autoRaf: false });
+  const heroHeading = document.getElementById('heroHeading');
+  if (heroHeading) {
+    heroHeading.addEventListener('mouseenter', () => {
+      arrow.classList.remove('is-hovering');
+      arrow.classList.add('is-name-hover');
+    });
+    heroHeading.addEventListener('mouseleave', () => {
+      arrow.classList.remove('is-name-hover');
+    });
+  }
 
-// Keep ScrollTrigger in sync with Lenis
-lenis.on('scroll', ScrollTrigger.update);
+  document.addEventListener('mouseleave', () => { arrow.style.opacity = '0'; });
+  document.addEventListener('mouseenter', () => { arrow.style.opacity = '1'; });
+})();
 
-// ─────────────────────────────────────────────────────────────────
-// Utility
-// ─────────────────────────────────────────────────────────────────
+// ── Lenis Smooth Scroll ──────────────────────────────────────────
+const lenis = IS_TOUCH ? null : new Lenis({ autoRaf: false });
+if (lenis) lenis.on('scroll', ScrollTrigger.update);
+
 function clamp01(v) {
   return Math.max(0, Math.min(1, v));
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Three.js — original dissolve shader (preserved exactly)
-// ─────────────────────────────────────────────────────────────────
+// ── Three.js Dissolve Shader ─────────────────────────────────────
 const vertexShader = `
   varying vec2 vUv;
   void main() {
@@ -77,8 +94,8 @@ const vertexShader = `
 
 const fragmentShader = `
   uniform vec2  uResolution;
-  uniform float uDissolve;   // 0 = fully black, 1 = fully gone
-  uniform vec2  uCenter;     // normalised (0.5, 0.5)
+  uniform float uDissolve;
+  uniform vec2  uCenter;
   varying vec2  vUv;
 
   float hash(vec2 p) {
@@ -101,93 +118,85 @@ const fragmentShader = `
 
   void main() {
     float aspect = uResolution.x / uResolution.y;
-
-    vec2  d        = (vUv - uCenter) * vec2(aspect, 1.0);
-    float dist     = length(d);
-    float angle    = atan(d.y, d.x);
-    vec2  pixUv    = floor(vUv * uResolution / 6.0) * 6.0 / uResolution;
-    float noisy    = fbm(pixUv * 80.0) * 0.12 + fbm(vec2(angle * 4.0, 0.0)) * 0.12;
-    float noisyDist= dist + noisy;
-
-    float maxDist  = length(vec2(aspect * 0.5, 0.5));
+    vec2  d = (vUv - uCenter) * vec2(aspect, 1.0);
+    float dist = length(d);
+    float angle = atan(d.y, d.x);
+    vec2  pixUv = floor(vUv * uResolution / 6.0) * 6.0 / uResolution;
+    float noisy = fbm(pixUv * 80.0) * 0.12 + fbm(vec2(angle * 4.0, 0.0)) * 0.12;
+    float noisyDist = dist + noisy;
+    float maxDist = length(vec2(aspect * 0.5, 0.5));
     float normDist = noisyDist / maxDist;
-
-    float T     = uDissolve * 1.5;
+    float T = uDissolve * 1.5;
     float alpha = smoothstep(T - 0.04, T + 0.04, normDist);
-
-    float edgeZone = smoothstep(T - 0.12, T - 0.04, normDist) *
-                     smoothstep(T + 0.04, T,         normDist);
-    float sparkle  = hash(floor(vUv * uResolution / 4.0)) * edgeZone;
-
-    // Canvas is WHITE — the dissolve fills in white over the dark hero
-    // Sparkle pixels are slightly grey at the jagged dissolving edge
-    float sparkDim = sparkle * 2.2 * (1.0 - uDissolve); // dimmer near edge as dissolve closes
-    vec3  color    = vec3(1.0 - sparkDim * 0.25);        // white minus a hint of grey sparkle
-
+    float edgeZone = smoothstep(T - 0.12, T - 0.04, normDist) * smoothstep(T + 0.04, T, normDist);
+    float sparkle = hash(floor(vUv * uResolution / 4.0)) * edgeZone;
+    float sparkDim = sparkle * 2.2 * (1.0 - uDissolve);
+    vec3  color = vec3(1.0 - sparkDim * 0.25);
     gl_FragColor = vec4(color, alpha);
   }
 `;
 
-// ── Three.js setup ─────────────────────────────────────────────────────────────
-const container = document.querySelector('.canvas1');
+let renderer = null, material = null, scene = null, camera = null;
 
-const scene    = new THREE.Scene();
-const camera   = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
-camera.position.z = 1;
+if (!IS_TOUCH) {
+  const container = document.querySelector('.canvas1');
+  if (container) {
+    scene = new THREE.Scene();
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+    camera.position.z = 1;
 
-const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'low-power' });
-renderer.setClearColor(0x000000, 0);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-renderer.setSize(window.innerWidth, window.innerHeight);
-container.appendChild(renderer.domElement);
+    renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'low-power' });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
 
-const material = new THREE.ShaderMaterial({
-  uniforms: {
-    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-    uDissolve:   { value: 1.0 }, // 1 = fully transparent (hero visible on load)
-    uCenter:     { value: new THREE.Vector2(0.5, 0.5) },
-  },
-  vertexShader,
-  fragmentShader,
-  transparent: true,
-});
+    material = new THREE.ShaderMaterial({
+      uniforms: {
+        uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        uDissolve:   { value: 1.0 }, 
+        uCenter:     { value: new THREE.Vector2(0.5, 0.5) },
+      },
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+    });
 
-scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
 
-// ── Resize handler ──────────────────────────────────────────────────────────────
-window.addEventListener('resize', () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
-  ScrollTrigger.refresh();
-});
-
-// ─────────────────────────────────────────────────────────────────
-// Mouse glow — lerped radial gradient (GPU-accelerated transform)
-// ─────────────────────────────────────────────────────────────────
-const glow   = document.getElementById('mouseGlow');
-let mouseX   = window.innerWidth  / 2;
-let mouseY   = window.innerHeight / 2;
-let glowX    = mouseX;
-let glowY    = mouseY;
-
-if (glow) glow.style.willChange = 'transform';
-
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-
-// Smooth glow follow — use transform instead of left/top
-function tickGlow() {
-  glowX += (mouseX - glowX) * 0.08;
-  glowY += (mouseY - glowY) * 0.08;
-  if (glow) glow.style.transform = `translate3d(${glowX}px, ${glowY}px, 0)`;
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+      ScrollTrigger.refresh();
+    });
+  }
+} else {
+  window.addEventListener('resize', () => ScrollTrigger.refresh());
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Unified RAF — Lenis + Three.js renderer + glow lerp
-// Renderer only renders when hero is visible (IntersectionObserver)
-// ─────────────────────────────────────────────────────────────────
+// ── Mouse Glow ───────────────────────────────────────────────────
+const glow = document.getElementById('mouseGlow');
+let mouseX = window.innerWidth  / 2;
+let mouseY = window.innerHeight / 2;
+let glowX = mouseX;
+let glowY = mouseY;
+
+if (!IS_TOUCH && glow) {
+  glow.style.willChange = 'transform';
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+}
+
+function tickGlow() {
+  if (IS_TOUCH || !glow) return;
+  glowX += (mouseX - glowX) * 0.08;
+  glowY += (mouseY - glowY) * 0.08;
+  glow.style.transform = `translate3d(${glowX}px, ${glowY}px, 0)`;
+}
+
+// ── Unified RAF ──────────────────────────────────────────────────
 let heroVisible = true;
 const heroEl = document.querySelector('.hero');
 if ('IntersectionObserver' in window && heroEl) {
@@ -198,98 +207,93 @@ if ('IntersectionObserver' in window && heroEl) {
 }
 
 function raf(time) {
-  lenis.raf(time);
-  if (heroVisible) renderer.render(scene, camera);
+  if (lenis) lenis.raf(time);
+  if (heroVisible && renderer && scene && camera) {
+    renderer.render(scene, camera);
+  }
   tickGlow();
   requestAnimationFrame(raf);
 }
 requestAnimationFrame(raf);
 
-// ─────────────────────────────────────────────────────────────────
-// Letter-split hero name
-// ─────────────────────────────────────────────────────────────────
-const NAME     = "UDBHAV'26";
+// ── Letter-split Hero Name ───────────────────────────────────────
+const NAME = "UDBHAV'26";
 const heroName = document.getElementById('heroHeading');
-heroName.setAttribute('aria-label', NAME);
+if (heroName) {
+  heroName.setAttribute('aria-label', NAME);
+  NAME.split('').forEach((char) => {
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.textContent = char;
+    heroName.appendChild(span);
+  });
+}
 
-NAME.split('').forEach((char) => {
-  const span = document.createElement('span');
-  span.className   = 'letter';
-  span.textContent = char;
-  heroName.appendChild(span);
-});
+const letters = heroName ? heroName.querySelectorAll('.letter') : [];
 
-const letters = heroName.querySelectorAll('.letter');
-
-// ─────────────────────────────────────────────────────────────────
-// Entrance animation timeline (CSS transitions via JS)
-// Chain: letters → subtitle → corners
-// ─────────────────────────────────────────────────────────────────
-const subtitleSans  = document.querySelector('.subtitle-sans');
+// ── Entrance Animations ──────────────────────────────────────────
+const subtitleSans = document.querySelector('.subtitle-sans');
 const subtitleSerif = document.querySelector('.subtitle-serif');
-const heroEyebrow   = document.querySelector('.hero-eyebrow');
-const cornerLeft    = document.getElementById('cornerLeft');
-const cornerRight   = document.getElementById('cornerRight');
+const heroEyebrow = document.querySelector('.hero-eyebrow');
+const cornerLeft = document.getElementById('cornerLeft');
+const cornerRight = document.getElementById('cornerRight');
 
-/** Fade + slide up — standard (corners/labels) */
 function revealEl(el, delay = 0, yStart = 20) {
-  el.style.opacity    = '0';
-  el.style.transform  = `translateY(${yStart}px)`;
+  if (!el) return;
+  el.style.opacity = '0';
+  el.style.transform = `translateY(${yStart}px)`;
   el.style.transition = 'none';
-
   setTimeout(() => {
     el.style.transition = 'opacity 0.72s ease, transform 0.72s cubic-bezier(0.16, 1, 0.3, 1)';
-    el.style.opacity    = '1';
-    el.style.transform  = 'translateY(0)';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
   }, delay);
 }
 
-/** Fade + slide up + blur-in — used for subtitle lines */
 function revealElBlur(el, delay = 0, yStart = 32) {
-  el.style.opacity    = '0';
-  el.style.transform  = `translateY(${yStart}px)`;
-  el.style.filter     = 'blur(10px)';
+  if (!el) return;
+  el.style.opacity = '0';
+  el.style.transform = `translateY(${yStart}px)`;
+  el.style.filter = 'blur(10px)';
   el.style.transition = 'none';
-
   setTimeout(() => {
-    el.style.transition =
-      'opacity 0.9s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.9s ease';
-    el.style.opacity    = '1';
-    el.style.transform  = 'translateY(0)';
-    el.style.filter     = 'blur(0px)';
+    el.style.transition = 'opacity 0.9s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.9s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    el.style.filter = 'blur(0px)';
   }, delay);
 }
 
-// Cat wrap — pops up first, before VEDANSH letters ────────────────
+// ── Cat Animation ────────────────────────────────────────────────
 const heroCatWrap = document.getElementById('heroCatWrap');
 if (heroCatWrap) {
-  heroCatWrap.style.opacity    = '0';
-  heroCatWrap.style.transform  = 'translateY(40px)';
-  heroCatWrap.style.filter     = 'blur(12px)';
-  heroCatWrap.style.transition = 'none';
-
-  setTimeout(() => {
-    heroCatWrap.style.transition =
-      'opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease';
-    heroCatWrap.style.opacity   = '1';
-    heroCatWrap.style.transform = 'translateY(0)';
-    heroCatWrap.style.filter    = 'blur(0px)';
-  }, 100);
+  if (IS_MOBILE) {
+    heroCatWrap.style.opacity = '1';
+  } else {
+    heroCatWrap.style.opacity = '0';
+    heroCatWrap.style.transform = 'translateY(40px)';
+    heroCatWrap.style.filter = 'blur(12px)';
+    setTimeout(() => {
+      heroCatWrap.style.transition = 'opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease';
+      heroCatWrap.style.opacity = '1';
+      heroCatWrap.style.transform = 'translateY(0)';
+      heroCatWrap.style.filter = 'blur(0px)';
+    }, 100);
+  }
 }
 
-// ── Cat eye tracking + blinking ──────────────────────────────────────────────
 (function initCatEyes() {
-  const eyeLeft   = document.getElementById('eyeLeft');
-  const eyeRight  = document.getElementById('eyeRight');
+  if (IS_TOUCH) return;
+  const eyeLeft = document.getElementById('eyeLeft');
+  const eyeRight = document.getElementById('eyeRight');
   const pupilLeft = document.getElementById('pupilLeft');
-  const pupilRight= document.getElementById('pupilRight');
+  const pupilRight = document.getElementById('pupilRight');
   if (!eyeLeft || !eyeRight) return;
 
-  const eyes   = [eyeLeft,   eyeRight];
+  const eyes = [eyeLeft, eyeRight];
   const pupils = [pupilLeft, pupilRight];
-  const MAX_PX = 6; // max pupil travel from centre
+  const MAX_PX = 6;
 
-  // Track mouse → move pupils (throttled with rAF) ──────────────────
   let eyeRaf = false;
   let lastEyeX = 0, lastEyeY = 0;
   document.addEventListener('mousemove', (e) => {
@@ -299,23 +303,22 @@ if (heroCatWrap) {
       eyeRaf = true;
       requestAnimationFrame(() => {
         eyes.forEach((eye, i) => {
-          const r  = eye.getBoundingClientRect();
-          const cx = r.left + r.width  / 2;
-          const cy = r.top  + r.height / 2;
+          const r = eye.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
           const dx = lastEyeX - cx;
           const dy = lastEyeY - cy;
-          const dist  = Math.sqrt(dx * dx + dy * dy);
+          const dist = Math.sqrt(dx * dx + dy * dy);
           const ratio = Math.min(dist, 80) / 80;
           const px = (dx / (dist || 1)) * MAX_PX * ratio;
           const py = (dy / (dist || 1)) * MAX_PX * ratio;
-          pupils[i].style.transform = `translate(${px}px, ${py}px)`;
+          if (pupils[i]) pupils[i].style.transform = `translate(${px}px, ${py}px)`;
         });
         eyeRaf = false;
       });
     }
   });
 
-  // Blinking — random interval between 2.5s and 5s ─────────────────
   function blink() {
     eyes.forEach(eye => {
       eye.classList.add('is-blinking');
@@ -323,95 +326,90 @@ if (heroCatWrap) {
     });
     setTimeout(blink, 2500 + Math.random() * 2500);
   }
-  setTimeout(blink, 1800 + Math.random() * 1500); // first blink after ~2-3s
+  setTimeout(blink, 1800 + Math.random() * 1500);
 })();
 
+// ── Timing Logic ─────────────────────────────────────────────────
+const LETTER_DUR = 800;
+const LETTER_STAG = 55;
+const LETTERS_START = 400;
 
-// Letters (staggered) ───────────────────────────────────────────────
-const LETTER_DUR   = 800;   // ms transition per letter
-const LETTER_STAG  = 55;    // ms stagger offset
-const LETTERS_START= 400;   // ms — cat appears at 100ms, letters follow at 400ms
-
-letters.forEach((letter, i) => {
-  letter.style.opacity    = '0';
-  letter.style.transform  = 'translateY(80px) rotate(2deg)';
-  letter.style.filter     = 'blur(4px)';
-  letter.style.transition = 'none';
-
-  const delay = LETTERS_START + i * LETTER_STAG;
+if (IS_MOBILE) {
+  letters.forEach(l => { l.style.opacity = '1'; });
   setTimeout(() => {
-    letter.style.transition = `opacity ${LETTER_DUR}ms cubic-bezier(0.16,1,0.3,1),
-                               transform ${LETTER_DUR}ms cubic-bezier(0.16,1,0.3,1),
-                               filter ${LETTER_DUR}ms ease`;
-    letter.style.opacity    = '1';
-    letter.style.transform  = 'translateY(0) rotate(0deg)';
-    letter.style.filter     = 'blur(0px)';
-  }, delay);
-});
-
-// Subtitle lines (blur-in, 500ms after last letter) ─────────────────
-const subtitleStart = LETTERS_START + letters.length * LETTER_STAG + 500;
-if (heroEyebrow) revealElBlur(heroEyebrow,   subtitleStart - 200,  14);
-revealElBlur(subtitleSans,  subtitleStart,       32);
-revealElBlur(subtitleSerif, subtitleStart + 160, 32);
-
-// Corner labels (last) ──────────────────────────────────────────────
-const cornersStart = subtitleStart + 600;
-revealEl(cornerLeft,  cornersStart,      18);
-revealEl(cornerRight, cornersStart + 90, 18);
-
-// ─────────────────────────────────────────────────────────────────
-// GSAP ScrollTrigger — PINNED dissolve + bento reveal
-// uDissolve: 1→0 = transparent→opaque white canvas over hero.
-// onUpdate watches progress each scrub frame:
-//   ≥ 0.98 → section2 fades IN above canvas (z16 > z15), cards blur in.
-//   ≤ 0.02 → section2 resets, ready for re-play.
-// canvas1 opacity is NEVER changed — section2 sits on top of it,
-// so there is zero hero bleed-through / flicker at any browser.
-// ─────────────────────────────────────────────────────────────────
-const canvas1El = document.querySelector('.canvas1');
-
-const dissolveST = gsap.fromTo(
-  material.uniforms.uDissolve,
-  { value: 1 },         // canvas transparent — dark hero bg shows
-  {
-    value: 0,           // canvas fully opaque white — hero is gone
-    ease: 'none',
-    scrollTrigger: {
-      trigger:    '.hero',
-      start:      'top top',
-      end:        '+=70%',
-      pin:        true,
-      scrub:      0.6,
-      pinSpacing: true,
-      anticipatePin: 1
-    }
-  }
-);
-
-// ─────────────────────────────────────────────────────────────────
-// Micro-interaction: letter parallax on mouse hover over name
-// ─────────────────────────────────────────────────────────────────
-heroName.addEventListener('mousemove', (e) => {
-  const rect  = heroName.getBoundingClientRect();
-  const dx    = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2); // -1 to +1
-  const dy    = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
-
+    if (heroEyebrow) { heroEyebrow.style.opacity = '1'; heroEyebrow.style.transform = ''; }
+    if (subtitleSans)  { subtitleSans.style.opacity = '1'; subtitleSans.style.transform = ''; }
+    if (subtitleSerif) { subtitleSerif.style.opacity = '1'; subtitleSerif.style.transform = ''; }
+  }, 100);
+} else {
   letters.forEach((letter, i) => {
-    const depth  = ((i / (letters.length - 1)) - 0.5) * 2; // -1→+1
-    const shiftX = dx * depth * 7;
-    const shiftY = dy * 4;
-    letter.style.transition = 'transform 0.15s ease';
-    letter.style.transform  = `translate(${shiftX}px, ${shiftY}px)`;
+    letter.style.opacity = '0';
+    letter.style.transform = 'translateY(80px) rotate(2deg)';
+    letter.style.filter = 'blur(4px)';
+    const delay = LETTERS_START + i * LETTER_STAG;
+    setTimeout(() => {
+      letter.style.transition = `opacity ${LETTER_DUR}ms cubic-bezier(0.16,1,0.3,1), transform ${LETTER_DUR}ms cubic-bezier(0.16,1,0.3,1), filter ${LETTER_DUR}ms ease`;
+      letter.style.opacity = '1';
+      letter.style.transform = 'translateY(0) rotate(0deg)';
+      letter.style.filter = 'blur(0px)';
+    }, delay);
   });
-});
 
-heroName.addEventListener('mouseleave', () => {
-  letters.forEach(letter => {
-    letter.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-    letter.style.transform  = 'translate(0, 0)';
+  const subtitleStart = LETTERS_START + letters.length * LETTER_STAG + 500;
+  revealElBlur(heroEyebrow, subtitleStart - 200, 14);
+  revealElBlur(subtitleSans, subtitleStart, 32);
+  revealElBlur(subtitleSerif, subtitleStart + 160, 32);
+  const cornersStart = subtitleStart + 600;
+  revealEl(cornerLeft, cornersStart, 18);
+  revealEl(cornerRight, cornersStart + 90, 18);
+}
+
+// ── GSAP ScrollTrigger Dissolve ──────────────────────────────────
+if (!IS_MOBILE && material) {
+  gsap.fromTo(
+    material.uniforms.uDissolve,
+    { value: 1 },
+    {
+      value: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: '+=70%',
+        pin: true,
+        scrub: 0.6,
+        pinSpacing: true,
+        anticipatePin: 1
+      }
+    }
+  );
+}
+
+// ── Letter Parallax ──────────────────────────────────────────────
+if (!IS_TOUCH && heroName) {
+  heroName.addEventListener('mousemove', (e) => {
+    const rect = heroName.getBoundingClientRect();
+    const dx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+    const dy = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+
+    letters.forEach((letter, i) => {
+      const depth = ((i / (letters.length - 1)) - 0.5) * 2;
+      const shiftX = dx * depth * 7;
+      const shiftY = dy * 4;
+      letter.style.transition = 'transform 0.15s ease';
+      letter.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+    });
   });
-});
+
+  heroName.addEventListener('mouseleave', () => {
+    letters.forEach(letter => {
+      letter.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      letter.style.transform = 'translate(0, 0)';
+    });
+  });
+}
+
+// ... [Rest of your navbar, dropdown, slider, and section logic follows here] ...
 
 // ─────────────────────────────────────────────────────────────────
 // Navbar — GSAP scroll light theme (fires at 3px scroll)
