@@ -32,9 +32,7 @@ export default defineConfig({
         codeOfConduct:      resolve(__dirname, 'code-of-conduct.html'),
         problemStatement:   resolve(__dirname, 'problem-statement.html'),
         
-        // Personal / Portfolio Pages
-        blogPost:           resolve(__dirname, 'blog-post.html'),
-        bookACall:          resolve(__dirname, 'book-a-call.html'),
+        // Legal
         legal:              resolve(__dirname, 'legal.html'),
 
         // Admin Dashboard Pages (Nested)

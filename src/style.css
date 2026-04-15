@@ -3755,6 +3755,34 @@ body {
 .cf-primary-pills   { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
 .cf-secondary-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
 
+.sch-phase-label .sch-phase-num {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 4.5rem;
+  line-height: 1;
+  color: rgba(255,255,255,0.12);
+  letter-spacing: -0.02em;
+  transition: color 0.4s;
+}
+.sch-phase-block:hover .sch-phase-label .sch-phase-num { color: rgba(255,255,255,0.35); }
+
+.sch-phase-timerange {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.sch-phase-name {
+  font-family: var(--font-ui);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.95);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
 /* ── Glass Pill — shared base ─────────────────────────────────────────────── */
 .cf-pill {
   display: inline-flex;
@@ -4044,45 +4072,89 @@ body {
 /* ── Glowing scroll progress line ── */
 .sch-progress-track {
   position: absolute;
-  left: 230px; /* aligns with the dot column in the grid */
+  left: 230px;
   top: 0;
   bottom: 0;
   width: 3px;
   z-index: 5;
   pointer-events: none;
 }
+/* Faint background rail */
+.sch-progress-track::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+}
 .sch-progress-line {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 0%; /* JS drives this via scroll */
-  background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
-  border-radius: 2px;
-  box-shadow: 0 0 12px rgba(249,115,22,0.6), 0 0 30px rgba(249,115,22,0.25);
-  transition: height 0.05s linear;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 0%;
+  background: linear-gradient(180deg,
+    rgba(56,189,248,0.2) 0%,
+    #38bdf8 20%,
+    #818cf8 50%,
+    #c084fc 80%,
+    rgba(192,132,252,0.2) 100%);
+  border-radius: 3px;
+  box-shadow:
+    0 0 8px rgba(56,189,248,0.5),
+    0 0 24px rgba(129,140,248,0.3),
+    0 0 48px rgba(192,132,252,0.15);
+  transition: height 0.08s linear;
 }
 .sch-progress-glow {
   position: absolute;
   left: 50%;
-  top: 0%; /* JS drives this via scroll */
+  top: 0%;
   transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #f97316;
-  box-shadow:
-    0 0 16px rgba(249,115,22,0.9),
-    0 0 40px rgba(249,115,22,0.5),
-    0 0 80px rgba(249,115,22,0.2);
-  transition: top 0.05s linear;
+  background: radial-gradient(circle, #c084fc 0%, rgba(192,132,252,0) 70%);
+  transition: top 0.08s linear;
   opacity: 0;
 }
 .sch-progress-glow.active { opacity: 1; }
+/* Inner bright core */
+.sch-progress-glow::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  box-shadow:
+    0 0 6px #c084fc,
+    0 0 18px rgba(192,132,252,0.8),
+    0 0 40px rgba(129,140,248,0.5);
+}
+/* Pulsing ring */
+.sch-progress-glow::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(192,132,252,0.4);
+  animation: schPulseRing 2s ease-out infinite;
+}
+@keyframes schPulseRing {
+  0% { transform: translate(-50%,-50%) scale(0.6); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1.8); opacity: 0; }
+}
 
 @media (max-width: 768px) {
   .sch-progress-track {
-    left: 90px; /* aligns with mobile timeline dot column */
+    left: 90px;
   }
 }
 
@@ -4141,7 +4213,7 @@ body {
   grid-template-columns: 130px 20px 1fr;
   gap: 0 1rem;
   align-items: flex-start;
-  padding: 1.3rem 0;
+  padding: 1.5rem 0;
   opacity: 0;
   transform: translateX(-24px);
   will-change: opacity, transform;
@@ -4150,12 +4222,14 @@ body {
 
 .sch-item-time {
   font-family: var(--font-ui);
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.45);
-  padding-top: 0.18rem;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.5);
+  padding-top: 0.15rem;
   white-space: nowrap;
+  text-align: right;
+  padding-right: 0.5rem;
 }
 
 .sch-item-track { display: flex; flex-direction: column; align-items: center; padding-top: 0.28rem; position: relative; z-index: 6; }
@@ -4177,32 +4251,57 @@ body {
 
 .sch-item-line { width: 1px; flex-grow: 1; min-height: 22px; background: rgba(255,255,255,0.07); margin-top: 4px; }
 
-.sch-item-content { display: flex; flex-direction: column; gap: 0.35rem; padding-bottom: 1rem; }
+.sch-item-content { display: flex; flex-direction: column; gap: 0.4rem; padding-bottom: 1rem; }
 .sch-item-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 
 .sch-item-name {
   font-family: var(--font-ui);
-  font-size: 1.05rem;
+  font-size: 1.18rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.92);
+  color: rgba(255,255,255,0.95);
   letter-spacing: -0.01em;
 }
 .sch-item-desc {
   font-family: var(--font-ui);
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.45);
-  line-height: 1.6;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.65;
   margin: 0;
 }
+
+.sch-badge {
+  font-family: var(--font-ui);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.4);
+  white-space: nowrap;
+}
+.sch-badge--critical {
+  color: #ef4444;
+  border-color: rgba(239,68,68,0.3);
+  background: rgba(239,68,68,0.08);
+}
+.sch-badge--main,
+.sch-badge--break,
+.sch-badge--submit,
+.sch-badge--fun,
+.sch-badge--finale { /* inherits .sch-badge */ }
 
 @media (max-width: 768px) {
   .sch-phase-block { grid-template-columns: 1fr; gap: 1rem 0; padding: 2rem 0; }
   .sch-phase-label { position: static; }
   .sch-phase-label .sch-phase-num { font-size: 2.4rem; }
+  .sch-phase-name { font-size: 1.1rem; }
   .sch-item { grid-template-columns: 72px 18px 1fr; gap: 0 0.7rem; }
-  .sch-item-time { font-size: 0.72rem; }
-  .sch-item-name { font-size: 0.95rem; }
-  .sch-item-desc { font-size: 0.82rem; }
+  .sch-item-time { font-size: 0.78rem; }
+  .sch-item-name { font-size: 1.02rem; }
+  .sch-item-desc { font-size: 0.88rem; }
 }
 
 
