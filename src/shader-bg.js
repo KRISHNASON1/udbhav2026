@@ -87,20 +87,21 @@ export function initHeroBgShader(mountEl) {
   resize();
   window.addEventListener('resize', resize, { passive: true });
 
-  // ── RAF loop (paused when off-screen via IntersectionObserver) ─────────────
+  // ── RAF loop (paused when hero off-screen via IntersectionObserver) ───────
   let rafId = null;
-  let frameCount = 0;
   let isVisible = true;
 
   function animate() {
-    if (!isVisible) { rafId = null; return; }
+    if (!isVisible) { 
+      rafId = null; 
+      return; 
+    }
     rafId = requestAnimationFrame(animate);
-    frameCount++;
     uniforms.time.value += 0.05;
     renderer.render(scene, camera);
   }
 
-  // Pause when hero scrolls off screen — saves GPU
+  // Pause shader when hero section scrolls off-screen — saves GPU/battery
   if ('IntersectionObserver' in window) {
     const obs = new IntersectionObserver(([entry]) => {
       isVisible = entry.isIntersecting;
