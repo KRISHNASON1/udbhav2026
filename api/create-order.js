@@ -72,9 +72,9 @@ export default async function handler(req, res) {
         customer_phone: leaderPhone || '9999999999',
       },
       order_meta: {
-        return_url:   returnUrl,
-        notify_url:   `${protocol}://${host}/api/cashfree-webhook`,  // optional webhook
-        payment_methods: 'upi,netbanking,cc,dc,wallet',
+        return_url:      returnUrl,
+        notify_url:      `${protocol}://${host}/api/cashfree-webhook`,
+        payment_methods: 'cc,dc,upi,nb,app,paylater,emi',
       },
       order_note: `UDBHAV'26 Registration — ${teamName}${mentorSession ? ' + Mentor Session' : ''}`,
     };
