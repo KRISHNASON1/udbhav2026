@@ -28,6 +28,7 @@ const __dirname  = path.dirname(__filename);
 // ── Import existing API handlers ─────────────────────────────────────────────
 import createOrderHandler  from './api/create-order.js';
 import verifyPaymentHandler from './api/verify-payment.js';
+import cashfreeWebhookHandler from './api/cashfree-webhook.js';
 import registerHandler      from './api/register.js';
 import teamHandler          from './api/team.js';
 import spotifyHandler       from './api/spotify.js';
@@ -66,7 +67,9 @@ const app  = express();
 const PORT = process.env.PORT || 8080;
 const DIST = path.join(__dirname, 'dist');
 
-// Parse JSON bodies
+// Parse JSON bodies — NOTE: webhook handler needs raw body for signature verification
+// We use express.raw for the webhook route and express.json for everything else
+app.use('/api/cashfree-webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 
 // ── Clean-URL mapping (Combined Portfolio + Udbhav Hackathon) ────────────────
@@ -120,8 +123,9 @@ function mountHandler(handler) {
 }
 
 // ── Existing API Routes ───────────────────────────────────────────────────────
-app.all('/api/create-order',   mountHandler(createOrderHandler));
-app.all('/api/verify-payment', mountHandler(verifyPaymentHandler));
+app.all('/api/create-order',      mountHandler(createOrderHandler));
+app.all('/api/verify-payment',    mountHandler(verifyPaymentHandler));
+app.post('/api/cashfree-webhook', mountHandler(cashfreeWebhookHandler));  // Cashfree payment events
 app.all('/api/register',       mountHandler(registerHandler));
 app.all('/api/team',           mountHandler(teamHandler));
 app.all('/api/spotify',        mountHandler(spotifyHandler));
@@ -185,8 +189,9 @@ app.listen(PORT, () => {
   console.log(`✅ UDBHAV'26 server running on port ${PORT}`);
   console.log(`📦 Environment check:`);
   console.log(`   - MONGODB_URI:      ${process.env.MONGODB_URI      ? '✓ Set' : '✗ Missing'}`);
-  console.log(`   - CASHFREE_APP_ID:    Set'✓ Set' : '✗ Missing'}`);
-  console.log(`   - PUSHER_APP_ID:    ${process.env.PUSHER_APP_ID    ? '✓ Set' : '✗ Missing'}`);
+  console.log(`   - CASHFREE_APP_ID:      ${process.env.CASHFREE_APP_ID      ? '✓ Set' : '✗ Missing'}`);
+  console.log(`   - CASHFREE_SECRET_KEY:  ${process.env.CASHFREE_SECRET_KEY  ? '✓ Set' : '✗ Missing'}`);
+  console.log(`   - CASHFREE_WEBHOOK_SEC: ${process.env.CASHFREE_WEBHOOK_SECRET ? '✓ Set' : '✗ Missing'}`);
   console.log(`   - RESEND_API_KEY:   ${process.env.RESEND_API_KEY   ? '✓ Set' : '✗ Missing'}`);
   console.log(`   - ADMIN_SECRET:     ${process.env.ADMIN_SECRET     ? '✓ Set' : '✗ Missing'}`);
   console.log(`   - ADMIN_USER:       ${process.env.ADMIN_USER       ? '✓ Set' : '✗ Missing'}`);
