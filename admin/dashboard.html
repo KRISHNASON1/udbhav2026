@@ -809,62 +809,91 @@
   </main>
 
   <script type="module">
-    import { AdminAuth, RegistrationStore, AdminUI, seedRegistrations } from '/src/admin.js';
+    import { AdminAuth, AdminUI } from '/src/admin.js';
+
+    // Nuke ALL old localStorage registration data immediately
+    localStorage.removeItem('udbhav_registrations');
 
     // Auth guard
     if (!AdminAuth.isAuthenticated()) {
       window.location.href = '/admin/login.html';
     }
 
-    // Sidebar
-    AdminUI.initSidebar();
+    const apiHeaders = () => ({ 'X-Admin-Secret': AdminAuth.getToken() });
 
-    // Logout
+    AdminUI.initSidebar();
     document.getElementById('logoutBtn').addEventListener('click', () => {
       AdminAuth.logout();
       window.location.href = '/admin/login.html';
     });
 
-    // Stats
-    function renderStats() {
-      const s = RegistrationStore.getStats();
-      document.getElementById('statTotal').textContent = s.total;
-      document.getElementById('statTotalSub').textContent = `${s.total} teams registered`;
-      document.getElementById('statMembers').textContent = s.totalMembers;
-      document.getElementById('statApproved').textContent = s.approved;
-      document.getElementById('statApprovedSub').textContent = `${s.rejected} rejected`;
-      document.getElementById('statPending').textContent = s.pending;
-    }
-    renderStats();
+    async function loadDashboard() {
+      try {
+        const res  = await fetch('/api/admin/payments?page=1&limit=200', { headers: apiHeaders() });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'API error');
 
-    // Recent registrations table
-    function renderRecent() {
-      const regs = RegistrationStore.getAll().slice(0, 5);
-      const tbody = document.getElementById('recentTableBody');
+        const regs    = data.registrations || [];
+        const total   = data.pagination?.total ?? regs.length;
+        const paid    = regs.filter(r => r.paymentStatus === 'paid').length;
+        const pending = regs.filter(r => r.paymentStatus !== 'paid').length;
+        const members = regs.reduce((sum, r) => sum + (r.members?.length || 0) + 1, 0);
 
-      if (regs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:rgba(255,255,255,0.25);">No registrations yet</td></tr>';
-        return;
+        document.getElementById('statTotal').textContent    = total;
+        document.getElementById('statTotalSub').textContent = total + ' team' + (total !== 1 ? 's' : '') + ' registered';
+        document.getElementById('statMembers').textContent  = members;
+        document.getElementById('statApproved').textContent = paid;
+        document.getElementById('statApprovedSub').textContent = pending + ' pending payment';
+        document.getElementById('statPending').textContent  = pending;
+
+        const recent = regs.slice(0, 5);
+        const tbody  = document.getElementById('recentTableBody');
+        if (recent.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:rgba(255,255,255,0.25);">No registrations yet</td></tr>';
+          return;
+        }
+        tbody.innerHTML = recent.map(r =>
+          '<tr>' +
+          '<td class="td-team">' + (r.teamName || '-') + '</td>' +
+          '<td>' + (r.leader?.name || '-') + '</td>' +
+          '<td>' + (r.collegeName || '-') + '</td>' +
+          '<td>' + ((r.members?.length || 0) + 1) + '</td>' +
+          '<td>' + (r.paymentStatus === 'paid' ? '<span class="status-badge badge--approved">Paid</span>' : '<span class="status-badge badge--pending">Pending</span>') + '</td>' +
+          '<td>' + AdminUI.formatDate(r.createdAt) + '</td>' +
+          '</tr>'
+        ).join('');
+      } catch (err) {
+        console.error('[Dashboard]', err);
+        ['statTotal','statMembers','statApproved','statPending'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = '-';
+        });
+        const tbody = document.getElementById('recentTableBody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:#f87171;">Failed to load — check server</td></tr>';
       }
-
-      tbody.innerHTML = regs.map(r => `
-        <tr>
-          <td class="td-team">${r.teamName || '—'}</td>
-          <td>${r.leaderName || '—'}</td>
-          <td>${r.college || '—'}</td>
-          <td>${(r.members ? r.members.length : 0) + 1}</td>
-          <td>${AdminUI.statusBadge(r.status)}</td>
-          <td>${AdminUI.formatDate(r.createdAt)}</td>
-        </tr>
-      `).join('');
     }
-    renderRecent();
 
-    // Export
-    document.getElementById('exportBtn').addEventListener('click', (e) => {
+    loadDashboard();
+
+    document.getElementById('exportBtn')?.addEventListener('click', async (e) => {
       e.preventDefault();
-      RegistrationStore.exportCSV(RegistrationStore.getAll());
-      AdminUI.toast('CSV exported successfully!', 'success');
+      try {
+        const res  = await fetch('/api/admin/payments?page=1&limit=1000', { headers: apiHeaders() });
+        const data = await res.json();
+        const regs = data.registrations || [];
+        const hdrs = ['Team Name','Leader Name','Email','Phone','College','Members','Amount','Status','Team Code','Date'];
+        const rows = regs.map(r => [
+          r.teamName||'', r.leader?.name||'', r.leader?.email||'', r.leader?.phone||'',
+          r.collegeName||'', (r.members||[]).map(m=>m.name).join('; '),
+          r.totalAmount||'', r.paymentStatus||'', r.teamCode||'',
+          r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : ''
+        ]);
+        const csv = [hdrs,...rows].map(row=>row.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+        const url = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+        Object.assign(document.createElement('a'),{href:url,download:'udbhav26_registrations.csv'}).click();
+        URL.revokeObjectURL(url);
+        AdminUI.toast('CSV exported!', 'success');
+      } catch(err) { AdminUI.toast('Export failed', 'error'); }
     });
   </script>
 
