@@ -72,9 +72,12 @@ export default async function handler(req, res) {
     const orderId     = `UDBHAV26_${Date.now()}_${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
     // ── Return URL ────────────────────────────────────────────────
-    const host      = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:5173';
+    // Use x-forwarded-host in prod; in dev Cashfree calls Express (8080)
+    // but the user browses via Vite (5173), so we force 5173 locally.
+    const rawHost   = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:5173';
+    const host      = rawHost.replace(':8080', ':5173'); // local dev fix
     const protocol  = req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https');
-    const returnUrl = `${protocol}://${host}/register.html?order_id={order_id}&status={order_status}`;
+    const returnUrl = `${protocol}://${host}/payment-status?order_id={order_id}&status={order_status}`;
 
     const payload = {
       order_id:      orderId,
