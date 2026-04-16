@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -782,9 +782,9 @@
         }
 
         tbody.innerHTML = teams.map(t => {
-          const code = t.codeGenerated
-            ? '<span style="font-family:monospace;color:#a855f7;font-weight:700;letter-spacing:0.08em;">' + (t.code || '-') + '</span>'
-            : '<span style="color:rgba(255,255,255,0.25);font-size:0.75rem;">Not generated</span>';
+          const code = t.code
+            ? '<span style="font-family:monospace;color:#a855f7;font-weight:700;letter-spacing:0.08em;">' + t.code + '</span>'
+            : '<span style="color:rgba(255,255,255,0.25);font-size:0.75rem;">— not assigned</span>';
           const payment = t.paymentStatus === 'paid'
             ? '<span class="status-badge badge--approved">Paid</span>'
             : '<span class="status-badge badge--pending">Pending</span>';
@@ -913,7 +913,7 @@
           '<div class="modal-row"><span class="modal-row-label">Branch</span><span class="modal-row-value">' + (r.branch||'-') + '</span></div>' +
           '</div>' +
           '<div class="modal-section"><div class="modal-section-title">Team Code</div>' +
-          '<div class="modal-row"><span class="modal-row-label">Code</span><span class="modal-row-value" style="font-family:monospace;color:#a855f7;">' + (r.code||'Not generated') + '</span></div>' +
+          '<div class="modal-row"><span class="modal-row-label">Code</span><span class="modal-row-value" style="font-family:monospace;color:#a855f7;">' + (r.code ? r.code : '<span style="color:rgba(255,255,255,0.25);font-size:0.8rem;">— not assigned yet</span>') + '</span></div>' +
           '<div class="modal-row"><span class="modal-row-label">Payment</span><span class="modal-row-value">' + (r.paymentStatus==='paid' ? '<span style="color:#4ade80;">Paid</span>' : '<span style="color:#fbbf24;">Pending</span>') + '</span></div>' +
           '<div class="modal-row"><span class="modal-row-label">Amount</span><span class="modal-row-value">' + (r.totalAmount ? '&#8377;'+r.totalAmount : '-') + '</span></div>' +
           '</div>' +

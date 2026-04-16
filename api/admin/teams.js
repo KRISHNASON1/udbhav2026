@@ -238,14 +238,22 @@ export async function generateCodesHandler(req, res) {
   try {
     await connectDB();
 
-    // Only process teams that don't already have a code
-    const uncodedTeams = await Team.find({ codeGenerated: false });
+    // First: sync any team that already has a code but the flag is not set
+    await Team.updateMany(
+      { code: { $exists: true, $ne: null, $ne: '' }, codeGenerated: { $ne: true } },
+      { $set: { codeGenerated: true } }
+    );
+
+    // Then: generate codes for teams that have NO code yet
+    const uncodedTeams = await Team.find({ $or: [{ code: { $exists: false } }, { code: null }, { code: '' }] });
 
     if (uncodedTeams.length === 0) {
+      const synced = await Team.countDocuments({ codeGenerated: true });
       return res.status(200).json({
         success: true,
-        message: 'All teams already have codes. Nothing to generate.',
+        message: `All teams already have codes (${synced} total active codes).`,
         generated: 0,
+        synced,
       });
     }
 
@@ -255,7 +263,7 @@ export async function generateCodesHandler(req, res) {
     for (const team of uncodedTeams) {
       const code = await generateUniqueCode();
       team.code          = code;
-      team.codeGenerated = true;  // IMMUTABLE flag — code cannot change after this
+      team.codeGenerated = true;
       await team.save();
       generated++;
       results.push({ id: team._id, teamName: team.teamName, code });
