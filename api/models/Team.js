@@ -20,10 +20,8 @@ const TeamSchema = new mongoose.Schema(
     code: {
       type:      String,
       default:   null,
-      sparse:    true,   // allows multiple null values
       uppercase: true,
       trim:      true,
-      index:     true,
     },
 
     // Once true, code cannot be changed — enforced at API level
