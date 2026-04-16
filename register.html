@@ -1959,7 +1959,6 @@
 
     // -- Team Code Verify flow
     let verifiedTeamCode = null;
-    let memberCount      = 0;
 
     const verifyBtn        = document.getElementById('verifyCodeBtn');
     const codeInput        = document.getElementById('teamCodeInput');
@@ -2294,7 +2293,7 @@
     }
 
     document.getElementById('cfBackToTop')?.addEventListener('click', () => {
-      lenis.scrollTo(0, { duration: 1.2 });
+      lenis?.scrollTo(0, { duration: 1.2 });
     });
 
     // Magnetic pills
