@@ -4,7 +4,7 @@
 
 const Dashboard = {
     teamId: null,
-    targetDate: new Date("2026-04-25T10:45:00"),
+    targetDate: new Date("2026-04-25T08:00:00"),
     psReleased: false,
 
     // Timeline Stages Data
@@ -40,7 +40,7 @@ const Dashboard = {
     initEthereal() {
         const hueEl = document.getElementById('etherHueRotate');
         if (!hueEl) return;
-        
+
         let hue = 0;
         const DEG = 360 / (5.84 * 60);
         const anim = () => {
@@ -79,7 +79,7 @@ const Dashboard = {
         }
 
         document.querySelectorAll('.display-team-id').forEach(el => el.textContent = teamData.id);
-        
+
         this.showView('dashboard-view');
         this.fetchStats(teamData.id);
     },
@@ -107,7 +107,7 @@ const Dashboard = {
         if (!container) return;
 
         container.innerHTML = `
-            <div class="absolute left-[13px] top-2 bottom-2 w-px bg-gradient-to-b from-primary/50 via-white/10 to-transparent"></div>
+            <div class="absolute left-[13px] top-2 bottom-2 w-[2px] -ml-[0.5px] bg-gradient-to-b from-primary via-primary/50 to-transparent drop-shadow-[0_0_8px_rgba(139,92,246,0.8)] shadow-[0_0_15px_rgba(139,92,246,0.4)]"></div>
         `;
 
         this.timelineStages.forEach((stage, idx) => {
@@ -116,14 +116,25 @@ const Dashboard = {
             stageEl.setAttribute('data-timestamp', stage.timestamp);
             stageEl.innerHTML = `
                 <div class="timeline-icon relative z-10 flex items-start pt-0.5 justify-center bg-background shrink-0">
-                    <i data-lucide="circle" class="w-[26px] h-[26px] text-white/20 bg-background rounded-full"></i>
+                    <i data-lucide="circle" class="w-[26px] h-[26px] text-white/20 bg-background rounded-full transition-all duration-500"></i>
                 </div>
                 <div class="timeline-content flex-1 pb-4">
                     <div class="flex items-center justify-between mb-1">
                         <span class="stage-time text-[10px] font-bold tracking-widest text-white/30">${stage.time}</span>
-                        <span class="status-live text-[9px] font-black text-primary animate-pulse hidden uppercase">Live</span>
+                        <div class="flex items-center">
+                            <span class="status-live hidden text-[9px] font-black text-blue-400 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(59,130,246,0.6)] items-center gap-1.5">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
+                                </span>
+                                Live
+                            </span>
+                            <span class="status-completed hidden text-[9px] font-black text-white/30 bg-white/5 px-2 py-0.5 rounded-md uppercase tracking-wider items-center gap-1 border border-white/5">
+                                <i data-lucide="check" class="w-3 h-3"></i> Completed
+                            </span>
+                        </div>
                     </div>
-                    <h4 class="text-sm font-bold text-white">${stage.title}</h4>
+                    <h4 class="stage-title text-sm font-bold text-white transition-all duration-500">${stage.title}</h4>
                     <p class="text-xs mt-1 leading-relaxed text-white/60">${stage.description}</p>
                 </div>
             `;
@@ -263,26 +274,62 @@ const Dashboard = {
 
             const iconI = stage.querySelector('.timeline-icon i');
             const statusLive = stage.querySelector('.status-live');
+            const statusCompleted = stage.querySelector('.status-completed');
+
+            const h4 = stage.querySelector('.stage-title');
 
             if (now >= stageTime && now < nextStageTime) {
                 stage.classList.add('is-current');
                 stage.classList.remove('is-completed', 'is-upcoming');
-                if (statusLive) statusLive.classList.remove('hidden');
+                if (statusLive) {
+                    statusLive.classList.remove('hidden');
+                    statusLive.classList.add('flex');
+                }
+                if (statusCompleted) {
+                    statusCompleted.classList.add('hidden');
+                    statusCompleted.classList.remove('flex');
+                }
                 if (iconI) {
                     iconI.setAttribute('data-lucide', 'play-circle');
-                    iconI.classList.add('text-primary');
+                    iconI.className = 'w-[26px] h-[26px] bg-background rounded-full transition-all duration-500 text-primary drop-shadow-[0_0_12px_rgba(139,92,246,1)] scale-110';
                 }
+                if (h4) h4.className = 'stage-title text-sm font-bold transition-all duration-500 text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]';
             } else if (now >= nextStageTime) {
                 stage.classList.add('is-completed');
                 stage.classList.remove('is-current', 'is-upcoming');
-                if (statusLive) statusLive.classList.add('hidden');
-                if (iconI) iconI.setAttribute('data-lucide', 'check-circle-2');
+                if (statusLive) {
+                    statusLive.classList.add('hidden');
+                    statusLive.classList.remove('flex');
+                }
+                if (statusCompleted) {
+                    statusCompleted.classList.remove('hidden');
+                    statusCompleted.classList.add('flex');
+                }
+                if (iconI) {
+                    iconI.setAttribute('data-lucide', 'check-circle-2');
+                    iconI.className = 'w-[26px] h-[26px] bg-background rounded-full transition-all duration-500 text-white/40 drop-shadow-none scale-100';
+                }
+                if (h4) h4.className = 'stage-title text-sm font-bold transition-all duration-500 text-white/60 drop-shadow-none';
             } else {
                 stage.classList.add('is-upcoming');
                 stage.classList.remove('is-current', 'is-completed');
+                if (statusLive) {
+                    statusLive.classList.add('hidden');
+                    statusLive.classList.remove('flex');
+                }
+                if (statusCompleted) {
+                    statusCompleted.classList.add('hidden');
+                    statusCompleted.classList.remove('flex');
+                }
+                if (iconI) {
+                    iconI.setAttribute('data-lucide', 'circle');
+                    iconI.className = 'w-[26px] h-[26px] bg-background rounded-full transition-all duration-500 text-white/20 drop-shadow-none scale-100';
+                }
+                if (h4) h4.className = 'stage-title text-sm font-bold text-white transition-all duration-500 text-white drop-shadow-none';
+
                 if (!nextStageFound) {
                     const text = document.getElementById('next-phase-text');
-                    if (text) text.textContent = `${stage.querySelector('h4').textContent} @ ${stage.querySelector('.stage-time').textContent}`;
+                    if (text) text.textContent = `${h4 ? h4.textContent : stage.querySelector('h4').textContent} @ ${stage.querySelector('.stage-time').textContent}`;
                     nextStageFound = true;
                 }
             }

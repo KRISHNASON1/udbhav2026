@@ -7,7 +7,7 @@
  */
 
 import { connectDB } from '../lib/mongodb.js';
-import { Team }      from '../models/Team.js';
+import { Registration } from '../models/Registration.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    const team = await Team.findOne({ code: formattedCode }).lean();
+    const team = await Registration.findOne({ teamCode: formattedCode }).lean();
 
     if (!team) {
       return res.status(404).json({
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       return res.status(403).json({
         success: false,
         error: 'Access Denied. Registration payment pending.',
-        code: team.code,
+        code: team.teamCode,
         status: team.paymentStatus
       });
     }
@@ -48,12 +48,12 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       team: {
-        id: team.code,
+        id: team.teamCode,
         name: team.teamName,
         college: team.collegeName,
-        leader: team.leader.name,
-        memberCount: team.memberCount,
-        psSelectionId: team.psSelectionId || null
+        leader: team.leader?.name || '',
+        memberCount: 1 + (team.members?.length || 0),
+        psSelectionId: null
       }
     });
 

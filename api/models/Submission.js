@@ -17,7 +17,7 @@ const SubmissionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['ppt-submission', 'project-submission', 'other'],
+      enum: ['ppt-submission', 'project-submission', 'github-submission', 'other'],
       required: true,
     },
     submissionLink: {
@@ -41,6 +41,8 @@ const SubmissionSchema = new mongoose.Schema(
   }
 );
 
-// Prevent re-compiling model on hot-reload
-export const Submission =
-  mongoose.models.Submission || mongoose.model('Submission', SubmissionSchema);
+// Force re-compiling model on hot-reload to catch schema changes
+if (mongoose.models.Submission) {
+  delete mongoose.models.Submission;
+}
+export const Submission = mongoose.model('Submission', SubmissionSchema);
