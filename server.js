@@ -185,7 +185,7 @@ app.listen(PORT, () => {
   console.log(`✅ UDBHAV'26 server running on port ${PORT}`);
   console.log(`📦 Environment check:`);
   console.log(`   - MONGODB_URI:      ${process.env.MONGODB_URI      ? '✓ Set' : '✗ Missing'}`);
-  console.log(`   - RAZORPAY_KEY_ID:  ${process.env.RAZORPAY_KEY_ID  ? '✓ Set' : '✗ Missing'}`);
+  console.log(`   - CASHFREE_APP_ID:    Set'✓ Set' : '✗ Missing'}`);
   console.log(`   - PUSHER_APP_ID:    ${process.env.PUSHER_APP_ID    ? '✓ Set' : '✗ Missing'}`);
   console.log(`   - RESEND_API_KEY:   ${process.env.RESEND_API_KEY   ? '✓ Set' : '✗ Missing'}`);
   console.log(`   - ADMIN_SECRET:     ${process.env.ADMIN_SECRET     ? '✓ Set' : '✗ Missing'}`);

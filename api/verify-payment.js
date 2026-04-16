@@ -1,39 +1,40 @@
 /**
  * api/verify-payment.js
- * ─────────────────────────────────────────────────────────────────────────────
+ * ─────────────────────────────────────────────────────────────────
  * POST /api/verify-payment
  *
- * 1. Verifies Razorpay signature (HMAC-SHA256)
- * 2. Saves the full registration to MongoDB with paymentStatus: 'paid'
- * 3. Generates a unique team code (UDB-XXXX)
- * 4. Sends confirmation email with team code (async, non-blocking to client)
+ * Verifies a Cashfree payment by calling the Cashfree Orders API
+ * (GET /orders/{order_id}) and checking order_status === 'PAID'.
+ *
+ * No HMAC signature needed — server-to-server API call is the
+ * authoritative source of truth.
  *
  * Request body (JSON):
  *   {
- *     razorpay_order_id, razorpay_payment_id, razorpay_signature,
- *     formData: {
- *       teamName, collegeName, branch, yearOfStudy,
- *       leader: { name, email, phone },
- *       members: [{ name, email, phone }, ...],
- *       mentorSession: boolean,
- *       totalAmount: number
- *     }
+ *     orderId:   string,   // Cashfree order_id returned from create-order
+ *     formData:  { teamName, collegeName, branch, yearOfStudy,
+ *                  leader: { name, email, phone },
+ *                  members: [...], mentorSession: boolean }
  *   }
  *
  * Response:
  *   200 { success: true, teamCode, teamName, amountPaid, wantsMentor }
- *   400 { success: false, error }
- *   500 { success: false, error }
- * ─────────────────────────────────────────────────────────────────────────────
+ *   400/500 { success: false, error }
+ * ─────────────────────────────────────────────────────────────────
  */
 
-import crypto from 'crypto';
 import { connectDB }         from './lib/mongodb.js';
 import { Registration }      from './models/Registration.js';
 import { generateTeamCode }  from './lib/teamCode.js';
 import { sendTeamCodeEmail } from './lib/email.js';
 
-const KEY_SECRET   = process.env.RAZORPAY_KEY_SECRET;
+const APP_ID     = process.env.CASHFREE_APP_ID;
+const SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
+const CF_ENV     = process.env.NODE_ENV === 'production' ? 'production' : 'sandbox';
+const CF_BASE    = CF_ENV === 'production'
+  ? 'https://api.cashfree.com/pg'
+  : 'https://sandbox.cashfreepayments.com/pg';
+
 const BASE_AMOUNT  = 800;
 const MENTOR_ADDON = 300;
 
@@ -56,35 +57,69 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, formData } = req.body || {};
+  if (!APP_ID || !SECRET_KEY) {
+    return res.status(500).json({ success: false, error: 'Server configuration error.' });
+  }
 
-    // ── 1. Presence checks ──────────────────────────────────────────────────
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return res.status(400).json({ success: false, error: 'Missing payment verification data.' });
+  try {
+    const { orderId, formData } = req.body || {};
+
+    // ── 1. Presence checks ─────────────────────────────────────
+    if (!orderId) {
+      return res.status(400).json({ success: false, error: 'Missing Cashfree order ID.' });
     }
     if (!formData) {
       return res.status(400).json({ success: false, error: 'Missing registration data.' });
     }
-    if (!KEY_SECRET) {
-      return res.status(500).json({ success: false, error: 'Server configuration error.' });
+
+    // ── 2. Fetch order status from Cashfree (authoritative) ─────
+    const cfRes = await fetch(`${CF_BASE}/orders/${orderId}`, {
+      method: 'GET',
+      headers: {
+        'x-api-version':   '2023-08-01',
+        'x-client-id':     APP_ID,
+        'x-client-secret': SECRET_KEY,
+      },
+    });
+
+    const cfData = await cfRes.json();
+
+    if (!cfRes.ok) {
+      console.error('[verify-payment] Cashfree order fetch error:', cfData);
+      return res.status(400).json({ success: false, error: 'Could not retrieve payment status. Please contact support.' });
     }
 
-    // ── 2. Verify Razorpay HMAC-SHA256 signature ────────────────────────────
-    const expectedSig = crypto
-      .createHmac('sha256', KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest('hex');
+    // Cashfree statuses: ACTIVE, PAID, EXPIRED, CANCELLED
+    const orderStatus = cfData.order_status;
+    console.log(`[verify-payment] Order ${orderId} status: ${orderStatus}`);
 
-    if (expectedSig !== razorpay_signature) {
-      console.warn('[verify-payment] Signature mismatch — possible tampered request', {
-        orderId: razorpay_order_id,
-        paymentId: razorpay_payment_id,
+    if (orderStatus !== 'PAID') {
+      return res.status(400).json({
+        success: false,
+        error: orderStatus === 'ACTIVE'
+          ? 'Payment not completed yet. Please complete the payment and try again.'
+          : `Payment ${orderStatus.toLowerCase()}. Please contact support.`,
       });
-      return res.status(400).json({ success: false, error: 'Payment verification failed. Please contact support.' });
     }
 
-    // ── 3. Validate form data ───────────────────────────────────────────────
+    // ── 3. Extract Cashfree payment ID from payments ─────────────
+    // Fetch payment details for this order to get cf_payment_id
+    let cfPaymentId = cfData.cf_order_id || orderId;
+    try {
+      const pymtRes  = await fetch(`${CF_BASE}/orders/${orderId}/payments`, {
+        headers: {
+          'x-api-version':   '2023-08-01',
+          'x-client-id':     APP_ID,
+          'x-client-secret': SECRET_KEY,
+        },
+      });
+      const payments = await pymtRes.json();
+      if (Array.isArray(payments) && payments.length > 0) {
+        cfPaymentId = String(payments[0].cf_payment_id || cfPaymentId);
+      }
+    } catch (_) { /* non-fatal */ }
+
+    // ── 4. Validate form data ────────────────────────────────────
     if (!(formData.teamName    || '').trim()) return res.status(400).json({ success: false, error: 'Team name is required.' });
     if (!(formData.collegeName || '').trim()) return res.status(400).json({ success: false, error: 'College name is required.' });
     if (!(formData.branch      || '').trim()) return res.status(400).json({ success: false, error: 'Branch is required.' });
@@ -102,12 +137,11 @@ export default async function handler(req, res) {
     // Server-authoritative amount
     const totalAmount = formData.mentorSession ? BASE_AMOUNT + MENTOR_ADDON : BASE_AMOUNT;
 
-    // ── 4. Connect & duplicate-payment guard ────────────────────────────────
+    // ── 5. Connect DB + duplicate guard ──────────────────────────
     await connectDB();
 
-    const existing = await Registration.findOne({ razorpayPaymentId: razorpay_payment_id });
+    const existing = await Registration.findOne({ cashfreeOrderId: orderId });
     if (existing) {
-      // Idempotent — same payment ID seen before, return what was saved
       return res.status(200).json({
         success:     true,
         teamCode:    existing.teamCode,
@@ -118,10 +152,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── 5. Generate unique team code ────────────────────────────────────────
+    // ── 6. Generate team code ────────────────────────────────────
     const teamCode = await generateTeamCode();
 
-    // ── 6. Save registration ────────────────────────────────────────────────
+    // ── 7. Save registration ─────────────────────────────────────
     const registration = await Registration.create({
       teamName:    formData.teamName.trim(),
       collegeName: formData.collegeName.trim(),
@@ -141,8 +175,8 @@ export default async function handler(req, res) {
       totalAmount,
       paymentStatus:     'paid',
       registrationCompleted: true,
-      razorpayOrderId:   razorpay_order_id,
-      razorpayPaymentId: razorpay_payment_id,
+      cashfreeOrderId:   orderId,
+      cashfreePaymentId: cfPaymentId,
       teamCode,
       ipAddress: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || null,
       userAgent: req.headers['user-agent'] || null,
@@ -150,16 +184,16 @@ export default async function handler(req, res) {
 
     console.log(`[verify-payment] ✅ Registered: ${registration._id} | Team: ${formData.teamName} | Code: ${teamCode}`);
 
-    // ── 7. Send email (async — do NOT await so client gets response fast) ───
+    // ── 8. Send confirmation email (non-blocking) ────────────────
     sendTeamCodeEmail({
       to:          formData.leader.email.trim().toLowerCase(),
       teamName:    formData.teamName.trim(),
       teamCode,
       wantsMentor: Boolean(formData.mentorSession),
       amountPaid:  totalAmount,
-    }).catch(err => console.error('[verify-payment] Email dispatch error:', err));
+    }).catch(err => console.error('[verify-payment] Email error:', err));
 
-    // ── 8. Respond immediately ──────────────────────────────────────────────
+    // ── 9. Respond ───────────────────────────────────────────────
     return res.status(200).json({
       success:     true,
       teamCode,
@@ -172,14 +206,12 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('[verify-payment] Error:', err);
-
     if (err.code === 11000) {
       return res.status(400).json({ success: false, error: 'This team is already registered.' });
     }
-
     return res.status(500).json({
       success: false,
-      error: 'Server error — please contact support with your payment ID.',
+      error: 'Server error — please contact support with your order ID.',
     });
   }
 }

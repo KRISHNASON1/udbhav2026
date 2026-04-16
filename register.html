@@ -370,7 +370,7 @@
     }
     .payment-addon span { color: rgba(167,139,250,0.9); font-weight: 600; }
 
-    .payment-razorpay {
+    .payment-cashfree {
       display: flex;
       align-items: center;
       gap: 0.6rem;
@@ -1273,12 +1273,12 @@
             <span class="payment-per-team">per team</span>
           </div>
           <p class="payment-addon">+ ₹300 for <span>Mentor Session</span> (optional)</p>
-          <div class="payment-razorpay">
-            <div class="razorpay-logo">
-              <div class="razorpay-logo-icon">
+          <div class="payment-cashfree">
+            <div class="cashfree-logo">
+              <div class="cashfree-logo-icon">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
-              Secured by Razorpay
+              Secured by Cashfree
             </div>
           </div>
         </div>
@@ -1558,7 +1558,7 @@
             </button>
             <div class="pay-secure-note" aria-label="Secure payment information">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              256-bit encrypted · Powered by Razorpay
+              256-bit encrypted &amp; Powered by Cashfree
             </div>
           </div>
 
@@ -2207,26 +2207,27 @@
       }
 
       try {
-        // STEP 1 → Create Razorpay order on the server
+        // STEP 1 — Create Cashfree order on the server
         const orderRes  = await fetch('/api/create-order', {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             mentorSession: mentorSelected,
-            teamName: formData.teamName,
-            leaderName: formData.leader.name,
-            leaderEmail: formData.leader.email
+            teamName:      formData.teamName,
+            leaderName:    formData.leader.name,
+            leaderEmail:   formData.leader.email,
+            leaderPhone:   formData.leader.phone,
           }),
         });
         const orderData = await orderRes.json();
         if (!orderData.success) throw new Error(orderData.error || 'Could not create payment order.');
 
-        // STEP 2 \u2192 Load Razorpay checkout.js (once)
+        // STEP 2 — Load Cashfree JS SDK v3 (once)
         await new Promise((resolve, reject) => {
-          if (window.Razorpay) { resolve(); return; }
-          const s  = document.createElement('script');
-          s.src    = 'https://checkout.razorpay.com/v1/checkout.js';
-          s.onload = resolve;
+          if (window.Cashfree) { resolve(); return; }
+          const s   = document.createElement('script');
+          s.src     = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+          s.onload  = resolve;
           s.onerror = () => reject(new Error('Failed to load payment gateway. Check your internet connection.'));
           document.head.appendChild(s);
         });
@@ -2237,73 +2238,58 @@
         payBtn.disabled = false;
         if (payLabel) payLabel.textContent = mentorSelected ? 'Pay ₹1,100 Securely' : 'Pay ₹800 Securely';
 
-        // STEP 3 \u2192 Open Razorpay Checkout modal
-        const rzp = new window.Razorpay({
-          key:         orderData.key,
-          order_id:    orderData.orderId,
-          amount:      orderData.amount,
-          currency:    orderData.currency,
-          name:        "UDBHAV'26",
-          description: `Round 2 Registration \u2014 ${formData.teamName}${mentorSelected ? ' + Mentor Session' : ''}`,
-          image:       '/logo.png',
-          prefill: {
-            name:    formData.leader.name,
-            email:   formData.leader.email,
-            contact: formData.leader.phone,
-          },
-          notes: {
-            teamName: formData.teamName,
-            college:  formData.collegeName,
-          },
-          theme: { color: '#653AC9' },
+        // STEP 3 — Open Cashfree Checkout popup
+        const cashfree = window.Cashfree({ mode: orderData.cfEnv === 'production' ? 'production' : 'sandbox' });
 
-          // STEP 4 \u2192 Payment success \u2192 verify signature + save to MongoDB
-          handler: async function (response) {
-            payBtn.classList.remove('enabled');
-            payBtn.classList.add('loading');
-            payBtn.disabled = true;
-            const vSpin = document.createElement('div');
-            vSpin.className = 'pay-spinner';
-            payBtn.insertBefore(vSpin, payBtn.firstChild);
-            if (payLabel) payLabel.textContent = 'Verifying payment…';
+        // Store formData for use after redirect-back / payment success
+        try { sessionStorage.setItem('udbhav_formData', JSON.stringify(formData)); } catch (_) {}
+        try { sessionStorage.setItem('udbhav_orderId',  orderData.orderId); } catch (_) {}
 
-            try {
-              const verifyRes  = await fetch('/api/verify-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  razorpay_order_id:   response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature:  response.razorpay_signature,
-                  formData,
-                }),
-              });
-              const verifyData = await verifyRes.json();
-              if (verifyData.success) {
-                showSuccess(verifyData);
-              } else {
-                throw new Error(verifyData.error || 'Payment verification failed.');
-              }
-            } catch (verifyErr) {
-              console.error('[Register] Verify error:', verifyErr);
-              if (vSpin.parentNode) vSpin.remove();
-              restoreBtn(
-                verifyErr.message ||
-                'Payment received but verification failed. Contact support with payment ID: ' +
-                response.razorpay_payment_id
-              );
+        cashfree.checkout({
+          paymentSessionId: orderData.paymentSessionId,
+          redirectTarget:   '_modal',   // opens in popup, no full redirect
+        }).then(async (result) => {
+          if (result.error) {
+            // User closed modal or payment failed/cancelled
+            console.log('[Cashfree] Checkout error/dismiss:', result.error);
+            restoreBtn(result.error.message || 'Payment cancelled. Please try again when ready.');
+            return;
+          }
+
+          // result.redirect means payment gateway is doing a redirect-based flow
+          // result.paymentDetails means inline success
+          const successMsg = 'Verifying payment\u2026';
+          payBtn.classList.remove('enabled');
+          payBtn.classList.add('loading');
+          payBtn.disabled = true;
+          const vSpin = document.createElement('div');
+          vSpin.className = 'pay-spinner';
+          payBtn.insertBefore(vSpin, payBtn.firstChild);
+          if (payLabel) payLabel.textContent = successMsg;
+
+          // STEP 4 — Verify on server (Cashfree order status API check)
+          try {
+            const verifyRes  = await fetch('/api/verify-payment', {
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId: orderData.orderId, formData }),
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              showSuccess(verifyData);
+            } else {
+              throw new Error(verifyData.error || 'Payment verification failed.');
             }
-          },
-
-          modal: {
-            ondismiss: function () {
-              console.log('[Razorpay] Modal dismissed.');
-              restoreBtn('Payment cancelled. Please try again when ready.');
-            },
-          },
+          } catch (verifyErr) {
+            console.error('[Register] Verify error:', verifyErr);
+            if (vSpin.parentNode) vSpin.remove();
+            restoreBtn(
+              verifyErr.message ||
+              'Payment received but verification failed. Contact support with order ID: ' +
+              orderData.orderId
+            );
+          }
         });
-
-        rzp.open();
 
       } catch (err) {
         console.error('[Register] Error:', err);

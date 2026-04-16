@@ -1,27 +1,30 @@
 /**
  * api/create-order.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Vercel Serverless Function — POST /api/create-order
+ * ─────────────────────────────────────────────────────────────────
+ * POST /api/create-order
  *
- * Creates a Razorpay Order server-side. Amount is calculated here based on
- * mentorSession flag — never trusted from the client.
+ * Creates a Cashfree Payment Order and returns the payment_session_id
+ * needed by the Cashfree JS SDK on the frontend.
  *
  * Request body (JSON):
- *   { mentorSession: boolean, teamName: string, leaderName: string, leaderEmail: string }
+ *   { mentorSession: boolean, teamName: string, leaderName: string, leaderEmail: string, leaderPhone: string }
  *
  * Response:
- *   200 { success: true, orderId, amount, currency, key }
- *   400 / 500 { success: false, error }
- * ─────────────────────────────────────────────────────────────────────────────
+ *   200 { success: true, orderId, paymentSessionId, amount }
+ *   400 { success: false, error }
+ *   500 { success: false, error }
+ * ─────────────────────────────────────────────────────────────────
  */
 
-import Razorpay from 'razorpay';
+const APP_ID     = process.env.CASHFREE_APP_ID;
+const SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
+const CF_ENV     = process.env.NODE_ENV === 'production' ? 'production' : 'sandbox';
+const CF_BASE    = CF_ENV === 'production'
+  ? 'https://api.cashfree.com/pg'
+  : 'https://sandbox.cashfreepayments.com/pg';
 
-const KEY_ID     = process.env.RAZORPAY_KEY_ID;
-const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
-
-const BASE_AMOUNT   = 800;   // ₹800
-const MENTOR_ADDON  = 300;   // ₹300
+const BASE_AMOUNT  = 800;
+const MENTOR_ADDON = 300;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,56 +35,81 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  if (!KEY_ID || !KEY_SECRET) {
-    return res.status(500).json({
-      success: false,
-      error: 'Razorpay keys not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in environment variables.',
-    });
+  if (!APP_ID || !SECRET_KEY) {
+    console.error('[create-order] Cashfree credentials missing');
+    return res.status(500).json({ success: false, error: 'Payment gateway not configured.' });
   }
 
   try {
-    const { mentorSession, teamName, leaderName, leaderEmail } = req.body || {};
+    const { mentorSession, teamName, leaderName, leaderEmail, leaderPhone } = req.body || {};
 
-    if (!teamName || !leaderName || !leaderEmail) {
-      return res.status(400).json({ success: false, error: 'Team name, leader name, and leader email are required.' });
+    if (!teamName || !leaderEmail) {
+      return res.status(400).json({ success: false, error: 'Team name and leader email are required.' });
     }
 
-    // Amount is authoritative — server decides based on mentorSession flag
-    const totalAmount   = mentorSession ? BASE_AMOUNT + MENTOR_ADDON : BASE_AMOUNT;
-    const amountPaisa   = totalAmount * 100;  // convert ₹ to paise
+    const amount    = mentorSession ? BASE_AMOUNT + MENTOR_ADDON : BASE_AMOUNT;
+    const orderId   = `UDBHAV26_${Date.now()}_${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
-    const razorpay = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
+    // Build return URL — Cashfree redirects here after payment with ?order_id=xxx
+    const host      = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:5173';
+    const protocol  = req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https');
+    const returnUrl = `${protocol}://${host}/register.html?order_id={order_id}&status={order_status}`;
 
-    const order = await razorpay.orders.create({
-      amount:   amountPaisa,
-      currency: 'INR',
-      receipt:  `udbhav26_${Date.now()}`,
-      notes: {
-        event:         "UDBHAV'26 Round 2",
-        teamName:      teamName,
-        mentorSession: mentorSession ? 'yes' : 'no',
+    const payload = {
+      order_id:      orderId,
+      order_amount:  amount,
+      order_currency: 'INR',
+      customer_details: {
+        customer_id:    `cust_${Date.now()}`,
+        customer_name:  leaderName  || teamName,
+        customer_email: leaderEmail,
+        customer_phone: leaderPhone || '9999999999',
       },
+      order_meta: {
+        return_url:   returnUrl,
+        notify_url:   `${protocol}://${host}/api/cashfree-webhook`,  // optional webhook
+        payment_methods: 'upi,netbanking,cc,dc,wallet',
+      },
+      order_note: `UDBHAV'26 Registration — ${teamName}${mentorSession ? ' + Mentor Session' : ''}`,
+    };
+
+    const cfRes = await fetch(`${CF_BASE}/orders`, {
+      method:  'POST',
+      headers: {
+        'Content-Type':    'application/json',
+        'x-api-version':   '2023-08-01',
+        'x-client-id':     APP_ID,
+        'x-client-secret': SECRET_KEY,
+      },
+      body: JSON.stringify(payload),
     });
 
+    const cfData = await cfRes.json();
+
+    if (!cfRes.ok || !cfData.payment_session_id) {
+      console.error('[create-order] Cashfree API error:', cfData);
+      return res.status(500).json({
+        success: false,
+        error: cfData?.message || 'Could not create payment order. Please try again.',
+      });
+    }
+
+    console.log(`[create-order] ✅ Order created: ${orderId} | ₹${amount} | ${leaderEmail}`);
+
     return res.status(200).json({
-      success:  true,
-      orderId:  order.id,
-      amount:   order.amount,
-      currency: order.currency,
-      key:      KEY_ID,
+      success:          true,
+      orderId:          cfData.order_id,
+      paymentSessionId: cfData.payment_session_id,
+      amount,
+      currency:         'INR',
+      cfEnv:            CF_ENV,
     });
 
   } catch (err) {
-    console.error('[/api/create-order] Razorpay error:', err);
-    console.error('[/api/create-order] Error details:', {
-      message: err.message,
-      statusCode: err.statusCode,
-      error: err.error,
-    });
+    console.error('[create-order] Unexpected error:', err);
     return res.status(500).json({
       success: false,
       error: 'Could not create payment order. Please try again.',
-      details: process.env.NODE_ENV === 'development' ? err.message : undefined,
     });
   }
 }
