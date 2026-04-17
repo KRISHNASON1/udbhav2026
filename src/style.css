@@ -1,4 +1,4 @@
-﻿/* ─────────────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
    PORTFOLIO HERO — style.css
    Merged: THREE.js dissolve overlay + hero UI layer + GSAP scroll system
    ─────────────────────────────────────────────────────────────────────────── */
@@ -986,21 +986,49 @@ body {
 
 /* ── Hero Eyebrow Tagline ──────────────────────────────────────────────────── */
 .hero-eyebrow {
-  font-family: var(--font-ui);
-  font-size: clamp(0.6rem, 1.1vw, 0.78rem);
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  color: rgba(255, 255, 255, 0.45);
-  text-transform: uppercase;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
   margin-bottom: 0.75rem;
   opacity: 0;
   transform: translateY(14px);
   will-change: transform, opacity;
   pointer-events: none;
-  white-space: nowrap;
   position: relative;
   z-index: 1;
+}
+
+.hero-eyebrow-logos {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-eyebrow-logo {
+  height: clamp(48px, 7vw, 75px);
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+.hero-eyebrow-divider {
+  font-family: var(--font-ui);
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.25);
+  user-select: none;
+}
+
+.hero-eyebrow-presents {
+  font-family: var(--font-ui);
+  font-size: clamp(0.6rem, 1.1vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  margin: 0;
 }
 
 /* ── Hero Name ─────────────────────────────────────────────────────────────── */
@@ -6571,7 +6599,7 @@ body {
     opacity: 0.42;
     margin: 4px 0 0;
   }
-  /* Hide the looping words widget on mobile � too cramped */
+  /* Hide the looping words widget on mobile  too cramped */
   .ulw-block { display: none; }
 
   /* -- Stats bento row ------------------------------------------- */
@@ -6774,8 +6802,19 @@ body {
   .uab-stat-card:nth-child(3) { grid-column: 1 / -1; }
 }
 
+/* Scroll Animation Classes */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* --------------------------------------------------------------
-   ABOUT SECTION � EVENT TIMELINE CARD  �  Mobile Rewrite (= 768px)
+   ABOUT SECTION  EVENT TIMELINE CARD    Mobile Rewrite (= 768px)
    --------------------------------------------------------------
    Full-width card, vertical timeline with a glowing left rail,
    time pinned to the left column, event text to the right.
@@ -7119,6 +7158,7 @@ body {
   background: #000;
   overflow: hidden;
   padding: 100px 0 80px;
+  min-height: 700px;
 }
 
 .prz-container {
@@ -7169,6 +7209,7 @@ body {
   gap: 16px;
   align-items: end;
   margin-bottom: 48px;
+  height: 420px;
 }
 
 /* -- Base card ------------------------------------------------- */
@@ -7186,21 +7227,62 @@ body {
   -webkit-backdrop-filter: blur(16px);
   text-align: center;
   transition: transform 0.35s cubic-bezier(0.16,1,0.3,1),
-              border-color 0.3s ease;
+              border-color 0.3s ease,
+              max-height 5s cubic-bezier(0.22,1,0.36,1);
+  max-height: 130px;
+  overflow: hidden;
+}
+
+/* Trophy image — always visible */
+.prz-trophy-img {
+  width: clamp(64px, 8vw, 90px);
+  height: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Text wrapper — hidden until card expands */
+.prz-card-text {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition-delay: 0s;
+}
+
+.prz-card.prz-revealed {
+  max-height: 600px;
+}
+
+.prz-card.prz-revealed .prz-card-text {
+  opacity: 1;
+  transition-delay: 0.8s;
+}
+
+/* Champion tag — hidden until revealed */
+.prz-card .prz-champion-tag {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  transition-delay: 0s;
+}
+.prz-card.prz-revealed .prz-champion-tag {
+  opacity: 1;
+  transition-delay: 1.0s;
 }
 .prz-card:hover { transform: translateY(-6px); }
 
 /* -- 1st place � champion card --------------------------------- */
 .prz-card--1st {
-  border-color: rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.07);
-  box-shadow: 0 0 60px rgba(255,255,255,0.06),
+  border-color: rgba(255, 215, 0, 0.25);
+  background: linear-gradient(165deg, rgba(255, 215, 0, 0.08), rgba(255, 180, 0, 0.03) 60%, rgba(255,255,255,0.04));
+  box-shadow: 0 0 60px rgba(255, 215, 0, 0.06),
               0 24px 64px rgba(0,0,0,0.55),
-              inset 0 1px 0 rgba(255,255,255,0.12);
+              inset 0 1px 0 rgba(255, 215, 0, 0.15);
   padding-top: 44px;
   padding-bottom: 36px;
 }
-.prz-card--1st:hover { border-color: rgba(255,255,255,0.28); }
+.prz-card--1st:hover { border-color: rgba(255, 215, 0, 0.4); }
 
 /* Champion tag ribbon */
 .prz-champion-tag {
@@ -7220,12 +7302,23 @@ body {
 }
 
 /* 2nd & 3rd � muted cards */
-.prz-card--2nd,
-.prz-card--3rd {
-  background: rgba(255,255,255,0.03);
-  border-color: rgba(255,255,255,0.07);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+/* 2nd — silver tint */
+.prz-card--2nd {
+  background: linear-gradient(165deg, rgba(192, 192, 192, 0.08), rgba(160, 160, 170, 0.03) 60%, rgba(255,255,255,0.03));
+  border-color: rgba(192, 192, 192, 0.18);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4),
+              inset 0 1px 0 rgba(192, 192, 192, 0.1);
 }
+.prz-card--2nd:hover { border-color: rgba(192, 192, 192, 0.35); }
+
+/* 3rd — bronze tint */
+.prz-card--3rd {
+  background: linear-gradient(165deg, rgba(205, 127, 50, 0.08), rgba(180, 110, 40, 0.03) 60%, rgba(255,255,255,0.03));
+  border-color: rgba(205, 127, 50, 0.18);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4),
+              inset 0 1px 0 rgba(205, 127, 50, 0.1);
+}
+.prz-card--3rd:hover { border-color: rgba(205, 127, 50, 0.35); }
 
 /* -- Card content ---------------------------------------------- */
 .prz-rank-badge {

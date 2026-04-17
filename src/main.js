@@ -282,6 +282,7 @@ const cornerRight   = document.getElementById('cornerRight');
 
 /** Fade + slide up — standard (corners/labels) */
 function revealEl(el, delay = 0, yStart = 20) {
+  if (!el) return;
   el.style.opacity    = '0';
   el.style.transform  = `translateY(${yStart}px)`;
   el.style.transition = 'none';
@@ -295,6 +296,7 @@ function revealEl(el, delay = 0, yStart = 20) {
 
 /** Fade + slide up + blur-in — used for subtitle lines */
 function revealElBlur(el, delay = 0, yStart = 32) {
+  if (!el) return;
   el.style.opacity    = '0';
   el.style.transform  = `translateY(${yStart}px)`;
   el.style.filter     = 'blur(10px)';
@@ -1697,4 +1699,28 @@ document.querySelectorAll('.nav-link').forEach(link => {
   }
 
   tick();
+})();
+
+// ─────────────────────────────────────────────────────────────────
+// Prize Cards — Scroll-triggered height expand + text reveal
+// ─────────────────────────────────────────────────────────────────
+(function initPrizeReveal() {
+  const cards = document.querySelectorAll('.prz-card');
+  if (!cards.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // All cards expand at the same time
+        cards.forEach((card) => {
+          card.classList.add('prz-revealed');
+        });
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.6, rootMargin: '0px 0px -150px 0px' });
+
+  // Observe the podium container
+  const podium = document.querySelector('.prz-podium');
+  if (podium) observer.observe(podium);
 })();
