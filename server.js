@@ -73,6 +73,7 @@ import submitHandler           from './api/submissions/submit.js';
 import listSubmissionsHandler  from './api/submissions/list.js';
 import getSubmissionHandler    from './api/submissions/get.js';
 import listHandler   from './api/submissions/list.js';
+import teamAuthHandler from './api/auth/team.js';
 
 
 // ── App setup ────────────────────────────────────────────────────────────────
@@ -193,6 +194,9 @@ app.post('/api/submissions/submit', mountHandler(submitHandler));
 app.get ('/api/submissions/get',    mountHandler(getSubmissionHandler));
 app.get ('/api/admin/submissions',  mountHandler(listSubmissionsHandler));
 
+
+// ── Team Auth API ─────────────────────────────────────────────────────────────
+app.post('/api/auth/team', mountHandler(teamAuthHandler));
 
 // ── Clean URL Routes ──────────────────────────────────────────────────────────
 for (const [route, file] of Object.entries(cleanRoutes)) {

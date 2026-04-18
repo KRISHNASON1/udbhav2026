@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -40,64 +40,66 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-[#030303] text-foreground font-body antialiased selection:bg-primary/30 min-h-screen overflow-x-hidden">
-    <!-- Background Layers -->
-    <div class="fixed inset-0 bg-grid opacity-30 pointer-events-none -z-10"></div>
-    <div class="fixed inset-0 bg-grain pointer-events-none -z-10"></div>
-    
-    <!-- Aurora Glows -->
-    <div class="fixed top-[-10%] left-[-10%] bg-glow-primary animate-pulse pointer-events-none opacity-60"></div>
-    <div class="fixed bottom-[10%] right-[-5%] bg-glow-secondary animate-pulse pointer-events-none opacity-40" style="animation-delay: 2s"></div>
-    <div class="fixed top-[20%] right-[10%] bg-glow-accent animate-pulse pointer-events-none opacity-30" style="animation-delay: 4s"></div>
+    <!-- Ethereal Background (Global) -->
+    <div id="ethereal-bg" class="ethereal-root visible" aria-hidden="true">
+        <svg class="ethereal-filter-svg" aria-hidden="true">
+            <defs>
+                <filter id="etherFilter" x="-20%" y="-20%" width="140%" height="140%">
+                    <feTurbulence id="etherTurb" result="undulation" numOctaves="2" baseFrequency="0.0005,0.002" seed="3" type="turbulence" />
+                    <feColorMatrix id="etherHueRotate" in="undulation" type="hueRotate" values="0" />
+                    <feColorMatrix in="dist" result="circulation" type="matrix" values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0" />
+                    <feDisplacementMap in="SourceGraphic" in2="circulation" scale="100" result="dist" />
+                    <feDisplacementMap in="dist" in2="undulation" scale="100" result="output" />
+                </filter>
+            </defs>
+        </svg>
+        <div class="ethereal-inner"><div class="ethereal-shadow"></div></div>
+        <div class="ethereal-noise"></div>
+        <div class="ethereal-vignette"></div>
+        <div class="grain-overlay"></div>
+    </div>
 
     <!-- VIEW 1: Login/Team Entry -->
-    <div id="login-view" data-view class="relative z-10 transition-opacity duration-300">
+    <div id="login-view" data-view class="relative z-50 transition-opacity duration-300">
         <div class="min-h-screen flex items-center justify-center p-6">
-            <div class="w-full max-w-md">
-                <div class="glass p-8 md:p-12 rounded-3xl border-white/10 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-grid opacity-10 pointer-events-none"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-center mb-8">
-                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent p-px">
-                                <div class="w-full h-full rounded-2xl bg-background flex items-center justify-center">
-                                    <i data-lucide="shield" class="w-8 h-8 text-white"></i>
-                                </div>
-                            </div>
+            <div class="login-wrapper">
+                <div class="login-card">
+                    <div class="login-logo">
+                        <img src="/logo.png" alt="UDBHAV'26 logo" onerror="this.src='https://udbhav26.vercel.app/logo.png'" />
+                        <span class="login-logo-text">UDBHAV'26</span>
+                        <span class="login-logo-sub"></span>
+                    </div>
+
+                    <div class="login-accent"></div>
+
+                    <div class="text-center mb-8">
+                        <p class="text-white/40 text-xs font-bold tracking-[0.2em] uppercase">
+                            Operational Access Required
+                        </p>
+                    </div>
+
+                    <form id="login-form" class="login-form" novalidate>
+                        <div class="login-field">
+                            <label class="login-label" for="teamId-input">Team Identifier Code</label>
+                            <input
+                                type="text"
+                                id="teamId-input"
+                                class="login-input"
+                                placeholder="e.g. UDB-00XX-XXXX"
+                                autocomplete="username"
+                                required
+                            />
                         </div>
 
-                        <div class="text-center mb-10">
-                            <h1 class="text-3xl font-heading font-black mb-3 text-white uppercase">
-                                MISSION <span class="text-gradient">DASHBOARD</span>
-                            </h1>
-                            <p class="text-white/50 text-sm">
-                                Enter your Team ID to access the command center.
-                            </p>
-                        </div>
+                        <div class="login-error" id="loginError" role="alert" aria-live="polite"></div>
 
-                        <form id="login-form" class="space-y-6">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold tracking-widest text-white/40 uppercase ml-1">
-                                    Team Identifier Code
-                                </label>
-                                <div class="relative group">
-                                    <div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-secondary rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                                    <input
-                                        type="text"
-                                        id="teamId-input"
-                                        placeholder="e.g. UDB-00XX-XXXX"
-                                        class="relative w-full bg-black/40 border border-white/10 rounded-xl px-4 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all font-mono tracking-wider"
-                                        required
-                                    >
-                                    <i data-lucide="zap" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20"></i>
-                                </div>
-                            </div>
+                        <button type="submit" class="login-submit" id="loginBtn">Initialize System</button>
+                    </form>
 
-                            <button type="submit" class="group relative w-full h-14 bg-white text-black font-black font-heading rounded-xl overflow-hidden hover:scale-[1.02] active:scale-[0.98] transition-all">
-                                <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <span class="relative z-10 flex items-center justify-center gap-2 group-hover:text-white transition-colors uppercase">
-                                    Initialize System <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                                </span>
-                            </button>
-                        </form>
+                    <div class="mt-8 text-center">
+                        <a href="/" class="text-[10px] font-bold text-white/20 hover:text-white/40 transition-colors uppercase tracking-widest">
+                            ← Back to Hub
+                        </a>
                     </div>
                 </div>
             </div>
@@ -105,35 +107,27 @@
     </div>
 
     <!-- VIEW 2: Dashboard Content -->
-    <div id="dashboard-view" data-view class="relative z-10 w-full max-w-7xl mx-auto hidden transition-opacity duration-300">
+    <div id="dashboard-view" data-view class="relative z-10 w-full max-w-7xl mx-auto hidden transition-all duration-500">
         <!-- Dashboard Header -->
         <header class="sticky top-4 z-50 px-6 mt-4">
-            <div class="glass-dark border-white/5 md:px-8 px-4 py-4 rounded-2xl flex items-center justify-between">
+            <div class="login-card p-4 md:px-8 py-4 rounded-2xl flex items-center justify-between !opacity-100 !transform-none !shadow-none border-white/5">
                 <div class="flex items-center gap-4">
-                    <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
-                        <i data-lucide="user" class="w-4 h-4 text-primary"></i>
-                        <span class="text-xs font-bold text-primary tracking-widest uppercase display-team-id">
+                    <div class="hidden md:flex items-center gap-3 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+                        <i data-lucide="user" class="w-4 h-4 text-white/40"></i>
+                        <span class="text-xs font-bold text-white/80 tracking-widest uppercase display-team-id">
                             TEAM-ID
                         </span>
                     </div>
                     <div class="flex flex-col">
-                        <h2 class="text-lg font-bold font-heading leading-tight">UDBHAV'26 Dashboard</h2>
-                        <p class="text-[10px] text-white/40 tracking-[0.2em] uppercase">Control Center Active</p>
+                        <h2 class="text-xl font-bold font-heading leading-tight tracking-tight uppercase">UDBHAV'26 <span class="text-white/40"></span></h2>
+                        <p class="text-[9px] text-white/30 tracking-[0.3em] uppercase">Hackathon are Live</p>
                     </div>
                 </div>
 
                 <nav class="flex items-center gap-2 md:gap-6">
-                    <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-                        <a href="#" class="text-white/60 hover:text-white transition-colors">Overview</a>
-                        <a href="#" class="text-white/60 hover:text-white transition-colors">Team</a>
-                        <a href="#" class="text-white/60 hover:text-white transition-colors">Project</a>
-                    </div>
                     <div class="w-px h-6 bg-white/10 mx-2 hidden md:block"></div>
                     <div class="flex items-center gap-3">
-                        <button class="p-2 text-white/50 hover:text-white transition-colors rounded-lg hover:bg-white/5">
-                            <i data-lucide="settings" class="w-5 h-5"></i>
-                        </button>
-                        <button class="btn-logout flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-3 py-2 rounded-xl transition-all text-xs font-bold uppercase">
+                        <button class="btn-logout flex items-center gap-2 bg-white/5 hover:bg-red-500/10 text-white/40 hover:text-red-500 border border-white/10 hover:border-red-500/20 px-4 py-2.5 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest">
                             <i data-lucide="log-out" class="w-4 h-4"></i>
                             <span class="hidden md:inline">Exit</span>
                         </button>
@@ -143,39 +137,41 @@
         </header>
 
         <!-- Main Dashboard Body -->
-        <div class="px-6 py-8 space-y-8">
+        <div class="px-6 py-8 space-y-10">
             <!-- Countdown Section -->
             <section id="deployment-countdown">
-                <div class="glass-dark border-primary/20 p-8 rounded-3xl overflow-hidden relative">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px]"></div>
-                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="login-card !p-8 border-white/5 relative overflow-hidden !opacity-100 !transform-none">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-[80px] -mr-32 -mt-32 rounded-full"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                         <div class="text-center md:text-left">
-                            <div class="flex items-center gap-2 mb-2 text-primary uppercase">
-                                <i data-lucide="clock" class="w-5 h-5 animate-pulse"></i>
-                                <span class="text-xs font-bold tracking-[0.3em]">Deployment Countdown</span>
+                            <div class="flex items-center gap-3 mb-3 text-white/40 uppercase">
+                                <i data-lucide="clock-4" class="w-5 h-5 animate-pulse"></i>
+                                <span class="text-[10px] font-bold tracking-[0.4em]">Deployment Protocol</span>
                             </div>
-                            <h3 class="text-2xl font-black font-heading uppercase">Problem Statements Dropping</h3>
-                            <p class="text-white/40 text-sm mt-1">Get ready to choose your challenge.</p>
+                            <h3 class="text-3xl font-black font-heading uppercase tracking-tight">Problem Statements <span class="text-white/20">Incoming</span></h3>
+                            <p class="text-white/30 text-sm mt-2 max-w-sm">Synchronize your team. PS drops when the timer hits zero.</p>
                         </div>
 
-                        <div class="flex gap-4">
+                        <div class="flex gap-6">
                             <div class="flex flex-col items-center">
-                                <div class="w-16 h-20 md:w-20 md:h-24 glass rounded-2xl flex items-center justify-center border-white/10 mb-2">
-                                    <span id="cd-hours" class="text-3xl md:text-4xl font-black font-heading text-gradient">00</span>
+                                <div class="w-20 h-24 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 mb-3 shadow-2xl backdrop-blur-xl">
+                                    <span id="cd-hours" class="text-4xl font-black font-heading text-white">00</span>
                                 </div>
-                                <span class="text-[10px] font-bold text-white/30 tracking-widest uppercase">Hrs</span>
+                                <span class="text-[9px] font-bold text-white/20 tracking-[0.3em] uppercase">Hours</span>
                             </div>
+                            <div class="flex flex-col items-center text-white/20 pt-8 font-black">:</div>
                             <div class="flex flex-col items-center">
-                                <div class="w-16 h-20 md:w-20 md:h-24 glass rounded-2xl flex items-center justify-center border-white/10 mb-2">
-                                    <span id="cd-minutes" class="text-3xl md:text-4xl font-black font-heading text-gradient">00</span>
+                                <div class="w-20 h-24 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 mb-3 shadow-2xl backdrop-blur-xl">
+                                    <span id="cd-minutes" class="text-4xl font-black font-heading text-white">00</span>
                                 </div>
-                                <span class="text-[10px] font-bold text-white/30 tracking-widest uppercase">Min</span>
+                                <span class="text-[9px] font-bold text-white/20 tracking-[0.3em] uppercase">Minutes</span>
                             </div>
+                            <div class="flex flex-col items-center text-white/20 pt-8 font-black">:</div>
                             <div class="flex flex-col items-center">
-                                <div class="w-16 h-20 md:w-20 md:h-24 glass rounded-2xl flex items-center justify-center border-white/10 mb-2">
-                                    <span id="cd-seconds" class="text-3xl md:text-4xl font-black font-heading text-gradient">00</span>
+                                <div class="w-20 h-24 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 mb-3 shadow-2xl backdrop-blur-xl">
+                                    <span id="cd-seconds" class="text-4xl font-black font-heading text-white">00</span>
                                 </div>
-                                <span class="text-[10px] font-bold text-white/30 tracking-widest uppercase">Sec</span>
+                                <span class="text-[9px] font-bold text-white/20 tracking-[0.3em] uppercase">Seconds</span>
                             </div>
                         </div>
                     </div>
@@ -216,7 +212,7 @@
                         <div class="mt-8 pt-6 border-t border-white/5">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-[10px] font-bold text-white/30 uppercase">Status</span>
-                                <span class="text-[10px] font-bold text-red-500 uppercase">Pending</span>
+                                <span class="text-[10px] font-bold text-red-500 uppercase">Success</span>
                             </div>
                             <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                                 <div class="w-1/4 h-full bg-red-500"></div>
@@ -227,83 +223,85 @@
             </section>
 
             <!-- Command & Roadmap Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-4">
-                    <h2 class="text-2xl font-black font-heading tracking-tight flex items-center gap-3 uppercase">
-                        <span class="w-8 h-[2px] bg-primary"></span> COMMAND CENTER
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="lg:col-span-2 space-y-6">
+                    <h2 class="text-2xl font-black font-heading tracking-widest flex items-center gap-4 uppercase">
+                        <span class="w-12 h-[2px] bg-white/20"></span> Command Center
                     </h2>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <!-- Resources: Visible after PS Drop (10:45 AM) -->
-                        <div class="group glass-dark border-white/5 p-6 rounded-2xl cursor-pointer hover:border-white/20 transition-all hidden" 
-                             data-action="resources" data-visible-after="2026-04-25T10:45:00">
-                             <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                                <i data-lucide="folder-kanban" class="w-5 h-5 text-purple-500"></i>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
+                        <!-- Resources -->
+                        <div class="group login-card !p-6 rounded-2xl cursor-pointer !opacity-100 !transform-none border-white/5 hover:border-white/20 transition-all hidden" 
+                             data-action="resources" data-visible-after="2026-04-25T11:00:00">
+                             <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-5 transition-transform group-hover:scale-110 border border-white/5">
+                                <i data-lucide="folder-kanban" class="w-5 h-5 text-white/60"></i>
                             </div>
-                            <h4 class="text-sm font-bold font-heading mb-1">Resources</h4>
-                            <p class="text-[10px] text-white/40 uppercase">Assets & Briefs</p>
+                            <h4 class="text-sm font-bold font-heading mb-1 text-white">Resources</h4>
+                            <p class="text-[9px] text-white/30 uppercase tracking-widest">Assets & Briefs</p>
                         </div>
 
-                        <!-- Leaderboard: Visible after Build Sprint 1 (11:00 AM) -->
-                        <div class="group glass-dark border-white/5 p-6 rounded-2xl cursor-pointer hover:border-white/20 transition-all hidden" 
-                             data-action="leaderboard" data-visible-after="2026-04-16T20:34:00">
-                            <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                                <i data-lucide="trophy" class="w-5 h-5 text-yellow-500"></i>
+                        
+
+                        <!-- Mentorship -->
+                        <div class="group login-card !p-6 rounded-2xl cursor-pointer !opacity-100 !transform-none border-white/5 hover:border-white/20 transition-all hidden" 
+                             data-action="mentorship" data-visible-after="2026-04-25T11:00:00">
+                            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-5 transition-transform group-hover:scale-110 border border-white/5">
+                                <i data-lucide="users" class="w-5 h-5 text-white/60"></i>
                             </div>
-                            <h4 class="text-sm font-bold font-heading mb-1">Leaderboard</h4>
-                            <p class="text-[10px] text-white/40 uppercase">Real-time stats</p>
+                            <h4 class="text-sm font-bold font-heading mb-1 text-white">Mentor</h4>
+                            <p class="text-[9px] text-white/30 uppercase tracking-widest">See your Mentor</p>
                         </div>
 
-                        <!-- Mentorship: Visible after Strategy Pivot (5:00 PM) -->
-                        <div class="group glass-dark border-white/5 p-6 rounded-2xl cursor-pointer hover:border-white/20 transition-all hidden" 
-                             data-action="mentorship" data-visible-after="2026-04-16T20:35:00">
-                            <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                                <i data-lucide="users" class="w-5 h-5 text-orange-500"></i>
+                        <!--Github  submission -->
+                        <div class="group login-card !p-6 rounded-2xl cursor-pointer !opacity-100 !transform-none border-white/5 hover:border-white/20 transition-all hidden" 
+                             data-action="github-submission" data-visible-after="2026-04-26T01:00:00">
+                            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-5 transition-transform group-hover:scale-110 border border-white/5">
+                                <i data-lucide="users" class="w-5 h-5 text-white/60"></i>
                             </div>
-                            <h4 class="text-sm font-bold font-heading mb-1">Mentorship</h4>
-                            <p class="text-[10px] text-white/40 uppercase">Expert help</p>
+                            <h4 class="text-sm font-bold font-heading mb-1 text-white"> Github Link</h4>
+                            <p class="text-[9px] text-white/30 uppercase tracking-widest">Submit your Github Link</p>
                         </div>
 
-                        <!-- PPT Submit: Visible after Final Pitch (7:00 AM) -->
-                        <div class="group glass-dark border-white/5 p-6 rounded-2xl cursor-pointer hover:border-white/20 transition-all hidden" 
+                        <!--ppt submission -->
+                         <div class="group login-card !p-6 rounded-2xl cursor-pointer !opacity-100 !transform-none border-white/5 hover:border-white/20 transition-all hidden" 
                              data-action="ppt-submission" data-visible-after="2026-04-26T07:00:00">
-                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                                <i data-lucide="presentation" class="w-5 h-5 text-blue-500"></i>
+                            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-5 transition-transform group-hover:scale-110 border border-white/5">
+                                <i data-lucide="users" class="w-5 h-5 text-white/60"></i>
                             </div>
-                            <h4 class="text-sm font-bold font-heading mb-1">PPT Submit</h4>
-                            <p class="text-[10px] text-white/40 uppercase">Round 2</p>
+                            <h4 class="text-sm font-bold font-heading mb-1 text-white">PPT Submission</h4>
+                            <p class="text-[9px] text-white/30 uppercase tracking-widest">Submit your PPT</p>
                         </div>
 
-                        <!-- Project Link: Visible after Demo Pitch (2:00 AM) -->
-                        <div class="group glass-dark border-white/5 p-6 rounded-2xl cursor-pointer hover:border-white/20 transition-all hidden" 
-                             data-action="project-submission" data-visible-after="2026-04-26T02:00:00">
-                            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-                                <i data-lucide="rocket" class="w-5 h-5 text-green-500"></i>
+                        <!--project  submission -->
+                        <div class="group login-card !p-6 rounded-2xl cursor-pointer !opacity-100 !transform-none border-white/5 hover:border-white/20 transition-all hidden" 
+                             data-action="project-submission" data-visible-after="2026-04-26T07:00:00">
+                            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-5 transition-transform group-hover:scale-110 border border-white/5">
+                                <i data-lucide="users" class="w-5 h-5 text-white/60"></i>
                             </div>
-                            <h4 class="text-sm font-bold font-heading mb-1">Project Link</h4>
-                            <p class="text-[10px] text-white/40 uppercase">Final Submission</p>
+                            <h4 class="text-sm font-bold font-heading mb-1 text-white"> Project Submission</h4>
+                            <p class="text-[9px] text-white/30 uppercase tracking-widest">Submit your project Drive Link</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-4">
-                    <h2 class="text-2xl font-black font-heading tracking-tight flex items-center gap-3 uppercase">
-                        <span class="w-8 h-[2px] bg-secondary"></span> ROADMAP
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-black font-heading tracking-widest flex items-center gap-4 uppercase text-white/60">
+                         ROADMAP
                     </h2>
-                    <div class="glass-dark border-white/5 p-6 rounded-3xl flex flex-col max-h-[600px] h-full overflow-hidden">
-                        <h3 class="text-xl font-bold font-heading mb-6 flex items-center gap-2 shrink-0 uppercase">
-                            <i data-lucide="rocket" class="w-5 h-5 text-secondary"></i> Timeline
+                    <div class="login-card !p-6 rounded-3xl flex flex-col max-h-[600px] h-full overflow-hidden !opacity-100 !transform-none border-white/5">
+                        <h3 class="text-lg font-bold font-heading mb-8 flex items-center gap-3 shrink-0 uppercase tracking-tighter">
+                            <i data-lucide="layout-list" class="w-4 h-4 text-white/40"></i> Mission Timeline
                         </h3>
                         <!-- Timeline rendered by dashboard.js -->
-                        <div id="timeline-container" class="space-y-6 relative overflow-y-auto pr-4 flex-1 custom-scrollbar"></div>
+                        <div id="timeline-container" class="space-y-8 relative overflow-y-auto pr-4 flex-1 custom-scrollbar text-white"></div>
                         
-                        <div class="mt-6 p-4 bg-primary/5 rounded-2xl border border-primary/10 shrink-0">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                    <i data-lucide="coffee" class="w-4 h-4 text-primary"></i>
+                        <div class="mt-8 p-5 bg-white/5 rounded-2xl border border-white/10 shrink-0">
+                            <div class="flex items-center gap-4 text-white">
+                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
+                                    <i data-lucide="clock" class="w-4 h-4 text-white"></i>
                                 </div>
                                 <div class="overflow-hidden">
-                                    <p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Next Phase</p>
-                                    <p id="next-phase-text" class="text-xs font-bold text-white truncate">Loading...</p>
+                                    <p class="text-[9px] text-white/20 uppercase font-black tracking-widest mb-1">Current Objective</p>
+                                    <p id="next-phase-text" class="text-[11px] font-bold text-white/80 truncate">Synchronizing...</p>
                                 </div>
                             </div>
                         </div>
