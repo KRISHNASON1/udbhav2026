@@ -1,8 +1,7 @@
 /**
  * api/models/Submission.js
  * ─────────────────────────────────────────────────────────────────────────────
- * One submission per team (upsert by teamCode).
- * Stores PPT link and live demo link submitted via the Team Dashboard.
+ * Mongoose schema for team submissions.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -10,11 +9,31 @@ import mongoose from 'mongoose';
 
 const SubmissionSchema = new mongoose.Schema(
   {
-    teamCode:  { type: String, required: true, trim: true, uppercase: true, unique: true, index: true },
-    teamName:  { type: String, trim: true, default: '' },
-    pptLink:   { type: String, trim: true, default: '' },
-    liveLink:  { type: String, trim: true, default: '' },
-    submittedAt: { type: Date, default: Date.now },
+    teamId: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+    },
+    type: {
+      type: String,
+      enum: ['ppt-submission', 'project-submission', 'other'],
+      required: true,
+    },
+    submissionLink: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'reviewed', 'accepted', 'rejected'],
+      default: 'pending',
+    },
   },
   {
     timestamps: true,
@@ -22,5 +41,6 @@ const SubmissionSchema = new mongoose.Schema(
   }
 );
 
+// Prevent re-compiling model on hot-reload
 export const Submission =
   mongoose.models.Submission || mongoose.model('Submission', SubmissionSchema);

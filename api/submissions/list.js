@@ -1,38 +1,35 @@
 /**
  * api/submissions/list.js
  * ─────────────────────────────────────────────────────────────────────────────
- * GET /api/admin/submissions  (admin-only)
- * Returns all team submissions sorted by submittedAt desc.
+ * GET /api/submissions/list
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import { connectDB }  from '../lib/mongodb.js';
+import { connectDB } from '../lib/mongodb.js';
 import { Submission } from '../models/Submission.js';
-import { psLog, getIP } from '../lib/rateLimiter.js';
-
-function requireAdmin(req, res) {
-  const secret = req.headers['x-admin-secret'] || req.headers['authorization']?.replace('Bearer ', '');
-  if (!secret || secret !== process.env.ADMIN_SECRET) {
-    psLog(req, { event: 'admin_auth_failed', ip: getIP(req) });
-    res.status(401).json({ error: 'unauthorized' });
-    return false;
-  }
-  return true;
-}
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') return res.status(405).json({ error: 'method_not_allowed' });
-  if (!requireAdmin(req, res)) return;
+  if (req.method !== 'GET') {
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
+  }
+
+  // Basic Admin Security check (consistent with other admin APIs)
+  const secret = req.headers['x-admin-secret'];
+  if (secret !== process.env.ADMIN_SECRET) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
 
   try {
     await connectDB();
-    const submissions = await Submission.find({})
-      .sort({ submittedAt: -1 })
-      .lean();
 
-    return res.status(200).json({ success: true, count: submissions.length, submissions });
+    const submissions = await Submission.find({}).sort({ createdAt: -1 }).lean();
+
+    return res.status(200).json({
+      success: true,
+      submissions,
+    });
   } catch (err) {
-    console.error('[submissions/list]', err);
-    return res.status(500).json({ error: 'server_error' });
+    console.error('[/api/submissions/list] Error:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 }

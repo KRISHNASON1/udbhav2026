@@ -31,6 +31,7 @@ export default defineConfig({
         ourTeam:            resolve(__dirname, 'our-team.html'),
         codeOfConduct:      resolve(__dirname, 'code-of-conduct.html'),
         problemStatement:   resolve(__dirname, 'problem-statement.html'),
+        userDashboard:      resolve(__dirname, 'user-dashboard.html'),
         contact:            resolve(__dirname, 'contact.html'),
         teamDashboard:      resolve(__dirname, 'team-dashboard.html'),
         paymentStatus:      resolve(__dirname, 'payment-status.html'),

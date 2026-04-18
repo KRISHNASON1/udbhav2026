@@ -2,209 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="UDBHAV'26 Admin — Team Submissions" />
+  <meta name="description" content="UDBHAV'26 Admin — Submissions" />
+  <meta name="robots" content="noindex, nofollow" />
   <title>Submissions — UDBHAV'26 Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --clr-bg:     #080808;
-      --clr-surface:#0f0f0f;
-      --clr-border: rgba(255,255,255,0.07);
-      --clr-white:  #ffffff;
-      --clr-grey:   rgba(255,255,255,0.45);
-      --clr-muted:  rgba(255,255,255,0.22);
-      --clr-purple: #a855f7;
-      --clr-green:  #4ade80;
-      --clr-amber:  #fbbf24;
-      --clr-red:    #f87171;
-      --clr-blue:   #60a5fa;
-      --sidebar-w:  220px;
+      --clr-bg: #080808;
+      --clr-surface: #0f0f0f;
+      --clr-white: #ffffff;
+      --clr-grey: #888888;
+      --clr-green: #4ade80;
+      --clr-red: #f87171;
+      --clr-blue: #60a5fa;
+      --clr-amber: #fbbf24;
+      --clr-purple: #a78bfa;
+      --font-display: 'Bebas Neue', sans-serif;
       --font-ui: 'Inter', sans-serif;
+      --sidebar-w: 260px;
     }
 
-    html, body { height: 100%; }
-    body { background: var(--clr-bg); color: var(--clr-white); font-family: var(--font-ui); font-size: 14px; line-height: 1.5; }
+    html { background: #000; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--clr-bg);
+      color: var(--clr-white);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 
     .grain-overlay {
-      position: fixed; inset: 0; z-index: 999; pointer-events: none; opacity: 0.018;
+      position: fixed; inset: 0; z-index: 99;
+      pointer-events: none; opacity: 0.03;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px; mix-blend-mode: overlay;
     }
 
-    /* ── SIDEBAR ── */
+    /* ── Sidebar ── */
     .admin-sidebar {
       position: fixed; top: 0; left: 0; bottom: 0;
-      width: var(--sidebar-w); z-index: 50;
-      background: var(--clr-surface);
-      border-right: 1px solid var(--clr-border);
+      width: var(--sidebar-w); background: rgba(12,12,12,0.95);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(30px); z-index: 50;
       display: flex; flex-direction: column;
-      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
     }
-    .sidebar-header {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 1.3rem 1.2rem; border-bottom: 1px solid var(--clr-border);
-    }
-    .sidebar-logo { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; }
-    .sidebar-brand { display: flex; flex-direction: column; }
-    .sidebar-brand-name { font-size: 0.85rem; font-weight: 700; color: var(--clr-white); }
-    .sidebar-brand-sub  { font-size: 0.68rem; color: var(--clr-muted); }
-    .sidebar-nav { flex: 1; overflow-y: auto; padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 0.25rem; }
-    .sidebar-nav-label {
-      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-      color: rgba(255,255,255,0.2); padding: 0.8rem 0.6rem 0.4rem;
-    }
+    .sidebar-header { padding: 1.5rem 1.4rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.75rem; }
+    .sidebar-logo { height: 28px; width: auto; opacity: 0.85; }
+    .sidebar-brand { display: flex; flex-direction: column; gap: 0.1rem; }
+    .sidebar-brand-name { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 0.06em; color: var(--clr-white); line-height: 1; }
+    .sidebar-brand-sub { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .sidebar-nav-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.2); padding: 0.8rem 0.6rem 0.4rem; }
     .sidebar-link {
-      display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.8rem;
-      border-radius: 10px; text-decoration: none; font-size: 0.84rem; font-weight: 500;
-      color: rgba(255,255,255,0.5); transition: all 0.2s;
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.8rem; border-radius: 10px;
+      text-decoration: none; font-size: 0.84rem; font-weight: 500; color: rgba(255,255,255,0.5); transition: all 0.2s;
     }
     .sidebar-link:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
     .sidebar-link.active { background: rgba(255,255,255,0.08); color: var(--clr-white); font-weight: 600; }
     .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
     .sidebar-link.active svg { opacity: 1; }
-    .sidebar-link .coming-tag {
-      margin-left: auto; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.06em;
-      padding: 0.15rem 0.5rem; border-radius: 6px;
-      background: rgba(251,191,36,0.12); color: var(--clr-amber); border: 1px solid rgba(251,191,36,0.2);
-    }
-    .sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid var(--clr-border); }
+
+    .sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.06); }
     .sidebar-logout {
       display: flex; align-items: center; gap: 0.65rem; width: 100%; padding: 0.7rem 0.8rem;
-      border: none; border-radius: 10px; background: rgba(248,113,113,0.08);
-      color: var(--clr-red); font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600;
-      cursor: pointer; transition: background 0.2s;
+      border: none; border-radius: 10px; background: rgba(248,113,113,0.08); color: var(--clr-red);
+      font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
     }
     .sidebar-logout:hover { background: rgba(248,113,113,0.15); }
-    .sidebar-logout svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .sidebar-overlay {
-      position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.6);
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    .sidebar-overlay.is-visible { opacity: 1; pointer-events: auto; }
 
-    /* ── MAIN ── */
+    /* ── Main ── */
     .admin-main { margin-left: var(--sidebar-w); min-height: 100vh; }
     .admin-topbar {
       position: sticky; top: 0; z-index: 30;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 2rem; background: rgba(8,8,8,0.85);
-      backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 1rem 2rem; background: rgba(8,8,8,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .topbar-left { display: flex; align-items: center; gap: 1rem; }
-    .sidebar-toggle {
-      display: none; align-items: center; justify-content: center;
-      width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px; background: rgba(255,255,255,0.04);
-      color: var(--clr-grey); cursor: pointer; transition: all 0.2s;
-    }
-    .sidebar-toggle:hover { background: rgba(255,255,255,0.08); color: var(--clr-white); }
-    .sidebar-toggle svg { width: 18px; height: 18px; }
     .topbar-title { font-size: 1.1rem; font-weight: 700; color: var(--clr-white); }
     .topbar-breadcrumb { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 0.15rem; }
     .admin-content { padding: 2rem; }
 
-    /* ── Stats row ── */
-    .stats-row {
-      display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    /* ── Filter ── */
+    .filter-bar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .filter-search { flex: 1; position: relative; }
+    .filter-search-input {
+      width: 100%; padding: 0.7rem 1rem 0.7rem 2.6rem;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; color: #fff; font-family: var(--font-ui); font-size: 0.84rem; outline: none;
     }
-    .stat-chip {
-      background: rgba(255,255,255,0.03); border: 1px solid var(--clr-border);
-      border-radius: 12px; padding: 0.9rem 1.3rem; min-width: 140px;
-    }
-    .stat-chip__label { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--clr-muted); margin-bottom: 0.3rem; }
-    .stat-chip__val   { font-size: 1.6rem; font-weight: 800; color: var(--clr-white); line-height: 1; }
+    .filter-search-icon { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: rgba(255,255,255,0.3); }
 
-    /* ── Toolbar ── */
-    .sub-toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem;
+    /* ── Table ── */
+    .table-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th {
+      text-align: left; padding: 0.75rem 1rem; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .sub-search {
-      padding: 0.6rem 1rem; background: rgba(255,255,255,0.04);
-      border: 1px solid var(--clr-border); border-radius: 10px;
-      color: var(--clr-white); font-size: 0.84rem; font-family: var(--font-ui);
-      outline: none; width: 260px; transition: border-color 0.2s;
-    }
-    .sub-search:focus { border-color: var(--clr-purple); }
-    .sub-search::placeholder { color: var(--clr-muted); }
-    .sub-refresh-btn {
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.6rem 1.1rem; background: rgba(255,255,255,0.05);
-      border: 1px solid var(--clr-border); border-radius: 10px;
-      color: var(--clr-grey); font-size: 0.8rem; font-family: var(--font-ui);
-      cursor: pointer; transition: all 0.2s;
-    }
-    .sub-refresh-btn:hover { background: rgba(255,255,255,0.09); color: var(--clr-white); }
-    .sub-refresh-btn svg { width: 14px; height: 14px; }
+    .admin-table td { padding: 0.85rem 1rem; font-size: 0.82rem; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .td-team { color: var(--clr-white) !important; font-weight: 600 !important; }
+    .td-link { color: var(--clr-blue); text-decoration: none; font-weight: 500; }
+    .td-link:hover { text-decoration: underline; }
 
-    /* ── Table card ── */
-    .section-card {
-      background: rgba(255,255,255,0.02); border: 1px solid var(--clr-border);
-      border-radius: 16px; overflow: hidden;
-    }
-    .sub-table-wrap { overflow-x: auto; }
-    .sub-table { width: 100%; border-collapse: collapse; }
-    .sub-table th {
-      text-align: left; padding: 0.8rem 1.2rem;
-      font-size: 0.64rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: rgba(255,255,255,0.28); border-bottom: 1px solid rgba(255,255,255,0.05);
-      white-space: nowrap;
-    }
-    .sub-table td {
-      padding: 0.95rem 1.2rem; font-size: 0.83rem;
-      color: rgba(255,255,255,0.65); border-bottom: 1px solid rgba(255,255,255,0.03);
-      vertical-align: top;
-    }
-    .sub-table tr:last-child td { border-bottom: none; }
-    .sub-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .td-team  { color: var(--clr-white) !important; font-weight: 600 !important; }
-    .td-code  { font-family: 'JetBrains Mono', monospace !important; font-size: 0.78rem !important; color: var(--clr-purple) !important; }
-    .td-link a {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      color: var(--clr-blue); text-decoration: none; font-family: 'JetBrains Mono', monospace;
-      font-size: 0.74rem; padding: 0.2rem 0.55rem; border-radius: 6px;
-      border: 1px solid rgba(96,165,250,0.2); background: rgba(96,165,250,0.06);
-      transition: background 0.2s; max-width: 200px; white-space: nowrap;
-      overflow: hidden; text-overflow: ellipsis;
-    }
-    .td-link a:hover { background: rgba(96,165,250,0.12); }
-    .td-link .no-link { color: var(--clr-muted); font-size: 0.72rem; }
-    .td-time { font-family: 'JetBrains Mono', monospace !important; font-size: 0.72rem !important; color: rgba(255,255,255,0.2) !important; }
+    /* Badges */
+    .status-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.7rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; }
+    .badge--ppt     { background: rgba(96,165,250,0.12); color: var(--clr-blue); border: 1px solid rgba(96,165,250,0.2); }
+    .badge--project { background: rgba(74,222,128,0.12); color: var(--clr-green); border: 1px solid rgba(74,222,128,0.2); }
+    .badge--mentor  { background: rgba(167,139,250,0.12); color: var(--clr-purple); border: 1px solid rgba(167,139,250,0.2); }
+    .badge--other   { background: rgba(255,255,255,0.08); color: var(--clr-grey); border: 1px solid rgba(255,255,255,0.1); }
 
-    .sub-empty {
-      padding: 4rem 2rem; text-align: center;
-      color: rgba(255,255,255,0.2); font-size: 0.85rem; font-family: 'Sora', sans-serif;
+    .action-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border: none; border-radius: 8px;
+      background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4);
+      cursor: pointer; transition: all 0.15s;
     }
-    .sub-empty svg { opacity: 0.15; margin-bottom: 1rem; }
+    .action-btn:hover { background: rgba(255,255,255,0.1); color: var(--clr-white); }
 
-    /* ── Responsive ── */
+    .table-empty { padding: 3rem; text-align: center; color: rgba(255,255,255,0.2); font-size: 0.9rem; }
+
     @media (max-width: 860px) {
       .admin-sidebar { transform: translateX(-100%); }
       .admin-sidebar.is-open { transform: translateX(0); }
       .admin-main { margin-left: 0; }
-      .sidebar-toggle { display: flex; }
-      .admin-content { padding: 1.2rem; }
     }
-
-    .admin-content > * {
-      opacity: 0; transform: translateY(14px);
-      animation: fadeIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
-    }
-    .admin-content > *:nth-child(1) { animation-delay: 0.04s; }
-    .admin-content > *:nth-child(2) { animation-delay: 0.1s; }
-    .admin-content > *:nth-child(3) { animation-delay: 0.16s; }
-    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
-
   <div class="grain-overlay" aria-hidden="true"></div>
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- ── SIDEBAR ── -->
+  <!-- Sidebar -->
   <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-header">
       <img src="/logo.png" alt="Logo" class="sidebar-logo" />
@@ -213,236 +154,127 @@
         <span class="sidebar-brand-sub">Admin Panel</span>
       </div>
     </div>
-
     <nav class="sidebar-nav">
       <span class="sidebar-nav-label">Main</span>
-
       <a href="/admin/dashboard.html" class="sidebar-link">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         Dashboard
       </a>
-
       <a href="/admin/registrations.html" class="sidebar-link">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
         Registrations
       </a>
-
       <a href="/admin/submissions.html" class="sidebar-link active">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Submissions
       </a>
-
       <a href="/admin/problem-statements.html" class="sidebar-link">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Problem Statements
       </a>
-
       <a href="/admin/payments.html" class="sidebar-link">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         Payments
       </a>
-
       <a href="/admin/ps-stats.html" class="sidebar-link">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         PS Stats
       </a>
-
       <a href="/admin/winners.html" class="sidebar-link">
         <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
         Winners
       </a>
-
-      <span class="sidebar-nav-label" style="margin-top:0.5rem;">Coming Soon</span>
-
-      <a href="#" class="sidebar-link" onclick="event.preventDefault();">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Teams <span class="coming-tag">Soon</span>
-      </a>
-
-      <a href="#" class="sidebar-link" onclick="event.preventDefault();">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Schedule <span class="coming-tag">Soon</span>
-      </a>
     </nav>
-
     <div class="sidebar-footer">
-      <button class="sidebar-logout" id="logoutBtn">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Logout
-      </button>
+      <button class="sidebar-logout" id="logoutBtn">Logout</button>
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
+  <!-- Main Content -->
   <main class="admin-main">
     <div class="admin-topbar">
       <div class="topbar-left">
-        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-        <div>
-          <div class="topbar-title">Submissions</div>
-          <div class="topbar-breadcrumb">Admin / Submissions</div>
-        </div>
+        <div class="topbar-title">Submissions</div>
+        <div class="topbar-breadcrumb">Admin / Submissions</div>
       </div>
     </div>
 
     <div class="admin-content">
-
-      <!-- Stats -->
-      <div class="stats-row" id="statsRow">
-        <div class="stat-chip">
-          <div class="stat-chip__label">Total Submissions</div>
-          <div class="stat-chip__val" id="statTotal">—</div>
-        </div>
-        <div class="stat-chip">
-          <div class="stat-chip__label">PPT Submitted</div>
-          <div class="stat-chip__val" id="statPpt">—</div>
-        </div>
-        <div class="stat-chip">
-          <div class="stat-chip__label">Live Link Added</div>
-          <div class="stat-chip__val" id="statLive">—</div>
-        </div>
-        <div class="stat-chip">
-          <div class="stat-chip__label">Both Submitted</div>
-          <div class="stat-chip__val" id="statBoth">—</div>
+      <div class="filter-bar">
+        <div class="filter-search">
+          <svg class="filter-search-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="filter-search-input" id="searchInput" placeholder="Search by Team ID..." />
         </div>
       </div>
 
-      <!-- Toolbar -->
-      <div class="sub-toolbar">
-        <input type="text" class="sub-search" id="subSearch" placeholder="Search by team name or code…" autocomplete="off" />
-        <button class="sub-refresh-btn" id="refreshBtn">
-          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          Refresh
-        </button>
+      <div class="table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Team ID</th>
+              <th>Type</th>
+              <th>Submission Link</th>
+              <th>Submitted At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="5" class="table-empty">Loading submissions...</td></tr>
+          </tbody>
+        </table>
       </div>
-
-      <!-- Table -->
-      <div class="section-card">
-        <div class="sub-table-wrap">
-          <table class="sub-table" id="subTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Team Code</th>
-                <th>Team Name</th>
-                <th>PPT Link</th>
-                <th>Live / Demo Link</th>
-                <th>Submitted At</th>
-              </tr>
-            </thead>
-            <tbody id="subTableBody">
-              <tr><td colspan="6" style="text-align:center;padding:2.5rem;color:rgba(255,255,255,0.2);">Loading…</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
   </main>
 
   <script type="module">
-    import { AdminAuth, AdminUI } from '/src/admin.js';
+    import { AdminAuth, SubmissionStore, AdminUI } from '/src/admin.js';
 
-    if (!AdminAuth.isAuthenticated()) {
-      window.location.href = '/admin/login.html';
-    }
+    // Auth check
+    if (!AdminAuth.isAuthenticated()) window.location.href = '/admin/login.html';
 
     AdminUI.initSidebar();
+
+    async function loadSubmissions() {
+      const submissions = await SubmissionStore.getAll();
+      const tbody = document.getElementById('tableBody');
+      const searchInput = document.getElementById('searchInput');
+
+      function render(items) {
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="table-empty">No submissions found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = items.map(s => `
+          <tr>
+            <td class="td-team">${s.teamId}</td>
+            <td>${SubmissionStore.getTypeBadge(s.type)}</td>
+            <td><a href="${s.submissionLink}" target="_blank" class="td-link">View File ↗</a></td>
+            <td>${AdminUI.formatDate(s.submittedAt)} <small style="opacity:0.4">${AdminUI.formatTime(s.submittedAt)}</small></td>
+            <td>
+              <button class="action-btn" title="View details" onclick="alert('${(s.description || 'No description').replace(/'/g, "\\'")}')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      render(submissions);
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = submissions.filter(s => s.teamId.toLowerCase().includes(query));
+        render(filtered);
+      });
+    }
+
+    loadSubmissions();
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
       AdminAuth.logout();
       window.location.href = '/admin/login.html';
     });
-
-    const apiHeaders = () => ({ 'X-Admin-Secret': AdminAuth.getToken() });
-
-    let allSubs = [];
-
-    function esc(s) {
-      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function formatDate(iso) {
-      if (!iso) return '—';
-      return new Date(iso).toLocaleString('en-IN', {
-        day: 'numeric', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata'
-      });
-    }
-
-    function renderTable(subs) {
-      const tbody = document.getElementById('subTableBody');
-      if (!subs.length) {
-        tbody.innerHTML = `
-          <tr><td colspan="6">
-            <div class="sub-empty">
-              <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <div>No submissions yet.</div>
-            </div>
-          </td></tr>`;
-        return;
-      }
-      tbody.innerHTML = subs.map((s, i) => `
-        <tr>
-          <td style="color:rgba(255,255,255,0.2);font-size:0.72rem;">${i + 1}</td>
-          <td class="td-code">${esc(s.teamCode)}</td>
-          <td class="td-team">${esc(s.teamName || '—')}</td>
-          <td class="td-link">
-            ${s.pptLink
-              ? `<a href="${esc(s.pptLink)}" target="_blank" rel="noopener">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                  Open PPT
-                </a>`
-              : '<span class="no-link">Not submitted</span>'}
-          </td>
-          <td class="td-link">
-            ${s.liveLink
-              ? `<a href="${esc(s.liveLink)}" target="_blank" rel="noopener">
-                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                  Open Live
-                </a>`
-              : '<span class="no-link">Not submitted</span>'}
-          </td>
-          <td class="td-time">${formatDate(s.submittedAt || s.updatedAt)}</td>
-        </tr>`).join('');
-    }
-
-    function updateStats(subs) {
-      document.getElementById('statTotal').textContent = subs.length;
-      document.getElementById('statPpt').textContent   = subs.filter(s => s.pptLink).length;
-      document.getElementById('statLive').textContent  = subs.filter(s => s.liveLink).length;
-      document.getElementById('statBoth').textContent  = subs.filter(s => s.pptLink && s.liveLink).length;
-    }
-
-    async function loadSubmissions() {
-      try {
-        const res  = await fetch('/api/admin/submissions', { headers: apiHeaders() });
-        if (res.status === 401) { AdminAuth.logout(); window.location.href = '/admin/login.html'; return; }
-        const data = await res.json();
-        allSubs = data.submissions || [];
-        updateStats(allSubs);
-        renderTable(allSubs);
-      } catch (err) {
-        console.error('[Submissions]', err);
-        document.getElementById('subTableBody').innerHTML =
-          `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#f87171;">Failed to load: ${err.message}</td></tr>`;
-      }
-    }
-
-    // Search
-    document.getElementById('subSearch').addEventListener('input', e => {
-      const q = e.target.value.toLowerCase().trim();
-      const filtered = q
-        ? allSubs.filter(s => (s.teamCode || '').toLowerCase().includes(q) || (s.teamName || '').toLowerCase().includes(q))
-        : allSubs;
-      renderTable(filtered);
-    });
-
-    document.getElementById('refreshBtn').addEventListener('click', loadSubmissions);
-
-    loadSubmissions();
   </script>
 </body>
 </html>
