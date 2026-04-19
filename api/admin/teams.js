@@ -15,6 +15,7 @@
 
 import { connectDB }  from '../lib/mongodb.js';
 import { Team }       from '../models/Team.js';
+import { Registration } from '../models/Registration.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function getIP(req) {
@@ -69,6 +70,7 @@ export async function teamsListHandler(req, res) {
     const [teams, total] = await Promise.all([
       Team.find(filter)
         .sort({ createdAt: -1 })
+        .populate('psSelectionId')
         .skip((page - 1) * limit)
         .limit(limit)
         .lean(),
@@ -199,12 +201,26 @@ export async function teamsUpdateHandler(req, res) {
     }
 
     // Apply allowed updates
-    const allowed = ['teamName', 'collegeName', 'branch', 'memberCount', 'leader', 'mentorSession', 'totalAmount', 'paymentStatus', 'members'];
+    const allowed = ['teamName', 'collegeName', 'branch', 'memberCount', 'leader', 'mentorSession', 'totalAmount', 'paymentStatus', 'members', 'mentor', 'mentorshipStatus', 'mentorshipReceiptUrl'];
     for (const key of allowed) {
       if (updates[key] !== undefined) team[key] = updates[key];
     }
 
     await team.save();
+
+    // Sync with Registration model if it exists
+    if (team.code) {
+      const regUpdates = {};
+      const syncFields = ['teamName', 'collegeName', 'branch', 'leader', 'mentorSession', 'totalAmount', 'paymentStatus', 'members', 'mentor', 'mentorshipStatus', 'mentorshipReceiptUrl'];
+      for (const field of syncFields) {
+        if (updates[field] !== undefined) regUpdates[field] = updates[field];
+      }
+      
+      if (Object.keys(regUpdates).length > 0) {
+        await Registration.findOneAndUpdate({ teamCode: team.code }, { $set: regUpdates });
+      }
+    }
+
     return res.status(200).json({ success: true, team });
   } catch (err) {
     console.error('[admin/teams] update error:', err);
@@ -288,6 +304,53 @@ export async function generateCodesHandler(req, res) {
     return res.status(200).json({ success: true, generated, teams: results });
   } catch (err) {
     console.error('[admin/teams] generate-codes error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+// ── APPROVE MENTORSHIP  POST /api/admin/teams/:id/approve-mentorship ──────────
+export async function mentorshipApproveHandler(req, res) {
+  if (!authGuard(req, res)) return;
+  try {
+    await connectDB();
+    const { id } = req.params;
+    const team   = await Team.findById(id);
+
+    if (!team) return res.status(404).json({ success: false, error: 'Team not found.' });
+
+    team.mentorshipStatus = 'approved';
+    team.mentorSession    = true;
+    
+    await team.save();
+
+    // Sync with Registration
+    if (team.code) {
+      await Registration.findOneAndUpdate(
+        { teamCode: team.code }, 
+        { $set: { mentorshipStatus: 'approved', mentorSession: true } }
+      );
+    }
+
+    return res.status(200).json({ success: true, message: 'Mentorship approved.' });
+  } catch (err) {
+    console.error('[admin/teams] mentorship-approve error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+// ── GET ONE  GET /api/admin/teams/:id ─────────────────────────────────────────
+export async function teamsGetHandler(req, res) {
+  if (!authGuard(req, res)) return;
+  try {
+    await connectDB();
+    const { id } = req.params;
+    const team   = await Team.findById(id).populate('psSelectionId').lean();
+
+    if (!team) return res.status(404).json({ success: false, error: 'Team not found.' });
+
+    return res.status(200).json({ success: true, team });
+  } catch (err) {
+    console.error('[admin/teams] get error:', err);
     return res.status(500).json({ success: false, error: err.message });
   }
 }

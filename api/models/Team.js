@@ -66,6 +66,21 @@ const TeamSchema = new mongoose.Schema(
       default: null,
     },
     psSelectedAt: { type: Date, default: null },
+    
+    // ── Mentorship ────────────────────────────────────────────────────────
+    mentor: {
+      name:     { type: String, default: null },
+      contact:  { type: String, default: null },
+      linkedin: { type: String, default: null },
+    },
+
+    // ── Mentorship Workflow ───────────────────────────────────────────────
+    mentorshipStatus: { 
+      type: String, 
+      enum: ['not_requested', 'pending', 'approved'], 
+      default: 'not_requested' 
+    },
+    mentorshipReceiptUrl: { type: String, default: null },
   },
   {
     timestamps: true,

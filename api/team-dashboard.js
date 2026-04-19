@@ -42,7 +42,29 @@ export default async function handler(req, res) {
     await connectDB();
 
     // ── Primary: Team record ────────────────────────────────────────────────
-    const team = await Team.findOne({ code }).lean();
+    let team = await Team.findOne({ code }).lean();
+
+    // ── Secondary: Registration record ────────────────────────────────────
+    const reg = await Registration.findOne({ teamCode: code }).lean();
+
+    // Fallback: If no team record, create a virtual one from registration
+    if (!team && reg) {
+      team = {
+        code: reg.teamCode,
+        teamName: reg.teamName,
+        collegeName: reg.collegeName,
+        branch: reg.branch,
+        paymentStatus: reg.paymentStatus,
+        mentorSession: reg.mentorSession,
+        leader: reg.leader,
+        members: reg.members,
+        mentor: reg.mentor,
+        mentorshipStatus: reg.mentorshipStatus,
+        mentorshipReceiptUrl: reg.mentorshipReceiptUrl,
+        psSelectionId: null,
+        psSelectedAt: null
+      };
+    }
 
     if (!team) {
       return res.status(404).json({
@@ -51,16 +73,13 @@ export default async function handler(req, res) {
       });
     }
 
-    if (team.paymentStatus !== 'paid') {
+    // Allow paid OR pending (previously strictly required paid)
+    if (team.paymentStatus !== 'paid' && team.paymentStatus !== 'pending') {
       return res.status(403).json({
-        error:   'payment_pending',
-        message: 'Payment not confirmed for this team.',
+        error:   'access_denied',
+        message: 'Access denied for this status: ' + team.paymentStatus,
       });
     }
-
-    // ── Secondary: Registration record (richer member data) ────────────────
-    // Registration uses teamCode field; Team uses code field — same value
-    const reg = await Registration.findOne({ teamCode: code }).lean();
 
     // Prefer Registration members (has email), fall back to Team.members
     let leader  = team.leader;
@@ -100,6 +119,9 @@ export default async function handler(req, res) {
         members,
         ps,
         psSelectedAt: team.psSelectedAt || null,
+        mentor:        team.mentor        || null,
+        mentorshipStatus:     team.mentorshipStatus     || 'not_requested',
+        mentorshipReceiptUrl: team.mentorshipReceiptUrl || null,
       },
     });
 

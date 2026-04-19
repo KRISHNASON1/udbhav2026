@@ -67,6 +67,21 @@ const RegistrationSchema = new mongoose.Schema(
 
     // ── Registration Status ─────────────────────────────────────────────
     registrationCompleted: { type: Boolean, default: false },
+
+    // ── Mentorship ─────────────────────────────────────────────────────────
+    mentor: {
+      name:     { type: String, default: null },
+      contact:  { type: String, default: null },
+      linkedin: { type: String, default: null },
+    },
+
+    // ── Mentorship Workflow ───────────────────────────────────────────────
+    mentorshipStatus: { 
+      type: String, 
+      enum: ['not_requested', 'pending', 'approved'], 
+      default: 'not_requested' 
+    },
+    mentorshipReceiptUrl: { type: String, default: null },
   },
   {
     timestamps: true,   // adds createdAt + updatedAt automatically
