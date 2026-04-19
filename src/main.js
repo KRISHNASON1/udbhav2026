@@ -61,11 +61,10 @@ if (!IS_TOUCH) {
   const arrow = document.getElementById('cursorArrow');
   if (!arrow) return;
 
-  // Track mouse — center dot on pointer
+  // Track mouse — center dot on pointer (GPU-accelerated transform)
   document.addEventListener('mousemove', (e) => {
-    arrow.style.left = e.clientX + 'px';
-    arrow.style.top  = e.clientY + 'px';
-  });
+    arrow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+  }, { passive: true });
 
   // Grow on hover over interactive elements
   const targets = 'a, button, [role="button"], .nav-link, .btn-cta, .nav-menu-btn, .icon-btn, .dropdown-item';
@@ -138,7 +137,7 @@ if (!IS_TOUCH && glow) {
   document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-  });
+  }, { passive: true });
 }
 
 // Smooth glow follow — only runs on desktop
@@ -341,19 +340,32 @@ if (IS_MOBILE) {
 }
 
 // Dissolve shader fully removed — see import section comment.
-if (!IS_TOUCH) heroName.addEventListener('mousemove', (e) => {
-  const rect  = heroName.getBoundingClientRect();
-  const dx    = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2); // -1 to +1
-  const dy    = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
+if (!IS_TOUCH) {
+  let _letterRaf = null;
+  let _cachedRect = null;
+  // Cache rect on resize instead of reading it every mouse event
+  const _updateRect = () => { _cachedRect = heroName.getBoundingClientRect(); };
+  _updateRect();
+  window.addEventListener('resize', _updateRect);
 
-  letters.forEach((letter, i) => {
-    const depth  = ((i / (letters.length - 1)) - 0.5) * 2; // -1→+1
-    const shiftX = dx * depth * 7;
-    const shiftY = dy * 4;
-    letter.style.transition = 'transform 0.15s ease';
-    letter.style.transform  = `translate(${shiftX}px, ${shiftY}px)`;
-  });
-});
+  heroName.addEventListener('mousemove', (e) => {
+    if (_letterRaf) return; // throttle to 1 update per frame
+    _letterRaf = requestAnimationFrame(() => {
+      _letterRaf = null;
+      if (!_cachedRect) return;
+      const dx = (e.clientX - _cachedRect.left - _cachedRect.width  / 2) / (_cachedRect.width  / 2);
+      const dy = (e.clientY - _cachedRect.top  - _cachedRect.height / 2) / (_cachedRect.height / 2);
+
+      letters.forEach((letter, i) => {
+        const depth  = ((i / (letters.length - 1)) - 0.5) * 2;
+        const shiftX = dx * depth * 7;
+        const shiftY = dy * 4;
+        letter.style.transition = 'transform 0.15s ease';
+        letter.style.transform  = `translate(${shiftX}px, ${shiftY}px)`;
+      });
+    });
+  }, { passive: true });
+}
 
 if (!IS_TOUCH) heroName.addEventListener('mouseleave', () => {
   letters.forEach(letter => {

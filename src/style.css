@@ -916,7 +916,7 @@ body {
   opacity: 0;
   transform: translateY(40px);
   filter: blur(12px);
-  will-change: opacity, transform, filter;
+  /* GSAP handles will-change during animation */
 }
 
 .hero-cat {
@@ -993,7 +993,7 @@ body {
   margin-bottom: 0.75rem;
   opacity: 0;
   transform: translateY(14px);
-  will-change: transform, opacity;
+  /* GSAP handles will-change during animation */
   pointer-events: none;
   position: relative;
   z-index: 1;
@@ -1044,7 +1044,7 @@ body {
   width: 100%;
   overflow: hidden;
   padding: 0 0.5rem;
-  will-change: transform;
+  /* GSAP handles will-change during animation */
   position: relative;
   z-index: 1;
 }
@@ -1053,7 +1053,7 @@ body {
   display: inline-block;
   opacity: 0;
   transform: translateY(70px) rotate(4deg);
-  will-change: transform, opacity;
+  /* GSAP handles will-change during animation */
 }
 
 /* ── Hero Subtitle ─────────────────────────────────────────────────────────── */
@@ -1077,7 +1077,7 @@ body {
   text-transform: uppercase;
   opacity: 0;
   transform: translateY(22px);
-  will-change: transform, opacity;
+  /* GSAP handles will-change during animation */
 }
 
 .subtitle-serif {
@@ -1089,7 +1089,7 @@ body {
   line-height: 1.1;
   opacity: 0;
   transform: translateY(22px);
-  will-change: transform, opacity;
+  /* GSAP handles will-change during animation */
 }
 
 /* ── Bottom Corner Labels ──────────────────────────────────────────────────── */
@@ -1113,7 +1113,7 @@ body {
   gap: 0.35rem;
   opacity: 0;
   transform: translateY(18px);
-  will-change: transform, opacity;
+  /* GSAP handles will-change during animation */
 }
 
 .corner-icon--green {
@@ -3880,7 +3880,7 @@ body {
   background-clip: text;
   /* will be animated via GSAP */
   opacity: 0;
-  will-change: transform, opacity;
+  /* GSAP handles will-change during animation */
 }
 
 /* ── Diagonal Marquee ────────────────────────────────────────────────────── */
@@ -3940,7 +3940,7 @@ body {
   /* GSAP animated in */
   opacity: 0;
   transform: translateY(50px);
-  will-change: opacity, transform;
+  /* GSAP handles will-change during animation */
 }
 
 /* "Ready to begin?" heading */
@@ -4431,7 +4431,7 @@ body {
   padding: 1.5rem 0;
   opacity: 0;
   transform: translateX(-24px);
-  will-change: opacity, transform;
+  /* GSAP handles will-change during animation */
 }
 .sch-item + .sch-item { border-top: 1px solid rgba(255,255,255,0.04); }
 
@@ -4764,7 +4764,7 @@ body {
 /* ── GSAP: initial hidden state — rows slide in from left/right ── */
 .schtl-row {
   opacity: 0;
-  will-change: opacity, transform;
+  /* GSAP handles will-change during animation */
 }
 .schtl-row--left  { transform: translateX(-40px); }
 .schtl-row--right { transform: translateX(40px);  }
