@@ -70,6 +70,7 @@ export default async function handler(req, res) {
             email: team.leader?.email || '',
             phone: team.leader?.phone || '',
           },
+          members: team.members || [],
         },
       });
     }
@@ -106,6 +107,7 @@ export default async function handler(req, res) {
             email: reg.leader?.email || '',
             phone: reg.leader?.phone || '',
           },
+          members: reg.members || [],
         },
       });
     }

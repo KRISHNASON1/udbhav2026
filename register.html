@@ -2598,8 +2598,8 @@
           verifyBtn.style.background = 'linear-gradient(135deg,#16a34a,#4ade80)';
           verifyBtn.style.opacity = '0.85';
           verifyBtn.style.boxShadow = '0 0 18px rgba(74,222,128,0.3)';
-          // Auto-add the first required member row
-          document.dispatchEvent(new CustomEvent('teamVerified'));
+          // Auto-add the first required member row or load existing members
+          document.dispatchEvent(new CustomEvent('teamVerified', { detail: team }));
           updatePayBtn();
         } catch(err) {
           if (codeErr) codeErr.textContent = 'Network error. Please try again.';
@@ -2614,9 +2614,16 @@
     var addBtn           = document.getElementById('addMemberBtn');
     var memberIdx        = 0;
 
-    function addMemberRow() {
-      if (memberIdx >= 3) return; // max 3 additional members (leader + 3 = 4 total)
+    function addMemberRow(existingMember) {
+      if (document.querySelectorAll('.member-block').length >= 3) return; // max 3 additional members (leader + 3 = 4 total)
       memberIdx++;
+      var isExisting = !!existingMember;
+      var nameVal = isExisting ? (existingMember.name || '') : '';
+      var phoneVal = isExisting ? (existingMember.phone || '') : '';
+      var nameAttr = isExisting ? 'readonly style="background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.5);"' : '';
+      var phoneAttr = isExisting ? 'readonly style="background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.5);"' : '';
+      var removeBtn = isExisting ? '' : '<button type="button" class="remove-member-btn" onclick="(function(btn){ btn.closest(\'.member-block\').remove(); var ab=document.getElementById(\'addMemberBtn\'); if(ab) { ab.style.display=\'\'; } if(typeof window.updatePayBtn===\'function\')window.updatePayBtn(); })(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Remove</button>';
+
       var row = document.createElement('div');
       row.className = 'member-block';
       row.id = 'dynMember' + memberIdx;
@@ -2624,30 +2631,30 @@
         '<div class="member-block-header">' +
           '<span class="member-block-title">Member ' + (memberIdx + 1) +
             ' <span class="opt-badge" style="opacity:.6;font-size:.7rem;font-weight:600">' + (memberIdx === 1 ? 'required' : 'optional') + '</span></span>' +
-          '<button type="button" class="remove-member-btn" onclick="(function(btn){' +
-            'btn.closest(\'.member-block\').remove();' +
-            'window.__memberIdx = Math.max(0, (window.__memberIdx||0)-1);' +
-            'var ab=document.getElementById(\'addMemberBtn\');if(ab)ab.style.display=\'\';' +
-            'if(typeof window.updatePayBtn===\'function\')window.updatePayBtn();' +
-          '})(this)">' +
-            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
-            'Remove</button></div>' +
+          removeBtn + '</div>' +
         '<div class="form-row">' +
           '<div class="form-field"><label class="form-label">Full Name <span class="req">*</span></label>' +
-            '<input type="text" class="form-input dyn-member-name" placeholder="Member full name" autocomplete="off" /></div>' +
+            '<input type="text" class="form-input dyn-member-name" placeholder="Member full name" autocomplete="off" value="' + nameVal + '" ' + nameAttr + ' /></div>' +
           '<div class="form-field"><label class="form-label">Phone</label>' +
-            '<input type="tel" class="form-input dyn-member-phone" placeholder="xxxxxxxxxx" autocomplete="off" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" /></div>' +
+            '<input type="tel" class="form-input dyn-member-phone" placeholder="xxxxxxxxxx" autocomplete="off" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" value="' + phoneVal + '" ' + phoneAttr + ' /></div>' +
         '</div>';
       if (membersContainer) membersContainer.appendChild(row);
       window.__memberIdx = memberIdx;
       // Hide Add button when at max
-      if (addBtn && memberIdx >= 3) addBtn.style.display = 'none';
-      updatePayBtn();
+      if (addBtn && document.querySelectorAll('.member-block').length >= 3) addBtn.style.display = 'none';
+      if (typeof updatePayBtn === 'function') updatePayBtn();
     }
 
-    if (addBtn) addBtn.addEventListener('click', addMemberRow);
-    // Add first required member row when team is verified
-    document.addEventListener('teamVerified', function() { if (memberIdx === 0) addMemberRow(); });
+    if (addBtn) addBtn.addEventListener('click', function() { addMemberRow(); });
+    // Add first required member row when team is verified OR load existing members
+    document.addEventListener('teamVerified', function(e) {
+      var members = (e.detail && e.detail.members) || [];
+      if (members.length > 0) {
+        members.forEach(function(m) { addMemberRow(m); });
+      } else if (memberIdx === 0) {
+        addMemberRow();
+      }
+    });
 
     // ── MENTOR SESSION TOGGLE ─────────────────────────────────────────────────
     var mentorWrap  = document.getElementById('mentorWrap');
