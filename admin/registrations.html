@@ -876,6 +876,76 @@
 
     document.getElementById('bulkDeselect')?.addEventListener('click', () => { selectedIds.clear(); updateBulkBar(); render(); });
 
+    document.getElementById('bulkApprove')?.addEventListener('click', async () => {
+      if (!selectedIds.size) return;
+      if (!confirm(`Mark ${selectedIds.size} team(s) as PAID?`)) return;
+      
+      const btn = document.getElementById('bulkApprove');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = 'Updating...';
+      btn.disabled = true;
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const id of selectedIds) {
+        try {
+          const res = await fetch('/api/admin/teams/' + id + '/payment', {
+            method: 'PATCH',
+            headers: apiHeaders(),
+            body: JSON.stringify({ paymentStatus: 'paid' })
+          });
+          if (res.ok) successCount++;
+          else errorCount++;
+        } catch (e) {
+          errorCount++;
+        }
+      }
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      
+      AdminUI.toast(`Updated ${successCount} successfully${errorCount ? \`, failed \${errorCount}\` : ''}.`, successCount ? 'success' : 'error');
+      selectedIds.clear();
+      updateBulkBar();
+      render();
+    });
+
+    document.getElementById('bulkReject')?.addEventListener('click', async () => {
+      if (!selectedIds.size) return;
+      if (!confirm(`Mark ${selectedIds.size} team(s) as FAILED/REJECTED?`)) return;
+      
+      const btn = document.getElementById('bulkReject');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = 'Updating...';
+      btn.disabled = true;
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const id of selectedIds) {
+        try {
+          const res = await fetch('/api/admin/teams/' + id + '/payment', {
+            method: 'PATCH',
+            headers: apiHeaders(),
+            body: JSON.stringify({ paymentStatus: 'failed' })
+          });
+          if (res.ok) successCount++;
+          else errorCount++;
+        } catch (e) {
+          errorCount++;
+        }
+      }
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      
+      AdminUI.toast(`Rejected ${successCount} successfully${errorCount ? \`, failed \${errorCount}\` : ''}.`, successCount ? 'success' : 'error');
+      selectedIds.clear();
+      updateBulkBar();
+      render();
+    });
+
     // -- DELETE TEAM
     async function deleteTeam(id) {
       if (!confirm('Delete this team? This cannot be undone.')) return;
