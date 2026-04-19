@@ -215,6 +215,18 @@ const Dashboard = {
 
         this.updateTimeline();
         setInterval(() => this.updateTimeline(), 60000);
+
+        // Auto Refresh Protocol
+        let refreshSeconds = 30;
+        const refreshEl = document.getElementById('refresh-timer');
+        setInterval(() => {
+            refreshSeconds--;
+            if (refreshSeconds <= 0) {
+                window.location.reload();
+            } else if (refreshEl) {
+                refreshEl.textContent = refreshSeconds.toString().padStart(2, '0');
+            }
+        }, 1000);
     },
 
     updateCountdown() {
@@ -352,10 +364,54 @@ const Dashboard = {
                 }
             } else {
                 el.classList.add('hidden');
+                
+                // 5 minutes before popup logic
+                const diffMs = visibleTime - now;
+                if (diffMs > 0 && diffMs <= 5 * 60 * 1000) {
+                    const actionId = el.getAttribute('data-action') || visibleTime.toString();
+                    if (!this.notifiedUpcoming) this.notifiedUpcoming = new Set();
+                    if (!this.notifiedUpcoming.has(actionId)) {
+                        this.notifiedUpcoming.add(actionId);
+                        
+                        let title = el.querySelector('h4') ? el.querySelector('h4').textContent.trim() : 'A new feature';
+                        this.showToast(`Heads up! ${title} opens in 5 minutes!`);
+                    }
+                }
             }
         });
 
         this.initializeIcons();
+    },
+
+    showToast(message, type = 'info') {
+        let container = document.getElementById('local-toast-container');
+        if (!container) return; // Fallback if missing
+        
+        const toast = document.createElement('div');
+        toast.className = `glass-dark border border-primary/20 bg-primary/10 px-6 py-3 rounded-xl flex items-center gap-3 transform -translate-y-4 opacity-0 transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.15)]`;
+        
+        toast.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
+                <i data-lucide="bell" class="w-4 h-4 text-primary animate-pulse"></i>
+            </div>
+            <p class="text-sm font-bold text-white">${message}</p>
+        `;
+        
+        container.appendChild(toast);
+        this.initializeIcons();
+        
+        // entry animation
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+        });
+        
+        // auto remove
+        setTimeout(() => {
+            toast.style.transform = '-translateY(4px)';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 300000);
     },
 
     async handleSubmit(form) {
