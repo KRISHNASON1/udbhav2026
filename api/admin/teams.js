@@ -194,15 +194,8 @@ export async function teamsUpdateHandler(req, res) {
       return res.status(403).json({ success: false, error: 'Team code is immutable once generated.' });
     }
 
-    // Block editing core fields once paid
-    const lockedIfPaid = ['teamName', 'collegeName', 'branch', 'leader'];
-    if (team.paymentStatus === 'paid') {
-      for (const field of lockedIfPaid) {
-        if (updates[field] !== undefined) {
-          return res.status(403).json({ success: false, error: `Cannot edit '${field}' after payment is completed.` });
-        }
-      }
-    }
+    // Admin has full control, no locked fields even if paid
+
 
     // Apply allowed updates
     const allowed = ['teamName', 'collegeName', 'branch', 'memberCount', 'leader', 'mentorSession', 'totalAmount', 'paymentStatus', 'members', 'mentor', 'mentorshipStatus', 'mentorshipReceiptUrl'];
