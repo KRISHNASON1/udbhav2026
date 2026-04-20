@@ -17,9 +17,9 @@ const RegistrationSchema = new mongoose.Schema(
   {
     // ── Team Info ───────────────────────────────────────────────────────
     teamName:    { type: String, required: true, trim: true },
-    collegeName: { type: String, required: true, trim: true },
-    branch:      { type: String, required: true, trim: true },
-    yearOfStudy: { type: String, required: true },
+    collegeName: { type: String, required: false, trim: true, default: '' },
+    branch:      { type: String, required: false, trim: true, default: '' },
+    yearOfStudy: { type: String, required: false, default: 'N/A' },
 
     // ── Leader ──────────────────────────────────────────────────────────
     leader: { type: MemberSchema, required: true },
@@ -43,6 +43,7 @@ const RegistrationSchema = new mongoose.Schema(
       enum: ['pending', 'paid', 'failed'],
       default: 'pending',
     },
+    paymentScreenshotUrl: { type: String, required: false },
     cashfreeOrderId:   { type: String, default: null },
     cashfreePaymentId: { type: String, default: null },
 

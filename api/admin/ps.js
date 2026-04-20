@@ -51,7 +51,7 @@ export async function configHandler(req, res) {
     const cfg = await PSDropConfig.findByIdAndUpdate(
       'singleton',
       { $set: update },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
     invalidatePSCache();
@@ -137,7 +137,7 @@ export async function updatePsHandler(req, res) {
     const ps = await ProblemStatement.findOneAndUpdate(
       { order: parseInt(order) },
       { $set: update },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!ps) return res.status(404).json({ error: 'ps_not_found' });

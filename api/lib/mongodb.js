@@ -46,6 +46,9 @@ export async function connectDB() {
       .then((m) => m)
       .catch((err) => {
         cached.promise = null; // reset so next request retries
+        if (err.code === 'ECONNREFUSED' || (err.message && err.message.includes('ECONNREFUSED')) || err.name === 'MongoServerSelectionError' || err.name === 'MongoNetworkError') {
+          throw new Error('No network connection');
+        }
         throw err;
       });
   }

@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 
 const MemberSchema = new mongoose.Schema({
   name:  { type: String, required: true, trim: true },
+  email: { type: String, required: true, trim: true, lowercase: true },
   phone: { type: String, required: true, trim: true },
 }, { _id: false });
 
@@ -54,6 +55,7 @@ const TeamSchema = new mongoose.Schema(
       default: 'pending',
     },
     paymentDate:        { type: Date,   default: null },
+    paymentScreenshotUrl: { type: String, default: null },
     cashfreeOrderId:    { type: String, default: null },
     cashfreePaymentId:  { type: String, default: null },
 

@@ -71,7 +71,7 @@ export async function paymentsHandler(req, res) {
         .sort(sortQuery)
         .skip(skip)
         .limit(limitNum)
-        .select('teamName collegeName leader totalAmount paymentStatus cashfreeOrderId cashfreePaymentId code mentorSession paymentDate members createdAt updatedAt')
+        .select('teamName collegeName leader totalAmount paymentStatus paymentScreenshotUrl cashfreeOrderId cashfreePaymentId code mentorSession paymentDate members createdAt updatedAt')
         .lean(),
       Team.countDocuments(filter),
     ]);
@@ -109,6 +109,7 @@ export async function paymentsHandler(req, res) {
       cashfreeOrderId:    t.cashfreeOrderId  || null,
       cashfreePaymentId:  t.cashfreePaymentId || null,
       teamCode:           t.code || null,
+      paymentScreenshotUrl: t.paymentScreenshotUrl || null,
       mentorSession:      t.mentorSession || false,
       memberCount:        t.memberCount || (t.members?.length || 0) + 1,
       paymentDate:        t.paymentDate || null,
