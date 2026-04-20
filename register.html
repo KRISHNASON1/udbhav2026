@@ -84,13 +84,35 @@
       background-size: 200px 200px; mix-blend-mode: overlay;
     }
 
-    /* ── Purple ambient background ─────────────────────────────────────────── */
+    /* ── Premium Animated Ambient Background ─────────────────────────────── */
     .reg-ambient {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background:
-        radial-gradient(ellipse 60% 50% at 15% 50%, rgba(139,92,246,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 85% 20%, rgba(139,92,246,0.05) 0%, transparent 60%),
-        var(--clr-bg);
+      background: var(--clr-bg);
+      overflow: hidden;
+    }
+    .reg-ambient::before, .reg-ambient::after {
+      content: ''; position: absolute;
+      width: 100vw; height: 100vh;
+      filter: blur(100px); opacity: 0.25;
+      animation: ambientDrift 20s ease-in-out infinite alternate;
+      border-radius: 50%;
+    }
+    .reg-ambient::before {
+      background: radial-gradient(circle at center, #8b5cf6 0%, transparent 60%);
+      top: -20%; left: -10%;
+      width: 80vw; height: 80vh;
+    }
+    .reg-ambient::after {
+      background: radial-gradient(circle at center, #ec4899 0%, transparent 60%);
+      bottom: -20%; right: -10%;
+      width: 70vw; height: 70vh;
+      animation-delay: -10s;
+      opacity: 0.15;
+    }
+    @keyframes ambientDrift {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(5%, 10%) scale(1.1); }
+      100% { transform: translate(-5%, -5%) scale(0.95); }
     }
 
 
@@ -370,7 +392,7 @@
     }
     .payment-addon span { color: rgba(167,139,250,0.9); font-weight: 600; }
 
-    .payment-razorpay {
+    .payment-cashfree {
       display: flex;
       align-items: center;
       gap: 0.6rem;
@@ -628,66 +650,242 @@
     .add-member-btn:hover { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.7); box-shadow: 0 0 18px rgba(139,92,246,0.15); }
     .add-member-btn[style*="display: none"] { display: none; }
 
-    /* ── MENTOR CHECKBOX ───────────────────────────────────────────── */
-    .mentor-check-wrap {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.85rem;
-      padding: 1.1rem 1.25rem;
-      background: rgba(139,92,246,0.06);
-      border: 1px solid rgba(139,92,246,0.2);
-      border-radius: 14px;
+    /* ── MENTOR PROMO CARD ─────────────────────────────────────────── */
+    .mentor-promo-card {
+      position: relative;
+      padding: 1.75rem 1.5rem;
+      background: linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(168,85,247,0.06) 50%, rgba(236,72,153,0.08) 100%);
+      border: 1.5px solid rgba(139,92,246,0.3);
+      border-radius: 20px;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
       margin-bottom: 0.75rem;
+      overflow: hidden;
     }
-    .mentor-check-wrap:hover { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.35); }
-
-    .custom-checkbox {
-      width: 20px; height: 20px;
+    .mentor-promo-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 15%; right: 15%;
+      height: 2px;
+      background: linear-gradient(to right, transparent, #a855f7, #ec4899, transparent);
+      border-radius: 2px;
+    }
+    .mentor-promo-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+      animation: mentorShine 4s ease-in-out infinite;
+    }
+    @keyframes mentorShine {
+      0% { left: -100%; }
+      50%, 100% { left: 200%; }
+    }
+    .mentor-promo-card:hover {
+      border-color: rgba(168,85,247,0.55);
+      background: linear-gradient(135deg, rgba(139,92,246,0.18) 0%, rgba(168,85,247,0.1) 50%, rgba(236,72,153,0.12) 100%);
+      box-shadow: 0 0 40px rgba(139,92,246,0.15), 0 0 80px rgba(168,85,247,0.06);
+      transform: translateY(-2px);
+    }
+    .mentor-promo-card.is-selected {
+      border-color: rgba(74,222,128,0.6);
+      background: linear-gradient(135deg, rgba(74,222,128,0.15) 0%, rgba(34,197,94,0.1) 50%, rgba(21,128,61,0.08) 100%);
+      box-shadow: 0 0 50px rgba(74,222,128,0.15), inset 0 0 30px rgba(74,222,128,0.05);
+    }
+    .mentor-promo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.28rem 0.75rem;
+      background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2));
+      border: 1px solid rgba(236,72,153,0.3);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f472b6;
+      margin-bottom: 0.85rem;
+    }
+    .mentor-promo-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      line-height: 0.95;
+      color: #fff;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .mentor-promo-heading .gradient-text {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mentor-promo-desc {
+      font-family: var(--font-ui);
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .mentor-promo-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .mentor-promo-price {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+    .mentor-promo-price .price-big {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: #a855f7;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .mentor-promo-price .price-label {
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+      font-weight: 500;
+    }
+    .mentor-promo-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: 12px;
+      border: 1.5px solid rgba(139,92,246,0.3);
+      background: rgba(139,92,246,0.08);
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.65);
+      transition: all 0.25s;
+    }
+    .mentor-promo-card.is-selected .mentor-promo-toggle {
+      background: linear-gradient(135deg, #16a34a, #4ade80);
+      border-color: rgba(74,222,128,0.5);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(74,222,128,0.25);
+    }
+    .mentor-toggle-dot {
+      width: 18px; height: 18px;
       border-radius: 5px;
       border: 1.5px solid rgba(139,92,246,0.4);
       background: transparent;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
-      margin-top: 1px;
       position: relative;
+      flex-shrink: 0;
     }
-    .custom-checkbox.checked {
-      background: var(--clr-purple);
-      border-color: var(--clr-purple);
+    .mentor-promo-card.is-selected .mentor-toggle-dot {
+      background: #fff;
+      border-color: #fff;
     }
-    .custom-checkbox.checked::after {
+    .mentor-promo-card.is-selected .mentor-toggle-dot::after {
       content: '';
       position: absolute;
       width: 5px; height: 9px;
-      border: 2px solid #fff;
+      border: 2px solid #16a34a;
       border-top: none;
       border-left: none;
       transform: rotate(45deg) translate(-1px, -1px);
     }
 
-    .mentor-check-text {}
-    .mentor-check-title {
+    /* ── CUSTOM FILE UPLOAD ────────────────────────────────────────── */
+    .file-upload-zone {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 1.5rem 1.25rem;
+      background: rgba(139,92,246,0.04);
+      border: 2px dashed rgba(139,92,246,0.3);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.25s;
+      min-height: 110px;
+    }
+    .file-upload-zone:hover {
+      background: rgba(139,92,246,0.08);
+      border-color: rgba(139,92,246,0.5);
+      box-shadow: 0 0 24px rgba(139,92,246,0.08);
+    }
+    .file-upload-zone.has-file {
+      border-style: solid;
+      border-color: rgba(74,222,128,0.4);
+      background: rgba(74,222,128,0.04);
+    }
+    .file-upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file-upload-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: #a78bfa;
+    }
+    .file-upload-zone.has-file .file-upload-icon {
+      background: rgba(74,222,128,0.12);
+      border-color: rgba(74,222,128,0.25);
+      color: #4ade80;
+    }
+    .file-upload-text {
       font-family: var(--font-ui);
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      color: #fff;
-      line-height: 1.3;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
     }
-    .mentor-check-desc {
+    .file-upload-text strong { color: #a78bfa; }
+    .file-upload-zone.has-file .file-upload-text strong { color: #4ade80; }
+    .file-upload-hint {
       font-family: var(--font-ui);
-      font-size: 0.75rem;
-      color: var(--clr-white-muted);
-      margin-top: 0.2rem;
-      line-height: 1.5;
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.3);
     }
-    .mentor-check-desc .price-tag {
-      color: rgba(167,139,250,0.9);
-      font-weight: 700;
+    .file-upload-filename {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #4ade80;
+      font-weight: 600;
+      display: none;
+    }
+    .file-upload-zone.has-file .file-upload-filename { display: block; }
+
+    /* ── EDITABLE FIELD HIGHLIGHT ──────────────────────────────────── */
+    .form-input.is-editable {
+      opacity: 1 !important;
+      cursor: text !important;
+      border-color: rgba(168,85,247,0.35) !important;
+      background: rgba(139,92,246,0.04) !important;
+    }
+    .form-input.is-editable:focus {
+      border-color: rgba(139,92,246,0.5) !important;
+      background: rgba(139,92,246,0.06) !important;
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.1) !important;
+    }
+    .editable-hint {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      color: rgba(168,85,247,0.6);
+      font-weight: 500;
+      letter-spacing: 0.04em;
     }
 
     /* ── TOTAL DISPLAY ─────────────────────────────────────────────── */
@@ -896,6 +1094,24 @@
       align-items: center;
       gap: 0.75rem;
     }
+    .verify-code-btn {
+      flex: 0 0 auto;
+      padding: 0 1.5rem;
+      height: 3rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 60%, #a78bfa 100%);
+      color: #fff;
+      font-family: var(--font-ui, inherit);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .verify-code-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .verify-code-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .pay-btn {
       width: 100%;
@@ -1037,6 +1253,24 @@
     }
   </style>
   <link rel="stylesheet" href="/mobile-perf.css" />
+  <style>
+    /* ── Register page footer fixes ──────────────────────────────────
+       The cinematic footer uses a scroll-pinned 200vh wrapper on the
+       home page. On the register page we just want a normal footer,
+       so collapse the wrapper height and force all GSAP-animated
+       elements visible (opacity/transform are set to 0 by CSS and then
+       animated in by GSAP, but GSAP never runs here due to IIFE crash).
+    ─────────────────────────────────────────────────────────────────── */
+    .cf-wrapper        { height: auto !important; }
+    .cf-footer         { position: relative !important; height: auto !important; min-height: unset !important; padding-bottom: 3rem !important; }
+    .cf-giant-text     { opacity: 0.06 !important; transform: none !important; }
+    .cf-center         { opacity: 1 !important; transform: none !important; }
+    .cf-heading        { opacity: 1 !important; transform: none !important; }
+    .cf-links          { opacity: 1 !important; transform: none !important; }
+    .cf-pill           { opacity: 1 !important; transform: none !important; }
+    .cf-bottom-bar     { opacity: 1 !important; transform: none !important; }
+    .cf-marquee-wrap   { opacity: 1 !important; }
+  </style>
 </head>
 
 <body>
@@ -1059,12 +1293,6 @@
     <!-- LEFT: logo + tagline -->
     <div class="nav-logo">
       <img src="/logo.png" alt="UDBHAV'26 logo" class="nav-logo-img" id="logoImg" />
-      <div class="logo-divider" aria-hidden="true"></div>
-      <span class="tagline-dot" aria-hidden="true"></span>
-      <div class="logo-tagline">
-        <span class="tagline-role">Alta School of Technology</span>
-        <span class="tagline-motto">Grand Hackathon 2026</span>
-      </div>
     </div>
 
     <!-- RIGHT: floating pill + circle menu button -->
@@ -1111,13 +1339,22 @@
                       <span class="md-item__desc">Meet the builders</span>
                     </div>
                   </a>
-                  <a href="/sponsors.html" class="md-item" role="menuitem" tabindex="-1">
+                                    <a href="/sponsors.html" class="md-item" role="menuitem" tabindex="-1">
                     <div class="md-item__icon">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/><path d="M8 17V5l12-2v12"/></svg>
                     </div>
                     <div class="md-item__body">
                       <span class="md-item__title">Sponsors</span>
                       <span class="md-item__desc">Our partners &amp; supporters</span>
+                    </div>
+                  </a>
+                  <a href="/user-dashboard.html" class="md-item" role="menuitem" tabindex="-1">
+                    <div class="md-item__icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                    </div>
+                    <div class="md-item__body">
+                      <span class="md-item__title">Team Dashboard</span>
+                      <span class="md-item__desc">View your assigned PS</span>
                     </div>
                   </a>
                 </div>
@@ -1205,7 +1442,11 @@
           <span class="mmd-link-text">Sponsors</span>
           <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
-      </nav>
+              <a href="/contact.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <span class="mmd-link-text">Contact</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a></nav>
       <div class="mmd-footer">
         <a href="/register.html" class="mmd-cta-btn">Register Now →</a>
       </div>
@@ -1273,12 +1514,12 @@
             <span class="payment-per-team">per team</span>
           </div>
           <p class="payment-addon">+ ₹300 for <span>Mentor Session</span> (optional)</p>
-          <div class="payment-razorpay">
+          <div class="payment-cashfree">
             <div class="razorpay-logo">
               <div class="razorpay-logo-icon">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M17 14h3M14 17h3"/></svg>
               </div>
-              Secured by Razorpay
+              Pay via UPI · QR Code
             </div>
           </div>
         </div>
@@ -1306,261 +1547,263 @@
 
         <form class="reg-form" id="regForm" novalidate>
 
-          <!-- ─────── TEAM INFORMATION ─────── -->
-          <div class="form-section-sep">
-            <div class="form-section-sep__line"></div>
-            <span class="form-section-sep__label">Team Information</span>
-            <div class="form-section-sep__line"></div>
-          </div>
-
-          <div class="form-row single" style="margin-bottom:1rem;">
-            <div class="form-field">
-              <label class="form-label" for="teamName">
-                Team Name <span class="req" aria-hidden="true">*</span>
-                <span class="hint">Must be unique</span>
-              </label>
-              <input type="text" id="teamName" name="teamName" class="form-input"
-                     placeholder="e.g., CodeStorm" required autocomplete="off" />
-              <span class="form-field-error" id="teamNameErr" role="alert"></span>
+          <!-- ── STEP 1: TEAM CODE VERIFICATION ─────────────────────────── -->
+          <div id="teamCodeStep">
+            <div class="form-section-sep">
+              <div class="form-section-sep__line"></div>
+              <span class="form-section-sep__label">Enter Your Team Code</span>
+              <div class="form-section-sep__line"></div>
             </div>
-          </div>
 
-          <div class="form-row single" style="margin-bottom:1rem;">
-            <div class="form-field">
-              <label class="form-label" for="collegeName">
-                College Name <span class="req" aria-hidden="true">*</span>
-              </label>
-              <input type="text" id="collegeName" name="collegeName" class="form-input"
-                     placeholder="e.g., Sage University, Indore" required autocomplete="organization" />
-              <span class="form-field-error" id="collegeNameErr" role="alert"></span>
-            </div>
-          </div>
-
-          <div class="form-row" style="margin-bottom:1rem;">
-            <div class="form-field">
-              <label class="form-label" for="branch">
-                Branch <span class="req" aria-hidden="true">*</span>
-                <span class="hint">All members</span>
-              </label>
-              <input type="text" id="branch" name="branch" class="form-input"
-                     placeholder="e.g., CSE, IT, ECE" required />
-              <span class="form-field-error" id="branchErr" role="alert"></span>
-            </div>
-            <div class="form-field">
-              <label class="form-label" for="yearOfStudy">
-                Year of Study <span class="req" aria-hidden="true">*</span>
-              </label>
-              <select id="yearOfStudy" name="yearOfStudy" class="form-input form-select" required>
-                <option value="" disabled selected>Select year</option>
-                <option value="1">1st Year</option>
-                <option value="2">2nd Year</option>
-                <option value="3">3rd Year</option>
-                <option value="4">4th Year</option>
-              </select>
-              <span class="form-field-error" id="yearErr" role="alert"></span>
-            </div>
-          </div>
-
-          <!-- ─────── TEAM LEADER ─────── -->
-          <div class="form-section-sep">
-            <div class="form-section-sep__line"></div>
-            <span class="form-section-sep__label">Team Leader</span>
-            <div class="form-section-sep__line"></div>
-          </div>
-
-          <div class="member-block" style="margin-bottom:1rem;">
-            <div class="member-block-header">
-              <span class="member-block-title">Leader</span>
-            </div>
-            <div class="form-row single">
+            <div class="form-row single" style="margin-bottom:0.5rem;">
               <div class="form-field">
-                <label class="form-label" for="leaderName">Full Name <span class="req" aria-hidden="true">*</span></label>
-                <input type="text" id="leaderName" name="leaderName" class="form-input"
-                       placeholder="Team leader's full name" required autocomplete="name" />
-                <span class="form-field-error" id="leaderNameErr" role="alert"></span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field">
-                <label class="form-label" for="leaderEmail">
-                  Email Address <span class="req" aria-hidden="true">*</span>
-                  <span class="hint">Team code sent here</span>
+                <label class="form-label" for="teamCodeInput">
+                  Team Code <span class="req" aria-hidden="true">*</span>
+                  <span class="hint">Sent to your leader's email after shortlisting</span>
                 </label>
-                <input type="email" id="leaderEmail" name="leaderEmail" class="form-input"
-                       placeholder="leader@email.com" required autocomplete="email" />
-                <span class="form-field-error" id="leaderEmailErr" role="alert"></span>
-              </div>
-              <div class="form-field">
-                <label class="form-label" for="leaderPhone">
-                  Phone Number <span class="req" aria-hidden="true">*</span>
-                  <span class="hint">+91 format</span>
-                </label>
-                <input type="tel" id="leaderPhone" name="leaderPhone" class="form-input"
-                       placeholder="+91 9876543210" required autocomplete="tel" />
-                <span class="form-field-error" id="leaderPhoneErr" role="alert"></span>
+                <div style="display:flex;gap:0.75rem;align-items:stretch;width:100%;">
+                  <input type="text" id="teamCodeInput" name="teamCodeInput" class="form-input"
+                         placeholder="e.g., UDB-ABCD" autocomplete="off" autocapitalize="characters"
+                         oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '')"
+                         style="font-family:'JetBrains Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;flex:1;min-width:0;font-size:1rem;font-weight:700;" />
+                  <button type="button" id="verifyCodeBtn" class="verify-code-btn">
+                    Verify →
+                  </button>
+                </div>
+                <span class="form-field-error" id="teamCodeErr" role="alert"></span>
+                <p style="margin:0.5rem 0 0;font-size:0.75rem;color:rgba(255,255,255,0.28);line-height:1.5;">
+                  Having trouble with your code?
+                  <a href="/contact.html" style="color:rgba(168,85,247,0.7);text-decoration:none;font-weight:600;transition:color 0.15s;"
+                     onmouseover="this.style.color='#a855f7'" onmouseout="this.style.color='rgba(168,85,247,0.7)'">
+                    Contact us ↗
+                  </a>
+                </p>
               </div>
             </div>
+
+            <!-- Verify status -->
+            <div id="codeVerifyStatus" style="display:none;margin-top:0.6rem;"></div>
           </div>
 
-          <!-- ─────── TEAM MEMBERS ─────── -->
-          <div class="form-section-sep">
-            <div class="form-section-sep__line"></div>
-            <span class="form-section-sep__label">Team Members</span>
-            <div class="form-section-sep__line"></div>
-          </div>
+          <!-- ── STEP 2: LOCKED AUTO-FILLED DETAILS ─────────────────────── -->
+          <div id="teamDetailsStep" style="display:none;">
 
-          <!-- Member 2 (Required) -->
-          <div class="member-block" id="member2Block">
-            <div class="member-block-header">
-              <span class="member-block-title">Member 2</span>
+            <!-- Verified badge -->
+            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.7rem 1rem;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:10px;margin-bottom:1.2rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="font-size:0.82rem;color:#4ade80;font-weight:600;">Team code verified — details auto-filled from our database</span>
             </div>
-            <div class="form-row single">
-              <div class="form-field">
-                <label class="form-label" for="m2Name">Full Name <span class="req" aria-hidden="true">*</span></label>
-                <input type="text" id="m2Name" name="m2Name" class="form-input" placeholder="Member's full name" required />
-                <span class="form-field-error" id="m2NameErr" role="alert"></span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field">
-                <label class="form-label" for="m2Email">Email <span class="req" aria-hidden="true">*</span></label>
-                <input type="email" id="m2Email" name="m2Email" class="form-input" placeholder="member2@email.com" required />
-                <span class="form-field-error" id="m2EmailErr" role="alert"></span>
-              </div>
-              <div class="form-field">
-                <label class="form-label" for="m2Phone">Phone <span class="req" aria-hidden="true">*</span></label>
-                <input type="tel" id="m2Phone" name="m2Phone" class="form-input" placeholder="+91 xxxxxxxxxx" required />
-                <span class="form-field-error" id="m2PhoneErr" role="alert"></span>
-              </div>
-            </div>
-          </div>
 
-          <!-- Member 3 (Optional, hidden) -->
-          <div class="member-optional" id="member3Wrap" data-visible="false" aria-hidden="true">
-            <div class="member-block" id="member3Block">
-              <div class="member-block-header">
-                <span class="member-block-title">Member 3 <span class="opt-badge">optional</span></span>
-                <button type="button" class="remove-member-btn" id="removeMember3" aria-label="Remove member 3">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  Remove
-                </button>
+            <!-- ── LOCKED TEAM INFO ─────────────────────────────────────── -->
+            <div class="form-section-sep">
+              <div class="form-section-sep__line"></div>
+              <span class="form-section-sep__label">Team Information <span style="font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:0.1em;">🔒 READ-ONLY</span></span>
+              <div class="form-section-sep__line"></div>
+            </div>
+
+            <div class="form-row single" style="margin-bottom:1rem;">
+              <div class="form-field">
+                <label class="form-label">Team Name</label>
+                <input type="text" id="teamName" class="form-input" readonly
+                       style="opacity:0.6;cursor:not-allowed;border-color:rgba(168,85,247,0.15);" />
               </div>
+            </div>
+
+            <div class="form-row" style="margin-bottom:1rem;">
+              <div class="form-field">
+                <label class="form-label">College</label>
+                <input type="text" id="collegeName" class="form-input" readonly
+                       style="opacity:0.6;cursor:not-allowed;border-color:rgba(168,85,247,0.15);" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Branch</label>
+                <input type="text" id="branch" class="form-input" readonly
+                       style="opacity:0.6;cursor:not-allowed;border-color:rgba(168,85,247,0.15);" />
+              </div>
+            </div>
+
+            <!-- ── LEADER (name locked, email/phone editable) ──────────── -->
+            <div class="form-section-sep">
+              <div class="form-section-sep__line"></div>
+              <span class="form-section-sep__label">Team Leader <span style="font-size:0.6rem;color:#a855f7;letter-spacing:0.1em;">✏ EMAIL & PHONE EDITABLE</span></span>
+              <div class="form-section-sep__line"></div>
+            </div>
+
+            <div class="member-block" style="margin-bottom:1rem;">
               <div class="form-row single">
                 <div class="form-field">
-                  <label class="form-label" for="m3Name">Full Name</label>
-                  <input type="text" id="m3Name" name="m3Name" class="form-input" placeholder="Member's full name" />
+                  <label class="form-label">Leader Name <span style="font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:0.1em;">🔒</span></label>
+                  <input type="text" id="leaderName" class="form-input" readonly
+                         style="opacity:0.6;cursor:not-allowed;border-color:rgba(168,85,247,0.15);" />
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-field">
-                  <label class="form-label" for="m3Email">Email</label>
-                  <input type="email" id="m3Email" name="m3Email" class="form-input" placeholder="member3@email.com" />
+                  <label class="form-label">Leader Email <span class="editable-hint">✏ editable</span></label>
+                  <input type="email" id="leaderEmail" class="form-input is-editable"
+                         placeholder="leader@email.com"
+                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9.@_-]/g, '')" />
                 </div>
                 <div class="form-field">
-                  <label class="form-label" for="m3Phone">Phone</label>
-                  <input type="tel" id="m3Phone" name="m3Phone" class="form-input" placeholder="+91 xxxxxxxxxx" />
+                  <label class="form-label">Leader Phone <span class="editable-hint">✏ editable</span></label>
+                  <input type="tel" id="leaderPhone" class="form-input is-editable"
+                         placeholder="10-digit phone" maxlength="10"
+                         oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Member 4 (Optional, hidden) -->
-          <div class="member-optional" id="member4Wrap" data-visible="false" aria-hidden="true">
-            <div class="member-block" id="member4Block">
-              <div class="member-block-header">
-                <span class="member-block-title">Member 4 <span class="opt-badge">optional</span></span>
-                <button type="button" class="remove-member-btn" id="removeMember4" aria-label="Remove member 4">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  Remove
-                </button>
-              </div>
-              <div class="form-row single">
-                <div class="form-field">
-                  <label class="form-label" for="m4Name">Full Name</label>
-                  <input type="text" id="m4Name" name="m4Name" class="form-input" placeholder="Member's full name" />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-field">
-                  <label class="form-label" for="m4Email">Email</label>
-                  <input type="email" id="m4Email" name="m4Email" class="form-input" placeholder="member4@email.com" />
-                </div>
-                <div class="form-field">
-                  <label class="form-label" for="m4Phone">Phone</label>
-                  <input type="tel" id="m4Phone" name="m4Phone" class="form-input" placeholder="+91 xxxxxxxxxx" />
-                </div>
-              </div>
+            <!-- ── EDITABLE: TEAM MEMBERS ───────────────────────────────── -->
+            <div class="form-section-sep">
+              <div class="form-section-sep__line"></div>
+              <span class="form-section-sep__label">Team Members <span style="font-size:0.6rem;color:#a855f7;letter-spacing:0.1em;">✏ EDITABLE</span> <span style="font-size:0.6rem;color:#f87171;letter-spacing:0.05em;">(min 1 required)</span></span>
+              <div class="form-section-sep__line"></div>
             </div>
-          </div>
 
-          <!-- Add Member Button -->
-          <button type="button" class="add-member-btn" id="addMemberBtn" aria-label="Add another team member">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Member
-          </button>
-
-          <!-- ─────── MENTOR & PAYMENT ─────── -->
-          <div class="form-section-sep">
-            <div class="form-section-sep__line"></div>
-            <span class="form-section-sep__label">Mentor &amp; Payment</span>
-            <div class="form-section-sep__line"></div>
-          </div>
-
-          <!-- Mentor checkbox -->
-          <div class="mentor-check-wrap" id="mentorWrap" role="checkbox" aria-checked="false" tabindex="0" aria-label="Add mentor session for ₹300 extra">
-            <div class="custom-checkbox" id="mentorCheckbox" aria-hidden="true"></div>
-            <div class="mentor-check-text">
-              <div class="mentor-check-title">I want a Mentor Session</div>
-              <div class="mentor-check-desc">Get direct Q&amp;amp;A time with an expert mentor during the hackathon. Exclusive guidance for your team. <span class="price-tag">+₹300 extra</span></div>
+            <div id="membersContainer">
+              <!-- Dynamic member rows injected here by JS -->
             </div>
-          </div>
 
-          <!-- Total Display -->
-          <div class="total-card" aria-live="polite" aria-label="Total payable amount">
-            <div class="total-label">Total Payable</div>
-            <div class="total-amount-display" id="totalAmount">₹800</div>
-            <div class="total-breakdown" id="totalBreakdown"></div>
-          </div>
-
-          <!-- ─────── AGREEMENT ─────── -->
-          <div class="form-section-sep">
-            <div class="form-section-sep__line"></div>
-            <span class="form-section-sep__label">Agreement</span>
-            <div class="form-section-sep__line"></div>
-          </div>
-
-          <div class="agreement-list">
-            <label class="agreement-item" id="agreeTC" role="checkbox" aria-checked="false" tabindex="0">
-              <div class="agreement-checkbox" id="checkTC" aria-hidden="true"></div>
-              <span class="agreement-text">
-                I agree to the <a href="/code-of-conduct.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> of UDBHAV'26
-              </span>
-            </label>
-            <label class="agreement-item" id="agreeConduct" role="checkbox" aria-checked="false" tabindex="0">
-              <div class="agreement-checkbox" id="checkConduct" aria-hidden="true"></div>
-              <span class="agreement-text">
-                I have read and agree to the <a href="/code-of-conduct.html" target="_blank" rel="noopener">Code of Conduct</a>
-              </span>
-            </label>
-          </div>
-
-          <!-- API error toast -->
-          <div class="api-error-toast" id="apiErrorToast" role="alert" aria-live="assertive">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" flex-shrink="0" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span id="apiErrorMsg">Something went wrong. Please try again.</span>
-          </div>
-
-          <!-- PAY NOW BUTTON -->
-          <div class="pay-btn-wrap">
-            <button type="submit" class="pay-btn disabled" id="payBtn" disabled>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              <span id="payBtnLabel">Pay ₹800 Securely</span>
+            <button type="button" id="addMemberBtn" class="add-member-btn" aria-label="Add another team member">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Member
             </button>
-            <div class="pay-secure-note" aria-label="Secure payment information">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              256-bit encrypted · Powered by Razorpay
+
+            <!-- ── MENTOR SESSION — PREMIUM PROMO ──────────────────── -->
+            <div class="form-section-sep">
+              <div class="form-section-sep__line"></div>
+              <span class="form-section-sep__label">🔥 Upgrade Your Experience</span>
+              <div class="form-section-sep__line"></div>
             </div>
-          </div>
+
+            <!-- Mentor promo card -->
+            <div class="mentor-promo-card" id="mentorWrap" role="checkbox" aria-checked="false" tabindex="0" aria-label="Add mentor session for ₹300 extra">
+              <div class="mentor-promo-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Most Popular Add-on
+              </div>
+              <h3 class="mentor-promo-heading">
+                Get a <span class="gradient-text">Mentor Session</span>
+              </h3>
+              <p class="mentor-promo-desc">
+                Direct 1-on-1 Q&amp;A time with an <strong style="color:rgba(255,255,255,0.8);">industry expert mentor</strong> during the hackathon. Get guidance on your approach, architecture decisions &amp; presentation strategy.
+              </p>
+              <div class="mentor-promo-bottom">
+                <div class="mentor-promo-price">
+                  <span class="price-big">+₹300</span>
+                  <span class="price-label">per team</span>
+                </div>
+                <div class="mentor-promo-toggle" id="mentorToggleBtn">
+                  <div class="mentor-toggle-dot" id="mentorCheckbox"></div>
+                  <span id="mentorToggleLabel">Add to Registration</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── AGREEMENT ───────────────────────────────────────────── -->
+            <div class="form-section-sep">
+              <div class="form-section-sep__line"></div>
+              <span class="form-section-sep__label">Agreement</span>
+              <div class="form-section-sep__line"></div>
+            </div>
+
+            <div class="agreement-list" id="agreementList">
+              <label class="agreement-item" id="agreeTC" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="agreement-checkbox" id="checkTC" aria-hidden="true"></div>
+                <span class="agreement-text">
+                  I agree to the <a href="/code-of-conduct.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> of UDBHAV'26
+                </span>
+              </label>
+              <label class="agreement-item" id="agreeConduct" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="agreement-checkbox" id="checkConduct" aria-hidden="true"></div>
+                <span class="agreement-text">
+                  I have read and agree to the <a href="/code-of-conduct.html" target="_blank" rel="noopener">Code of Conduct</a>
+                </span>
+              </label>
+            </div>
+
+            <!-- ── QR PAYMENT SECTION (only visible when both agreements checked) ──── -->
+            <div id="qrPaymentSection" style="display:none;">
+
+              <!-- Divider -->
+              <div style="height:1px;background:linear-gradient(to right,transparent,rgba(139,92,246,0.4),transparent);margin:1.5rem 0;"></div>
+
+              <!-- Instruction text & Upload -->
+              <div style="background:rgba(139,92,246,0.07);border:1px solid rgba(139,92,246,0.2);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;">
+                <p style="font-family:var(--font-ui);font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.7;margin:0 0 1rem;">
+                  <span style="font-size:1.1rem;">📲</span> <strong style="color:#fff;">Scan the QR below</strong> to pay. Then <strong style="color:#a78bfa;">upload your payment screenshot</strong> here:
+                </p>
+                <div class="file-upload-zone" id="fileUploadZone">
+                  <input type="file" id="paymentScreenshot" accept="image/*" required />
+                  <div class="file-upload-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  </div>
+                  <p class="file-upload-text"><strong>Click to upload</strong> or drag & drop</p>
+                  <span class="file-upload-hint">JPG, PNG, JPEG • Max 5MB</span>
+                  <span class="file-upload-filename" id="uploadedFileName"></span>
+                </div>
+              </div>
+
+              <!-- ⚠️ UPI Transaction ID warning -->
+              <div style="display:flex;align-items:flex-start;gap:0.7rem;padding:0.85rem 1.1rem;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.25);border-radius:12px;margin-bottom:1.5rem;">
+                <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
+                <p style="font-family:var(--font-ui);font-size:0.78rem;color:rgba(251,191,36,0.9);line-height:1.6;margin:0;font-weight:500;">
+                  <strong style="color:#fbbf24;">Important:</strong> Make sure the <strong>UPI Transaction ID / UTR number</strong> is clearly visible in your payment screenshot. Screenshots without a visible transaction ID may delay your registration verification.
+                </p>
+              </div>
+
+              <!-- QR Code -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+                <div style="position:relative;padding:1rem;background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.25);border-radius:20px;box-shadow:0 0 40px rgba(139,92,246,0.12);">
+                  <img src="/QR-800.jpeg" alt="Payment QR Code" id="paymentQrImg"
+                       style="display:block;width:220px;height:220px;border-radius:12px;object-fit:cover;"
+                       onerror="this.style.display='none';document.getElementById('qrFallback').style.display='flex';" />
+                  <!-- Fallback if image doesn't load -->
+                  <div id="qrFallback" style="display:none;width:220px;height:220px;border-radius:12px;background:rgba(139,92,246,0.08);border:2px dashed rgba(139,92,246,0.3);align-items:center;justify-content:center;flex-direction:column;gap:0.75rem;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(139,92,246,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
+                    <span style="font-size:0.72rem;color:rgba(139,92,246,0.6);font-family:var(--font-mono);text-align:center;">QR CODE<br>PLACEHOLDER</span>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <div style="width:6px;height:6px;border-radius:50%;background:#25d366;animation:stepPulse 2s ease-in-out infinite;"></div>
+                  <span style="font-family:var(--font-mono);font-size:0.7rem;color:rgba(255,255,255,0.4);letter-spacing:0.08em;">UPI · SCAN &amp; PAY</span>
+                </div>
+              </div>
+
+              <!-- Amount reminder -->
+              <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:0.85rem 1.25rem;background:rgba(13,13,18,0.95);border:1px solid rgba(139,92,246,0.2);border-radius:14px;margin-bottom:1.25rem;">
+                <div style="font-family:var(--font-display);font-size:2rem;color:#fff;letter-spacing:0.02em;" id="totalAmount">₹800</div>
+                <div style="font-family:var(--font-ui);font-size:0.75rem;color:rgba(255,255,255,0.4);" id="totalBreakdown">per team</div>
+              </div>
+
+              <!-- Divider -->
+              <div style="height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.1),transparent);margin-bottom:1.25rem;"></div>
+
+              <!-- After payment notice -->
+              <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:1rem 1.25rem;background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.15);border-radius:14px;margin-bottom:1.5rem;">
+                <span style="font-size:1.2rem;flex-shrink:0;">⏳</span>
+                <p style="font-family:var(--font-ui);font-size:0.82rem;color:rgba(255,255,255,0.6);line-height:1.65;margin:0;">Within <strong style="color:#4ade80;">1 hour</strong> of submitting your registration, you will be able to access your <strong style="color:#4ade80;">Team Dashboard</strong>.</p>
+              </div>
+
+            </div><!-- /#qrPaymentSection -->
+
+            <!-- API error toast -->
+            <div class="api-error-toast" id="apiErrorToast" role="alert" aria-live="assertive">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span id="apiErrorMsg">Something went wrong. Please try again.</span>
+            </div>
+
+            <!-- REGISTER BUTTON (only visible when both checkboxes checked) -->
+            <div class="pay-btn-wrap" id="regBtnWrap" style="display:none;">
+              <button type="submit" class="pay-btn enabled" id="payBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span id="payBtnLabel">Complete Registration</span>
+              </button>
+              <div class="pay-secure-note">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Your data is saved securely to our system
+              </div>
+            </div>
 
         </form>
 
@@ -1586,33 +1829,63 @@
           <!-- Email notice -->
           <p class="success-sub" id="successEmailNote" style="font-size:0.8rem;color:rgba(255,255,255,0.35);margin-top:0.8rem;"></p>
 
-          <!-- Amount & mentor -->
-          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;margin:1rem 0;">
+
+          <!-- ── BIG THANK YOU HEADING ── -->
+          <div style="width:100%;max-width:420px;text-align:center;margin-bottom:1.5rem;">
+            <p style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:#fff;letter-spacing:0.04em;line-height:1.1;margin:0;">
+              Thank You for Registering!
+            </p>
+            <p style="font-size:0.92rem;color:rgba(255,255,255,0.55);margin:0.5rem 0 0;line-height:1.6;">
+              Best of luck 🎉 — can't wait to see you on <strong style="color:#a855f7;">25th April</strong> at the college.
+            </p>
+          </div>
+
+          <!-- Amount & mentor badges -->
+          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.2rem;">
             <div style="font-family:monospace;font-size:0.78rem;padding:0.4rem 0.9rem;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);" id="successAmountBadge"></div>
             <div style="font-family:monospace;font-size:0.78rem;padding:0.4rem 0.9rem;border-radius:8px;background:rgba(168,85,247,0.07);border:1px solid rgba(168,85,247,0.2);color:#a855f7;" id="successMentorBadge"></div>
           </div>
 
-          <!-- What's next -->
-          <div style="width:100%;max-width:380px;text-align:left;margin:0.8rem 0 1.5rem;padding:1rem 1.2rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
+          <!-- Email notice -->
+          <p class="success-sub" id="successEmailNote" style="font-size:0.8rem;color:rgba(255,255,255,0.35);margin-bottom:1.2rem;"></p>
+
+          <!-- ── WHATSAPP GROUP GUIDELINE ── -->
+          <div style="width:100%;max-width:400px;padding:1rem 1.2rem;background:linear-gradient(135deg,rgba(37,211,102,0.1),rgba(37,211,102,0.05));border:1px solid rgba(37,211,102,0.3);border-radius:14px;margin-bottom:1.4rem;text-align:left;">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#25d366" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <span style="font-size:0.82rem;font-weight:700;color:#25d366;">WhatsApp Group — Important</span>
+            </div>
+            <p style="margin:0;font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.65;">
+              Once your payment screenshot is <strong style="color:rgba(255,255,255,0.8);">verified by our team</strong>, you will be added to the official UDBHAV'26 WhatsApp group where all event updates, schedule, and instructions will be shared. Please keep an eye on your messages.
+            </p>
+          </div>
+
+          <!-- ── WHAT'S NEXT ── -->
+          <div style="width:100%;max-width:400px;text-align:left;margin-bottom:1.4rem;padding:1rem 1.2rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
             <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:0.8rem;font-family:monospace;">What's Next</p>
-            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.55rem;">
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">✓</span> Check your email for the team code</li>
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">→</span> Save your Team Code somewhere safe</li>
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">⏳</span> Be online at 10:45 AM, 25 Apr 2026</li>
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">💻</span> Bring laptop, charger & ID proof</li>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.65rem;">
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#4ade80;flex-shrink:0;margin-top:1px;">✓</span> Our team will verify your payment screenshot within a few hours</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#25d366;flex-shrink:0;margin-top:1px;">💬</span> After verification, you'll be added to the WhatsApp group</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#a855f7;flex-shrink:0;margin-top:1px;">→</span> Save your Team Code — you'll need it for the PS Drop</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#fbbf24;flex-shrink:0;margin-top:1px;">⏳</span> Be ready at <strong style="color:rgba(255,255,255,0.7);">10:45 AM, 25 April 2026</strong> for PS Drop</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#60a5fa;flex-shrink:0;margin-top:1px;">💻</span> Bring your laptop, charger &amp; college ID proof</li>
             </ul>
           </div>
 
-          <!-- PS Drop CTA -->
-          <div style="width:100%;max-width:380px;padding:0.9rem 1.2rem;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.18);border-radius:12px;margin-bottom:1.4rem;text-align:left;">
+          <!-- ── PS DROP REMINDER ── -->
+          <div style="width:100%;max-width:400px;padding:0.9rem 1.2rem;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.18);border-radius:12px;margin-bottom:1.4rem;text-align:left;">
             <p style="margin:0;font-size:0.75rem;color:rgba(255,255,255,0.35);line-height:1.6;">📅 <strong style="color:rgba(255,255,255,0.6);">PS Drop: 10:45 AM, 25 April 2026</strong><br>Be ready with your Team Code to select your Problem Statement domain.</p>
           </div>
 
           <!-- CTAs -->
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
+            <button onclick="downloadReceipt()" class="success-cta" id="downloadReceiptBtn" style="background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.35);color:#a855f7;cursor:pointer;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Receipt
+            </button>
             <a href="/problem-statement.html" class="success-cta" id="successPsBtn">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Visit PS Drop Page
+              PS Drop Page
             </a>
             <a href="/" class="success-cta" style="background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.55);">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="true" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1620,7 +1893,6 @@
             </a>
           </div>
 
-        </div>
 
       </section><!-- /.reg-right -->
 
@@ -1643,11 +1915,11 @@
         </div>
 
         <div class="contact-strip-actions">
-          <a href="mailto:udbhav@sage.edu.in" class="contact-pill contact-pill--primary" id="contactEmail">
+          <a href="mailto:udbhav26byalta@gmail.com" class="contact-pill contact-pill--primary" id="contactEmail">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8l10 7 10-7"/></svg>
             Email Us
           </a>
-          <a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener noreferrer" class="contact-pill contact-pill--ghost" id="contactWhatsapp">
+          <a href="https://wa.me/918829841257" target="_blank" rel="noopener noreferrer" class="contact-pill contact-pill--ghost" id="contactWhatsapp">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             WhatsApp
           </a>
@@ -1794,7 +2066,7 @@
               <a href="/legal.html#terms" class="cf-pill cf-pill--ghost js-magnetic">Terms</a>
               <a href="/legal.html#privacy" class="cf-pill cf-pill--ghost js-magnetic">Privacy</a>
               <a href="/legal.html#refund" class="cf-pill cf-pill--ghost js-magnetic">Refund Policy</a>
-              <a href="/legal.html#contact" class="cf-pill cf-pill--ghost js-magnetic">Contact Us</a>
+              <a href="/contact.html" class="cf-pill cf-pill--ghost js-magnetic">Contact Us</a>
             </div>
           </div>
         </div>
@@ -1830,13 +2102,16 @@
     'use strict';
 
     // ── Lenis smooth scroll ──────────────────────────────────────────────
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smooth: true, smoothTouch: false, touchMultiplier: 2, infinite: false,
-    });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
+    let lenis;
+    try {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smooth: true, smoothTouch: false, touchMultiplier: 2, infinite: false,
+      });
+      const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+    } catch(e) { console.warn('[Lenis] unavailable:', e.message); }
 
     // ── Custom cursor ────────────────────────────────────────────────────
     const cursor = document.getElementById('cursorArrow');
@@ -1859,277 +2134,63 @@
 
     if (typeof gsap !== 'undefined') {
       gsap.registerPlugin(ScrollTrigger);
-
-      gsap.from(regLeft, { opacity: 0, x: -40, duration: 1, ease: 'power3.out', delay: 0.15 });
-      gsap.from(regRight, { opacity: 0, x: 40, duration: 1, ease: 'power3.out', delay: 0.25 });
-
-      // Stagger the stepper steps
-      gsap.from('.step-item', {
-        opacity: 0, y: 20, stagger: 0.1, duration: 0.7, ease: 'power3.out', delay: 0.4
-      });
-    }
-
-    // ── Member add/remove logic ──────────────────────────────────────────
-    let memberCount = 2; // leader + member 2 already shown
-
-    function showMember(n) {
-      const wrap = document.getElementById('member' + n + 'Wrap');
-      if (!wrap) return;
-      wrap.setAttribute('data-visible', 'true');
-      wrap.setAttribute('aria-hidden', 'false');
-      if (typeof gsap !== 'undefined') {
-        gsap.from('#member' + n + 'Block', { opacity: 0, y: 18, duration: 0.55, ease: 'power3.out' });
+      gsap.from(regLeft,  { opacity: 0, x: -40, duration: 1, ease: 'power3.out', delay: 0.15 });
+      gsap.from(regRight, { opacity: 0, x:  40, duration: 1, ease: 'power3.out', delay: 0.25 });
+      if (document.querySelector('.step-item')) {
+        gsap.from('.step-item', { opacity: 0, y: 20, stagger: 0.1, duration: 0.7, ease: 'power3.out', delay: 0.4 });
       }
     }
 
-    function hideMember(n) {
-      const wrap = document.getElementById('member' + n + 'Wrap');
-      if (!wrap) return;
-      // Clear inputs
-      ['Name', 'Email', 'Phone'].forEach(f => {
-        const inp = document.getElementById('m' + n + f.toLowerCase().charAt(0).toUpperCase() + f.slice(1).toLowerCase());
-        if (inp) inp.value = '';
-      });
-      wrap.setAttribute('data-visible', 'false');
-      wrap.setAttribute('aria-hidden', 'true');
-    }
+    // ── Agreement checkbox state lives in the standalone script (window.__tcChecked / __conductChecked) ─
+    // ── Member/Verify/PayBtn all handled by standalone DOMContentLoaded script below ────────────────────
 
-    function updateAddBtn() {
-      const btn = document.getElementById('addMemberBtn');
-      if (!btn) return;
-      if (memberCount >= 4) {
-        btn.style.display = 'none';
-      } else {
-        btn.style.display = '';
-      }
-    }
-
-    document.getElementById('addMemberBtn')?.addEventListener('click', () => {
-      if (memberCount >= 4) return;
-      memberCount++;
-      showMember(memberCount);
-      updateAddBtn();
-    });
-
-    document.getElementById('removeMember3')?.addEventListener('click', () => {
-      hideMember(3);
-      if (memberCount === 4) {
-        // Move member 4 up to 3 slot visually — just hide 3 and keep 4
-      }
-      memberCount = Math.max(2, memberCount - 1);
-      // If member 4 is visible but 3 is removed, also hide 4
-      const wrap4 = document.getElementById('member4Wrap');
-      if (wrap4 && wrap4.dataset.visible === 'true') {
-        hideMember(4);
-        memberCount = 2;
-      }
-      updateAddBtn();
-    });
-
-    document.getElementById('removeMember4')?.addEventListener('click', () => {
-      hideMember(4);
-      memberCount = Math.max(2, memberCount - 1);
-      updateAddBtn();
-    });
-
-    updateAddBtn();
-
-    // ── Mentor toggle ────────────────────────────────────────────────────
-    let mentorSelected = false;
-    const mentorWrap   = document.getElementById('mentorWrap');
-    const mentorCB     = document.getElementById('mentorCheckbox');
-    const totalEl      = document.getElementById('totalAmount');
-    const breakdownEl  = document.getElementById('totalBreakdown');
-    const payLabel     = document.getElementById('payBtnLabel');
-
-    function toggleMentor() {
-      mentorSelected = !mentorSelected;
-      mentorCB.classList.toggle('checked', mentorSelected);
-      mentorWrap.setAttribute('aria-checked', mentorSelected ? 'true' : 'false');
-
-      if (typeof gsap !== 'undefined') {
-        // Animate the amount number
-        const target = mentorSelected ? 1100 : 800;
-        const obj = { val: mentorSelected ? 800 : 1100 };
-        gsap.to(obj, {
-          val: target,
-          duration: 0.55,
-          ease: 'power2.out',
-          onUpdate: function () {
-            totalEl.textContent = '₹' + Math.round(obj.val).toLocaleString('en-IN');
-          },
-          onComplete: updatePayBtn
-        });
-      } else {
-        totalEl.textContent = mentorSelected ? '₹1,100' : '₹800';
-        updatePayBtn();
-      }
-
-      if (mentorSelected) {
-        totalEl.classList.add('is-mentor');
-        breakdownEl.textContent = '₹800 base + ₹300 mentor session = ₹1,100';
-      } else {
-        totalEl.classList.remove('is-mentor');
-        breakdownEl.textContent = '';
-      }
-    }
-
-    mentorWrap?.addEventListener('click', toggleMentor);
-    mentorWrap?.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleMentor(); } });
-
-    // ── Agreement checkboxes ─────────────────────────────────────────────
-    let tcChecked      = false;
-    let conductChecked = false;
-
-    function toggleTC() {
-      tcChecked = !tcChecked;
-      document.getElementById('checkTC').classList.toggle('checked', tcChecked);
-      document.getElementById('agreeTC').setAttribute('aria-checked', tcChecked ? 'true' : 'false');
-      updatePayBtn();
-    }
-    function toggleConduct() {
-      conductChecked = !conductChecked;
-      document.getElementById('checkConduct').classList.toggle('checked', conductChecked);
-      document.getElementById('agreeConduct').setAttribute('aria-checked', conductChecked ? 'true' : 'false');
-      updatePayBtn();
-    }
-
-    document.getElementById('agreeTC')?.addEventListener('click', (e) => {
-      if (e.target.tagName === 'A') return; // let links through
-      toggleTC();
-    });
-    document.getElementById('agreeTC')?.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTC(); } });
-    document.getElementById('agreeConduct')?.addEventListener('click', (e) => {
-      if (e.target.tagName === 'A') return;
-      toggleConduct();
-    });
-    document.getElementById('agreeConduct')?.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleConduct(); } });
-
-    // ── Pay button state ─────────────────────────────────────────────────
-    const payBtn = document.getElementById('payBtn');
-
-    function updatePayBtn() {
-      const canPay = tcChecked && conductChecked;
-      payBtn.classList.toggle('disabled', !canPay);
-      payBtn.classList.toggle('enabled', canPay);
-      payBtn.disabled = !canPay;
-      if (payLabel) {
-        payLabel.textContent = canPay
-          ? (mentorSelected ? 'Pay ₹1,100 Securely' : 'Pay ₹800 Securely')
-          : 'Pay ₹800 Securely';
-      }
-    }
-
-    // ── Form validation & submit ─────────────────────────────────────────
-    function showErr(id, msg) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = msg;
-      el.classList.add('visible');
-    }
-    function clearErr(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = '';
-      el.classList.remove('visible');
-    }
-    function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
-    function isValidPhone(v) { return /^(\+91[\s-]?)?[6-9]\d{9}$/.test(v.trim().replace(/\s/g,'')); }
-
-    // Live clear on input
-    ['teamName','collegeName','branch','yearOfStudy','leaderName','leaderEmail','leaderPhone','m2Name','m2Email','m2Phone'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('input', () => {
-          el.classList.remove('is-error');
-          clearErr(id + 'Err');
-        });
-        el.addEventListener('change', () => {
-          el.classList.remove('is-error');
-          clearErr(id + 'Err');
-        });
-      }
-    });
+    function showErr(id, msg) { const el = document.getElementById(id); if (!el) return; el.textContent = msg; el.classList.add('visible'); }
+    function clearErr(id)     { const el = document.getElementById(id); if (!el) return; el.textContent = '';  el.classList.remove('visible'); }
 
     document.getElementById('regForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const verifiedTeamCode = window.__verifiedTeamCode;
+      if (!verifiedTeamCode) { alert('Please verify your team code first.'); return; }
+      if (!window.__tcChecked || !window.__conductChecked) { alert('Please accept both agreements.'); return; }
 
-      let valid = true;
+      // Collect dynamic member rows (min 1 additional)
+      const membersContainer = document.getElementById('membersContainer');
+      const payLabel         = document.getElementById('payBtnLabel');
+      const mentorSelected   = !!window.__mentorOn;
+      const membersPayload = [];
+      let missingFields = false;
+      (membersContainer || document.body).querySelectorAll('.member-block').forEach(block => {
+        const name  = block.querySelector('.dyn-member-name')?.value.trim();
+        const email = block.querySelector('.dyn-member-email')?.value.trim();
+        const phone = block.querySelector('.dyn-member-phone')?.value.trim();
+        if (name || email || phone) {
+          if (!name || !email || !phone) {
+            missingFields = true;
+          }
+          membersPayload.push({ name, email: email || '', phone: phone || '' });
+        }
+      });
 
-      // ── Client-side validation ──────────────────────────────────────────────
-      const teamName = document.getElementById('teamName').value.trim();
-      if (!teamName) { showErr('teamNameErr', 'Team name is required.'); document.getElementById('teamName').classList.add('is-error'); valid = false; } else clearErr('teamNameErr');
-
-      const college = document.getElementById('collegeName').value.trim();
-      if (!college) { showErr('collegeNameErr', 'College name is required.'); document.getElementById('collegeName').classList.add('is-error'); valid = false; } else clearErr('collegeNameErr');
-
-      const branch = document.getElementById('branch').value.trim();
-      if (!branch) { showErr('branchErr', 'Branch is required.'); document.getElementById('branch').classList.add('is-error'); valid = false; } else clearErr('branchErr');
-
-      const year = document.getElementById('yearOfStudy').value;
-      if (!year) { showErr('yearErr', 'Year of study is required.'); document.getElementById('yearOfStudy').classList.add('is-error'); valid = false; } else clearErr('yearErr');
-
-      const lName = document.getElementById('leaderName').value.trim();
-      if (!lName) { showErr('leaderNameErr', 'Leader name is required.'); document.getElementById('leaderName').classList.add('is-error'); valid = false; } else clearErr('leaderNameErr');
-
-      const lEmail = document.getElementById('leaderEmail').value.trim();
-      if (!lEmail || !isValidEmail(lEmail)) { showErr('leaderEmailErr', 'Valid email required.'); document.getElementById('leaderEmail').classList.add('is-error'); valid = false; } else clearErr('leaderEmailErr');
-
-      const lPhone = document.getElementById('leaderPhone').value.trim();
-      if (!lPhone) { showErr('leaderPhoneErr', 'Phone number is required.'); document.getElementById('leaderPhone').classList.add('is-error'); valid = false; } else clearErr('leaderPhoneErr');
-
-      const m2Name = document.getElementById('m2Name').value.trim();
-      if (!m2Name) { showErr('m2NameErr', 'Member 2 name is required.'); document.getElementById('m2Name').classList.add('is-error'); valid = false; } else clearErr('m2NameErr');
-      const m2Email = document.getElementById('m2Email').value.trim();
-      if (!m2Email || !isValidEmail(m2Email)) { showErr('m2EmailErr', 'Valid email required.'); document.getElementById('m2Email').classList.add('is-error'); valid = false; } else clearErr('m2EmailErr');
-      const m2Phone = document.getElementById('m2Phone').value.trim();
-      if (!m2Phone) { showErr('m2PhoneErr', 'Phone number is required.'); document.getElementById('m2Phone').classList.add('is-error'); valid = false; } else clearErr('m2PhoneErr');
-
-      if (!tcChecked || !conductChecked) { valid = false; }
-
-      if (!valid) {
-        const firstErr = document.querySelector('.is-error');
-        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (missingFields) {
+        alert('Please fill in all fields (Name, Email, Phone) for each added team member.');
         return;
       }
 
-      // ── Collect form data ───────────────────────────────────────────────────
-      const membersPayload = [];
-      if (m2Name) {
-        membersPayload.push({ name: m2Name, email: m2Email, phone: m2Phone });
-      }
-      if (document.getElementById('member3Wrap')?.dataset.visible === 'true' && document.getElementById('m3Name')?.value.trim()) {
-        membersPayload.push({
-          name:  document.getElementById('m3Name').value.trim(),
-          email: document.getElementById('m3Email').value.trim(),
-          phone: document.getElementById('m3Phone').value.trim(),
-        });
-      }
-      if (document.getElementById('member4Wrap')?.dataset.visible === 'true' && document.getElementById('m4Name')?.value.trim()) {
-        membersPayload.push({
-          name:  document.getElementById('m4Name').value.trim(),
-          email: document.getElementById('m4Email').value.trim(),
-          phone: document.getElementById('m4Phone').value.trim(),
-        });
+      if (membersPayload.length < 1) {
+        const apiErr = document.getElementById('apiErrorMsg');
+        const toast  = document.getElementById('apiErrorToast');
+        if (apiErr) apiErr.textContent = 'A team must have at least 2 members (leader + 1 additional). Please add at least one team member.';
+        if (toast) { toast.classList.add('visible'); setTimeout(() => toast.classList.remove('visible'), 7000); }
+        document.getElementById('addMemberBtn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
       }
 
-      const formData = {
-        teamName:    teamName,
-        collegeName: college,
-        branch:      branch,
-        yearOfStudy: year,
-        leader:      { name: lName, email: lEmail, phone: lPhone },
-        members:     membersPayload,
-        mentorSession: mentorSelected,
-        totalAmount:   mentorSelected ? 1100 : 800,
-      };
-
-      // ── Loading state ───────────────────────────────────────────────────────
-      const payBtn   = document.getElementById('payBtn');
+      // ── Loading state ──────────────────────────────────────────────────
+      const payBtn = document.getElementById('payBtn');
       payBtn.classList.remove('enabled');
       payBtn.classList.add('loading');
       payBtn.disabled = true;
-      if (payLabel) payLabel.textContent = 'Creating order…';
+      if (payLabel) payLabel.textContent = 'Uploading Screenshot & Saving…';
 
       const spinner = document.createElement('div');
       spinner.className = 'pay-spinner';
@@ -2139,20 +2200,93 @@
       const toastMsg = document.getElementById('apiErrorMsg');
       toast?.classList.remove('visible');
 
-      // ── Helpers ─────────────────────────────────────────────────────────────
+      function restoreBtn(msg) {
+        if (spinner.parentNode) spinner.remove();
+        payBtn.classList.remove('loading');
+        payBtn.classList.add('enabled');
+        payBtn.disabled = false;
+        if (payLabel) payLabel.textContent = 'Complete Registration';
+        if (toast && toastMsg && msg) {
+          toastMsg.textContent = msg;
+          toast.classList.add('visible');
+          setTimeout(() => toast.classList.remove('visible'), 8000);
+        }
+      }
+
+      // Check for file
+      const fileInput = document.getElementById('paymentScreenshot');
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        restoreBtn('Please select a payment screenshot to upload.');
+        return;
+      }
+      const file = fileInput.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        restoreBtn('Screenshot exceeds 5MB limit. Please compress it and try again.');
+        return;
+      }
+
+      // ── Cloudinary Upload ───────────────────────────────────────────────
+      let finalScreenshotUrl = '';
+      try {
+        const cData = new FormData();
+        const ext = file.name.lastIndexOf('.') !== -1 ? file.name.substring(file.name.lastIndexOf('.')) : '.jpg';
+        const newFileName = verifiedTeamCode.toUpperCase() + '_payment' + ext;
+        const renamedFile = new File([file], newFileName, { type: file.type });
+        
+        cData.append('file', renamedFile);
+        cData.append('upload_preset', 'UDBHAV26');
+        cData.append('cloud_name', 'dimq4wo1i');
+
+        const cRes = await fetch('https://api.cloudinary.com/v1_1/dimq4wo1i/image/upload', {
+          method: 'POST',
+          body: cData,
+        });
+        const cJson = await cRes.json();
+        
+        if (!cRes.ok || cJson.error) {
+          throw new Error(cJson.error?.message || 'Cloudinary upload failed.');
+        }
+        
+        finalScreenshotUrl = cJson.secure_url;
+      } catch (err) {
+        console.error('Cloud upload error:', err);
+        alert("Cloudinary Error: " + err.message);
+        restoreBtn('Failed to upload screenshot. Please try again or check your connection.');
+        return;
+      }
+
+      // ── Collect form data ──────────────────────────────────────────────
+      const formData = {
+        teamCode:    verifiedTeamCode,
+        teamName:    document.getElementById('teamName')?.value    || '',
+        collegeName: document.getElementById('collegeName')?.value || '',
+        branch:      document.getElementById('branch')?.value      || '',
+        leader: {
+          name:  document.getElementById('leaderName')?.value  || '',
+          email: document.getElementById('leaderEmail')?.value || '',
+          phone: document.getElementById('leaderPhone')?.value || '',
+        },
+        members:       membersPayload,
+        mentorSession: mentorSelected,
+        totalAmount:   mentorSelected ? 1100 : 800,
+        paymentScreenshotUrl: finalScreenshotUrl,
+        paymentStatus: 'pending',  // manual QR payment — admin will verify screenshot
+      };
+
       function showSuccess(data) {
-        // Populate all dynamic fields
-        const tc   = data.teamCode   || '—';
-        const name = data.teamName   || '';
-        const amt  = data.amountPaid || 800;
-        const email= data.leaderEmail|| '';
-        const mentor = data.wantsMentor;
+        const tc    = data.teamCode   || verifiedTeamCode || '';
+        const name  = data.teamName   || formData.teamName || '';
+        const amt   = data.amountPaid || formData.totalAmount || 800;
+        const email = data.leaderEmail|| formData.leader.email || '';
+        const mentor = data.wantsMentor || mentorSelected;
+
+        window._receiptData = { orderId: data.orderId||tc, teamName: name, leaderName: formData.leader.name, leaderEmail: email, amountPaid: amt, wantsMentor: mentor };
 
         const el = id => document.getElementById(id);
-        if (el('successTeamName'))  el('successTeamName').textContent  = name;
-        if (el('successTeamCode'))  el('successTeamCode').textContent  = tc;
-        if (el('successEmailNote')) el('successEmailNote').textContent = email ? `📧 Team code sent to ${email}` : '';
-        if (el('successAmountBadge')) el('successAmountBadge').textContent = `Amount Paid: ₹${amt}`;
+        if (el('successTeamName'))    el('successTeamName').textContent    = name;
+        if (el('successTeamCode'))    el('successTeamCode').textContent    = tc;
+        if (el('successEmailNote'))   el('successEmailNote').textContent   = email ? `📧 Confirmation sent to ${email}` : '';
+        if (el('successAmountBadge')) el('successAmountBadge').textContent = `Amount: ₹${amt}`;
         if (el('successMentorBadge')) el('successMentorBadge').textContent = mentor ? 'Mentor Session ✓' : 'No Mentor Session';
 
         const form    = document.getElementById('regForm');
@@ -2175,22 +2309,19 @@
         }
         document.getElementById('regRight')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        // Confetti burst 🎉
+        // Confetti 🎉
         try {
-          if (typeof confetti !== 'undefined') {
+          const fireConfetti = () => {
             confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ['#a855f7','#7c3aed','#ffffff','#e879f9','#8b5cf6'] });
             setTimeout(() => confetti({ particleCount: 60, spread: 55, origin: { y: 0.4 }, colors: ['#a855f7','#ffffff'] }), 500);
-          } else {
-            // Load canvas-confetti on demand
+          };
+          if (typeof confetti !== 'undefined') { fireConfetti(); } else {
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
-            s.onload = () => {
-              confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ['#a855f7','#7c3aed','#ffffff','#e879f9'] });
-              setTimeout(() => confetti({ particleCount: 60, spread: 55, origin: { y: 0.4 }, colors: ['#a855f7','#ffffff'] }), 500);
-            };
+            s.onload = fireConfetti;
             document.head.appendChild(s);
           }
-        } catch(_) { /* confetti is non-critical */ }
+        } catch(_) {}
       }
 
       function restoreBtn(msg) {
@@ -2198,7 +2329,7 @@
         payBtn.classList.remove('loading');
         payBtn.classList.add('enabled');
         payBtn.disabled = false;
-        if (payLabel) payLabel.textContent = mentorSelected ? 'Pay ₹1,100 Securely' : 'Pay ₹800 Securely';
+        if (payLabel) payLabel.textContent = 'Complete Registration';
         if (toast && toastMsg && msg) {
           toastMsg.textContent = msg;
           toast.classList.add('visible');
@@ -2207,103 +2338,20 @@
       }
 
       try {
-        // STEP 1 → Create Razorpay order on the server
-        const orderRes  = await fetch('/api/create-order', {
-          method: 'POST',
+        // ── Save registration to MongoDB via server API ─────────────────
+        const res  = await fetch('/api/register', {
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            mentorSession: mentorSelected,
-            teamName: formData.teamName,
-            leaderName: formData.leader.name,
-            leaderEmail: formData.leader.email
-          }),
+          body:    JSON.stringify(formData),
         });
-        const orderData = await orderRes.json();
-        if (!orderData.success) throw new Error(orderData.error || 'Could not create payment order.');
+        const data = await res.json();
 
-        // STEP 2 \u2192 Load Razorpay checkout.js (once)
-        await new Promise((resolve, reject) => {
-          if (window.Razorpay) { resolve(); return; }
-          const s  = document.createElement('script');
-          s.src    = 'https://checkout.razorpay.com/v1/checkout.js';
-          s.onload = resolve;
-          s.onerror = () => reject(new Error('Failed to load payment gateway. Check your internet connection.'));
-          document.head.appendChild(s);
-        });
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Registration failed. Please try again.');
+        }
 
-        spinner.remove();
-        payBtn.classList.remove('loading');
-        payBtn.classList.add('enabled');
-        payBtn.disabled = false;
-        if (payLabel) payLabel.textContent = mentorSelected ? 'Pay ₹1,100 Securely' : 'Pay ₹800 Securely';
-
-        // STEP 3 \u2192 Open Razorpay Checkout modal
-        const rzp = new window.Razorpay({
-          key:         orderData.key,
-          order_id:    orderData.orderId,
-          amount:      orderData.amount,
-          currency:    orderData.currency,
-          name:        "UDBHAV'26",
-          description: `Round 2 Registration \u2014 ${formData.teamName}${mentorSelected ? ' + Mentor Session' : ''}`,
-          image:       '/logo.png',
-          prefill: {
-            name:    formData.leader.name,
-            email:   formData.leader.email,
-            contact: formData.leader.phone,
-          },
-          notes: {
-            teamName: formData.teamName,
-            college:  formData.collegeName,
-          },
-          theme: { color: '#653AC9' },
-
-          // STEP 4 \u2192 Payment success \u2192 verify signature + save to MongoDB
-          handler: async function (response) {
-            payBtn.classList.remove('enabled');
-            payBtn.classList.add('loading');
-            payBtn.disabled = true;
-            const vSpin = document.createElement('div');
-            vSpin.className = 'pay-spinner';
-            payBtn.insertBefore(vSpin, payBtn.firstChild);
-            if (payLabel) payLabel.textContent = 'Verifying payment…';
-
-            try {
-              const verifyRes  = await fetch('/api/verify-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  razorpay_order_id:   response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature:  response.razorpay_signature,
-                  formData,
-                }),
-              });
-              const verifyData = await verifyRes.json();
-              if (verifyData.success) {
-                showSuccess(verifyData);
-              } else {
-                throw new Error(verifyData.error || 'Payment verification failed.');
-              }
-            } catch (verifyErr) {
-              console.error('[Register] Verify error:', verifyErr);
-              if (vSpin.parentNode) vSpin.remove();
-              restoreBtn(
-                verifyErr.message ||
-                'Payment received but verification failed. Contact support with payment ID: ' +
-                response.razorpay_payment_id
-              );
-            }
-          },
-
-          modal: {
-            ondismiss: function () {
-              console.log('[Razorpay] Modal dismissed.');
-              restoreBtn('Payment cancelled. Please try again when ready.');
-            },
-          },
-        });
-
-        rzp.open();
+        if (spinner.parentNode) spinner.remove();
+        showSuccess(data);
 
       } catch (err) {
         console.error('[Register] Error:', err);
@@ -2333,7 +2381,7 @@
     }
 
     document.getElementById('cfBackToTop')?.addEventListener('click', () => {
-      lenis.scrollTo(0, { duration: 1.2 });
+      lenis?.scrollTo(0, { duration: 1.2 });
     });
 
     // Magnetic pills
@@ -2522,9 +2570,453 @@
     })();
 
   })();
+
+  // ── Download Receipt ────────────────────────────────────────────────────
+  // Stores the latest successful registration data for receipt generation
+  window._receiptData = {};
+
+  function downloadReceipt() {
+    const d = window._receiptData || {};
+    const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UDBHAV'26 Payment Receipt</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #111; padding: 40px 48px; max-width: 680px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 20px; margin-bottom: 28px; }
+    .logo-text { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.04em; }
+    .logo-text span { color: #7c3aed; }
+    .receipt-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: #888; margin-top: 4px; }
+    .receipt-no { font-size: 0.75rem; color: #555; text-align: right; }
+    .receipt-no strong { display: block; font-size: 0.9rem; color: #111; }
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+    .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5; }
+    .row .label { color: #666; }
+    .row .val { font-weight: 600; color: #111; text-align: right; }
+    .amount-box { background: #f3f0ff; border: 1.5px solid #7c3aed; border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin: 24px 0; }
+    .amount-box .amt-label { font-size: 0.75rem; color: #7c3aed; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+    .amount-box .amt-val { font-size: 1.6rem; font-weight: 900; color: #7c3aed; }
+    .status-badge { display: inline-block; background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 999px; border: 1px solid #bbf7d0; text-transform: uppercase; }
+    .footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid #eee; display: flex; justify-content: space-between; font-size: 0.7rem; color: #aaa; }
+    .note { font-size: 0.72rem; color: #888; background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 10px 14px; margin-top: 16px; line-height: 1.6; }
+    @media print {
+      body { padding: 20px 32px; }
+      @page { margin: 0.5in; size: A4; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="logo-text">UDBHAV<span>'26</span></div>
+      <div class="receipt-label">Payment Receipt</div>
+    </div>
+    <div class="receipt-no">
+      <strong>${d.orderId || '—'}</strong>
+      Order ID
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Event Details</div>
+    <div class="row"><span class="label">Event</span><span class="val">UDBHAV'26 — 24-Hour Hackathon</span></div>
+    <div class="row"><span class="label">Venue</span><span class="val">Sage University, Indore</span></div>
+    <div class="row"><span class="label">Date</span><span class="val">25–26 April 2026</span></div>
+    <div class="row"><span class="label">Organiser</span><span class="val">Enclope / Alta School of Technology</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Team Details</div>
+    <div class="row"><span class="label">Team Name</span><span class="val">${d.teamName || '—'}</span></div>
+    <div class="row"><span class="label">Leader</span><span class="val">${d.leaderName || '—'}</span></div>
+    <div class="row"><span class="label">Email</span><span class="val">${d.leaderEmail || '—'}</span></div>
+    <div class="row"><span class="label">Mentor Session</span><span class="val">${d.wantsMentor ? 'Yes (+₹300)' : 'No'}</span></div>
+  </div>
+
+  <div class="amount-box">
+    <div>
+      <div class="amt-label">Total Paid</div>
+      <div style="font-size:0.72rem;color:#9333ea;margin-top:2px;">Payment Status &nbsp; <span class="status-badge">✓ PAID</span></div>
+    </div>
+    <div class="amt-val">₹${d.amountPaid || '—'}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Transaction Details</div>
+    <div class="row"><span class="label">Payment Gateway</span><span class="val">Cashfree Payments</span></div>
+    <div class="row"><span class="label">Date &amp; Time</span><span class="val">${now}</span></div>
+    <div class="row"><span class="label">Status</span><span class="val"><span class="status-badge">✓ PAID</span></span></div>
+  </div>
+
+  <div class="note">
+    📋 <strong>Important:</strong> Your Team Code will be shared via email before the event.
+    Keep this receipt safe as proof of registration. For support, contact the UDBHAV'26 team.
+  </div>
+
+  <div class="footer">
+    <span>© 2026 UDBHAV'26 · Enclope / Alta School of Technology</span>
+    <span>Generated: ${now}</span>
+  </div>
+
+  <script>window.onload = () => window.print();<\/script>
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    if (!win) { alert('Please allow popups to download the receipt.'); }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
   </script>
 
-  <script src="/mobile-perf.js" defer></script>
+  <script type="module" src="/mobile-perf.js" defer></script>
 
+
+
+    <style>
+    /* ─ Verify toast popup ─ */
+    .vfy-toast {
+      position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%) translateY(-10px);
+      min-width: 280px; max-width: 90vw;
+      padding: 1rem 1.4rem; border-radius: 16px;
+      font-family: 'Outfit', sans-serif; font-size: 0.92rem; font-weight: 600;
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      z-index: 9999; opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+    }
+    .vfy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .vfy-toast.error { background: #1c0a0a; border: 1.5px solid rgba(248,113,113,0.4); color: #fca5a5; }
+    .vfy-toast.warn  { background: #1a140a; border: 1.5px solid rgba(251,191,36,0.4);  color: #fde68a; }
+    .vfy-toast-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: -1px; }
+    .vfy-toast-body { line-height: 1.45; }
+    .vfy-toast-title { font-size: 0.97rem; font-weight: 800; margin-bottom: 0.15rem; }
+    .vfy-toast-msg   { opacity: 0.8; font-size: 0.83rem; font-weight: 500; }
+    /* Verify btn loading spinner */
+    .verify-code-btn .vfy-spin {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: vfySpin 0.7s linear infinite; vertical-align: middle;
+    }
+    @keyframes vfySpin { to { transform: rotate(360deg); } }
+  </style>
+  <!-- ══ UDBHAV'26 Register Form — Interactive Logic ══════════════════════════
+       This script is COMPLETELY STANDALONE — no 'use strict', no IIFE conflicts.
+       It handles all interactive elements and is guaranteed to run.
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+        // ── NAVBAR: MOBILE MENU + MORE DROPDOWN ──────────────────────────────────
+
+    // 1. Hamburger mobile menu
+    var menuBtn    = document.getElementById('mobileMenuBtn');
+    var menuDrawer = document.getElementById('mobileMenuDrawer');
+    if (menuBtn && menuDrawer) {
+      menuBtn.addEventListener('click', function() {
+        var isOpen = menuDrawer.getAttribute('aria-hidden') !== 'true';
+        menuDrawer.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+        menuBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        menuDrawer.style.display = isOpen ? '' : 'block';
+        // Toggle hamburger ↔ X icon
+        var spans = menuBtn.querySelectorAll('span');
+        if (spans.length >= 3) {
+          if (!isOpen) {
+            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+            spans[1].style.opacity   = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+          } else {
+            spans[0].style.transform = '';
+            spans[1].style.opacity   = '';
+            spans[2].style.transform = '';
+          }
+        }
+      });
+      document.querySelectorAll('.mmd-nav a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          menuDrawer.setAttribute('aria-hidden', 'true');
+          menuBtn.setAttribute('aria-expanded', 'false');
+          menuDrawer.style.display = '';
+        });
+      });
+    }
+
+    // "More" desktop dropdown handled by initMoreDropdown() above
+
+
+    // ── TOAST POPUP HELPER ───────────────────────────────────────────────────
+    function showToast(type, title, msg) {
+      var existing = document.getElementById('vfyToast');
+      if (existing) existing.remove();
+      var t = document.createElement('div');
+      t.id = 'vfyToast';
+      t.className = 'vfy-toast ' + type;
+      t.innerHTML = '<span class="vfy-toast-icon">' + (type === 'error' ? '🚫' : '⚠️') + '</span>' +
+        '<div class="vfy-toast-body"><div class="vfy-toast-title">' + title + '</div>' +
+        '<div class="vfy-toast-msg">' + msg + '</div></div>';
+      document.body.appendChild(t);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() { t.classList.add('show'); });
+      });
+      setTimeout(function() {
+        t.classList.remove('show');
+        setTimeout(function() { t.remove(); }, 300);
+      }, 5000);
+    }
+
+    // ── TEAM CODE VERIFY ─────────────────────────────────────────────────────
+    var verifyBtn  = document.getElementById('verifyCodeBtn');
+    var codeInput  = document.getElementById('teamCodeInput');
+    var codeErr    = document.getElementById('teamCodeErr');
+    var detailStep = document.getElementById('teamDetailsStep');
+    window.__verifiedTeamCode = null;
+
+    if (verifyBtn && codeInput) {
+      verifyBtn.addEventListener('click', async function() {
+        var code = (codeInput.value || '').trim().toUpperCase();
+        if (!code) { showToast('error', 'Code Required', 'Please enter your team code before verifying.'); return; }
+        if (codeErr) codeErr.textContent = '';
+
+        // Loading state — spinner
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<span class="vfy-spin"></span> Checking…';
+
+        try {
+          var res  = await fetch('/api/team?code=' + encodeURIComponent(code));
+          var data = await res.json();
+          if (!res.ok || !data.success) {
+            // Already paid / registered
+            if (data.alreadyPaid) {
+              var statusEl = document.getElementById('codeVerifyStatus');
+              if (statusEl) {
+                statusEl.innerHTML = '<div style="margin-top:1rem;padding:1.5rem;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:12px;text-align:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:0.5rem;"><polyline points="20 6 9 17 4 12"/></svg><h3 style="color:#4ade80;margin:0 0 0.4rem;font-size:1.1rem;">Already Registered</h3><p style="color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;line-height:1.5;">Your payment is verified and your registration is complete!<br>No need to register again. We look forward to seeing you at the hackathon.</p></div>';
+                statusEl.style.display = 'block';
+              }
+              showToast('success', 'Registration Complete', 'You have already been registered, no need to register again.');
+              verifyBtn.disabled = true;
+              verifyBtn.innerHTML = '✓ Registered';
+              verifyBtn.style.background = 'rgba(74,222,128,0.15)';
+              verifyBtn.style.color = '#4ade80';
+              verifyBtn.style.borderColor = 'rgba(74,222,128,0.3)';
+              return;
+            } else if (res.status === 404) {
+              showToast('error', 'Code Not Found',
+                '\'' + code + '\' doesn\'t match any team. Double-check your shortlisting email.');
+            } else {
+              showToast('error', 'Verification Failed', data.error || 'Invalid team code. Please try again.');
+            }
+            if (codeErr) codeErr.textContent = '';
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = 'Verify →';
+            return;
+          }
+          var team = data.team;
+          var fieldMap = { teamName: team.teamName, collegeName: team.collegeName, branch: team.branch,
+            leaderName: team.leader && team.leader.name, leaderEmail: team.leader && team.leader.email, leaderPhone: team.leader && team.leader.phone };
+          Object.keys(fieldMap).forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.value = fieldMap[id] || '';
+          });
+          window.__verifiedTeamCode = team.code;
+          if (detailStep) { detailStep.style.display = 'block'; detailStep.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          codeInput.readOnly = true;
+          verifyBtn.innerHTML = '✓ Verified';
+          verifyBtn.style.background = 'linear-gradient(135deg,#16a34a,#4ade80)';
+          verifyBtn.style.opacity = '0.85';
+          verifyBtn.style.boxShadow = '0 0 18px rgba(74,222,128,0.3)';
+          // Auto-add the first required member row or load existing members
+          document.dispatchEvent(new CustomEvent('teamVerified', { detail: team }));
+          updatePayBtn();
+        } catch(err) {
+          if (codeErr) codeErr.textContent = 'Network error. Please try again.';
+          verifyBtn.disabled = false; verifyBtn.textContent = 'Verify →';
+        }
+      });
+      codeInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); verifyBtn.click(); } });
+    }
+
+    // ── MEMBERS ──────────────────────────────────────────────────────────────
+    var membersContainer = document.getElementById('membersContainer');
+    var addBtn           = document.getElementById('addMemberBtn');
+    var memberIdx        = 0;
+
+    function addMemberRow(existingMember) {
+      if (document.querySelectorAll('.member-block').length >= 4) return; // max 3 additional members (leader + 3 = 4 total)
+      memberIdx++;
+      var isExisting = !!existingMember;
+      var nameVal = isExisting ? (existingMember.name || '') : '';
+      var emailVal = isExisting ? (existingMember.email || '') : '';
+      var phoneVal = isExisting ? (existingMember.phone || '') : '';
+      var editableClass = isExisting ? 'is-editable' : '';
+      var editHint = isExisting ? ' <span class="editable-hint">✏ editable</span>' : '';
+      var removeBtn = '<button type="button" class="remove-member-btn" onclick="(function(btn){ btn.closest(\'.member-block\').remove(); var ab=document.getElementById(\'addMemberBtn\'); if(ab) { ab.style.display=\'\'; } if(typeof window.updatePayBtn===\'function\')window.updatePayBtn(); })(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Remove</button>';
+
+      var row = document.createElement('div');
+      row.className = 'member-block';
+      row.id = 'dynMember' + memberIdx;
+      row.innerHTML =
+        '<div class="member-block-header">' +
+          '<span class="member-block-title">Member ' + (memberIdx + 1) +
+            ' <span class="opt-badge" style="opacity:.6;font-size:.7rem;font-weight:600">' + (memberIdx === 1 ? 'required' : 'optional') + '</span>' +
+            (isExisting ? ' <span class="opt-badge" style="background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.25);color:#a855f7;">pre-filled</span>' : '') + '</span>' +
+          removeBtn + '</div>' +
+        '<div class="form-row single">' +
+          '<div class="form-field"><label class="form-label">Full Name <span class="req">*</span>' + editHint + '</label>' +
+            '<input type="text" class="form-input dyn-member-name ' + editableClass + '" placeholder="Member full name" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z\\\\s-]/g, \'\')" value="' + nameVal + '" /></div>' +
+        '</div>' +
+        '<div class="form-row">' +
+          '<div class="form-field"><label class="form-label">Email <span class="req">*</span>' + editHint + '</label>' +
+            '<input type="email" class="form-input dyn-member-email ' + editableClass + '" placeholder="Email address" autocomplete="off" oninput="this.value = this.value.replace(/[^a-zA-Z0-9.@_-]/g, \'\')" value="' + emailVal + '" required /></div>' +
+          '<div class="form-field"><label class="form-label">Phone <span class="req">*</span>' + editHint + '</label>' +
+            '<input type="tel" class="form-input dyn-member-phone ' + editableClass + '" placeholder="xxxxxxxxxx" autocomplete="off" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" value="' + phoneVal + '" required /></div>' +
+        '</div>';
+      if (membersContainer) membersContainer.appendChild(row);
+      window.__memberIdx = memberIdx;
+      // Hide Add button when at max
+      if (addBtn && document.querySelectorAll('.member-block').length >= 4) addBtn.style.display = 'none';
+      if (typeof updatePayBtn === 'function') updatePayBtn();
+    }
+
+    if (addBtn) addBtn.addEventListener('click', function() { addMemberRow(); });
+    // Add first required member row when team is verified OR load existing members
+    document.addEventListener('teamVerified', function(e) {
+      var members = (e.detail && e.detail.members) || [];
+      if (members.length > 0) {
+        members.forEach(function(m) { addMemberRow(m); });
+      } else if (memberIdx === 0) {
+        addMemberRow();
+      }
+    });
+
+    // ── MENTOR SESSION TOGGLE ─────────────────────────────────────────────────
+    var mentorWrap  = document.getElementById('mentorWrap');
+    var mentorCheck = document.getElementById('mentorCheckbox');
+    var totalEl     = document.getElementById('totalAmount');
+    var breakdownEl = document.getElementById('totalBreakdown');
+    var mentorOn    = false;
+    window.__mentorOn = false;
+
+    function toggleMentor() {
+      mentorOn = !mentorOn;
+      window.__mentorOn = mentorOn;
+      var card = document.getElementById('mentorWrap');
+      if (card) {
+        card.classList.toggle('is-selected', mentorOn);
+        card.setAttribute('aria-checked', mentorOn ? 'true' : 'false');
+      }
+      var toggleLabel = document.getElementById('mentorToggleLabel');
+      if (toggleLabel) toggleLabel.textContent = mentorOn ? '✓ Added' : 'Add to Registration';
+      if (totalEl)     totalEl.textContent = mentorOn ? '₹1,100' : '₹800';
+      if (breakdownEl) breakdownEl.textContent = mentorOn ? '₹800 base + ₹300 mentor session = ₹1,100' : 'per team';
+      var qrImg = document.getElementById('paymentQrImg');
+      if (qrImg) qrImg.src = mentorOn ? '/QR-1100.jpeg' : '/QR-800.jpeg';
+      var lbl = document.getElementById('payBtnLabel');
+      if (lbl) lbl.textContent = 'Complete Registration';
+      updatePayBtn();
+    }
+    if (mentorWrap) {
+      mentorWrap.addEventListener('click', toggleMentor);
+      mentorWrap.addEventListener('keydown', function(e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleMentor(); } });
+    }
+
+    // ── AGREEMENT CHECKBOXES ─────────────────────────────────────────────────
+    var tcChecked      = false;
+    var conductChecked = false;
+    window.__tcChecked      = false;
+    window.__conductChecked = false;
+
+    function updateQrSection() {
+      var bothChecked = tcChecked && conductChecked;
+      var qrSection = document.getElementById('qrPaymentSection');
+      var regBtnWrap = document.getElementById('regBtnWrap');
+      if (qrSection) {
+        if (bothChecked) {
+          qrSection.style.display = 'block';
+          // Smooth scroll to QR section
+          setTimeout(function() { qrSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+        } else {
+          qrSection.style.display = 'none';
+        }
+      }
+      if (regBtnWrap) regBtnWrap.style.display = bothChecked ? 'flex' : 'none';
+    }
+
+    function toggleTC() {
+      tcChecked = !tcChecked;
+      window.__tcChecked = tcChecked;
+      var el = document.getElementById('checkTC');
+      if (el) el.classList.toggle('checked', tcChecked);
+      var ag = document.getElementById('agreeTC');
+      if (ag) ag.setAttribute('aria-checked', tcChecked ? 'true' : 'false');
+      updateQrSection();
+      updatePayBtn();
+    }
+    function toggleConduct() {
+      conductChecked = !conductChecked;
+      window.__conductChecked = conductChecked;
+      var el = document.getElementById('checkConduct');
+      if (el) el.classList.toggle('checked', conductChecked);
+      var ag = document.getElementById('agreeConduct');
+      if (ag) ag.setAttribute('aria-checked', conductChecked ? 'true' : 'false');
+      updateQrSection();
+      updatePayBtn();
+    }
+    var agTC = document.getElementById('agreeTC');
+    var agCo = document.getElementById('agreeConduct');
+    if (agTC) agTC.addEventListener('click', function(e) { if (e.target.tagName !== 'A') toggleTC(); });
+    if (agCo) agCo.addEventListener('click', function(e) { if (e.target.tagName !== 'A') toggleConduct(); });
+    if (agTC) agTC.addEventListener('keydown', function(e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTC(); } });
+    if (agCo) agCo.addEventListener('keydown', function(e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleConduct(); } });
+
+    // ── REGISTER BUTTON STATE ────────────────────────────────────────────────
+    var payBtn = document.getElementById('payBtn');
+
+    function updatePayBtn() {
+      if (!payBtn) return;
+      var hasCode    = !!window.__verifiedTeamCode;
+      var hasMembers = document.querySelectorAll('.dyn-member-name').length > 0;
+      var ready      = hasCode && hasMembers && tcChecked && conductChecked;
+      payBtn.disabled = !ready;
+      payBtn.classList.toggle('disabled', !ready);
+      payBtn.classList.toggle('enabled',  ready);
+    }
+    window.updatePayBtn = updatePayBtn;
+
+    // ── MENTOR: update total amount display ──────────────────────────────────
+    // (already handled above in toggleMentor, but sync total display with amount box)
+    var origToggleMentor = window.__origToggleMentor; // just reference for clarity
+
+    // ── FILE UPLOAD ZONE UX ───────────────────────────────────────────────────
+    var fileInput = document.getElementById('paymentScreenshot');
+    var fileZone  = document.getElementById('fileUploadZone');
+    var fileName  = document.getElementById('uploadedFileName');
+    if (fileInput && fileZone) {
+      fileInput.addEventListener('change', function() {
+        if (fileInput.files && fileInput.files.length > 0) {
+          fileZone.classList.add('has-file');
+          if (fileName) fileName.textContent = '✓ ' + fileInput.files[0].name;
+        } else {
+          fileZone.classList.remove('has-file');
+          if (fileName) fileName.textContent = '';
+        }
+      });
+      // Drag and drop visual
+      fileZone.addEventListener('dragover', function(e) { e.preventDefault(); fileZone.style.borderColor = 'rgba(139,92,246,0.7)'; fileZone.style.background = 'rgba(139,92,246,0.12)'; });
+      fileZone.addEventListener('dragleave', function() { fileZone.style.borderColor = ''; fileZone.style.background = ''; });
+      fileZone.addEventListener('drop', function() { fileZone.style.borderColor = ''; fileZone.style.background = ''; });
+    }
+
+    // Initial state
+    updatePayBtn();
+    updateQrSection();
+  });
+  </script>
 </body>
 </html>

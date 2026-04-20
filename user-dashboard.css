@@ -238,7 +238,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 /* ── Ethereal background ── */
 .ethereal-root { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
-.ethereal-root.visible { opacity: 1; pointer-events: auto; }
+.ethereal-root.visible { opacity: 1; }
 
 .ethereal-filter-svg { position: absolute; width: 0; height: 0; pointer-events: none; overflow: visible; }
 .ethereal-inner { position: absolute; inset: -100px; filter: url(#etherFilter) blur(4px); will-change: filter; }

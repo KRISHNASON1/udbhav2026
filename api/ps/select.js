@@ -98,7 +98,7 @@ export default async function handler(req, res) {
       const ps = await ProblemStatement.findOneAndUpdate(
         { order: psOrder, $expr: { $lt: ['$slotsTaken', '$slotsTotal'] } }, // only if slot available
         { $inc: { slotsTaken: 1 } },
-        { new: true, session }
+        { returnDocument: 'after', session }
       );
 
       if (!ps) {

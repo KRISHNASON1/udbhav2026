@@ -17,9 +17,9 @@ const RegistrationSchema = new mongoose.Schema(
   {
     // ── Team Info ───────────────────────────────────────────────────────
     teamName:    { type: String, required: true, trim: true },
-    collegeName: { type: String, required: true, trim: true },
-    branch:      { type: String, required: true, trim: true },
-    yearOfStudy: { type: String, required: true },
+    collegeName: { type: String, required: false, trim: true, default: '' },
+    branch:      { type: String, required: false, trim: true, default: '' },
+    yearOfStudy: { type: String, required: false, default: 'N/A' },
 
     // ── Leader ──────────────────────────────────────────────────────────
     leader: { type: MemberSchema, required: true },
@@ -43,6 +43,11 @@ const RegistrationSchema = new mongoose.Schema(
       enum: ['pending', 'paid', 'failed'],
       default: 'pending',
     },
+    paymentScreenshotUrl: { type: String, required: false },
+    cashfreeOrderId:   { type: String, default: null },
+    cashfreePaymentId: { type: String, default: null },
+
+    // Legacy — kept for historical records (Razorpay era)
     razorpayOrderId:   { type: String, default: null },
     razorpayPaymentId: { type: String, default: null },
 
@@ -62,6 +67,21 @@ const RegistrationSchema = new mongoose.Schema(
 
     // ── Registration Status ─────────────────────────────────────────────
     registrationCompleted: { type: Boolean, default: false },
+
+    // ── Mentorship ─────────────────────────────────────────────────────────
+    mentor: {
+      name:     { type: String, default: null },
+      contact:  { type: String, default: null },
+      linkedin: { type: String, default: null },
+    },
+
+    // ── Mentorship Workflow ───────────────────────────────────────────────
+    mentorshipStatus: { 
+      type: String, 
+      enum: ['not_requested', 'pending', 'approved'], 
+      default: 'not_requested' 
+    },
+    mentorshipReceiptUrl: { type: String, default: null },
   },
   {
     timestamps: true,   // adds createdAt + updatedAt automatically
@@ -79,9 +99,12 @@ RegistrationSchema.index({ paymentStatus: 1 });
 // Fast duplicate check in register.js (teamName + leader email)
 RegistrationSchema.index({ teamName: 1, 'leader.email': 1 });
 
-// Razorpay order/payment ID lookup (webhook + verify-payment)
-RegistrationSchema.index({ razorpayOrderId: 1 }, { sparse: true });
-RegistrationSchema.index({ razorpayPaymentId: 1 }, { sparse: true });
+// Cashfree order/payment ID lookup
+RegistrationSchema.index({ cashfreeOrderId: 1 },   { sparse: true });
+RegistrationSchema.index({ cashfreePaymentId: 1 },  { sparse: true });
+// Legacy Razorpay indexes (kept for existing records)
+RegistrationSchema.index({ razorpayOrderId: 1 },   { sparse: true });
+RegistrationSchema.index({ razorpayPaymentId: 1 },  { sparse: true });
 
 // Sort by creation date (admin registrations table default order)
 RegistrationSchema.index({ createdAt: -1 });

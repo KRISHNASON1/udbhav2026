@@ -209,6 +209,13 @@ const Dashboard = {
         }
     },
 
+    closeActiveModal() {
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+        });
+    },
+
     startTimers() {
         this.updateCountdown();
         setInterval(() => this.updateCountdown(), 1000);

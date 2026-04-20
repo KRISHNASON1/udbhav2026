@@ -81,7 +81,7 @@ export async function saveWinnersHandler(req, res) {
           // published state is NOT changed
         },
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
     return res.status(200).json({
@@ -115,7 +115,7 @@ export async function publishWinnersHandler(req, res) {
       update.winners = sanitizeWinners(winners);
     }
 
-    const doc = await WinnersConfig.findByIdAndUpdate('singleton', { $set: update }, { upsert: true, new: true });
+    const doc = await WinnersConfig.findByIdAndUpdate('singleton', { $set: update }, { upsert: true, returnDocument: 'after' });
 
     psLog(req, { event: 'winners_published', count: doc.winners.length });
 
