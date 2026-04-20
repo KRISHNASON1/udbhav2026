@@ -9,7 +9,7 @@
  *
  * Run this once locally after any credential change. The hash is stored in
  * Atlas; ADMIN_PASS is then removed from the env entirely.
- */
+ */ 
 
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
