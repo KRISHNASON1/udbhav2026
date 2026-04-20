@@ -74,7 +74,7 @@ export default async function handler(req, res) {
     await connectDB();
 
     // ── 3. Duplicate check (Upsert pending, block paid) ──────────────────────
-    const teamCodeStr = (body.teamCode || '').trim().toUpperCase();
+    const teamCodeStr = sanitizeCode(body.teamCode);
     const existing = await Registration.findOne({ teamCode: teamCodeStr });
 
     if (existing && existing.paymentStatus === 'paid') {
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     }
 
     // ── 4. Save or Update Registration ───────────────────────────────────────
-    const teamCodeStr = sanitizeCode(body.teamCode);
+    // teamCodeStr is already sanitized and declared above
     const payload = {
       teamCode:    teamCodeStr,
       teamName:    sanitizeText(body.teamName),
