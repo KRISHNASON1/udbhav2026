@@ -1564,6 +1564,7 @@
                 <div style="display:flex;gap:0.75rem;align-items:stretch;width:100%;">
                   <input type="text" id="teamCodeInput" name="teamCodeInput" class="form-input"
                          placeholder="e.g., UDB-ABCD" autocomplete="off" autocapitalize="characters"
+                         oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '')"
                          style="font-family:'JetBrains Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;flex:1;min-width:0;font-size:1rem;font-weight:700;" />
                   <button type="button" id="verifyCodeBtn" class="verify-code-btn">
                     Verify →
@@ -1640,7 +1641,8 @@
                 <div class="form-field">
                   <label class="form-label">Leader Email <span class="editable-hint">✏ editable</span></label>
                   <input type="email" id="leaderEmail" class="form-input is-editable"
-                         placeholder="leader@email.com" />
+                         placeholder="leader@email.com"
+                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9.@_-]/g, '')" />
                 </div>
                 <div class="form-field">
                   <label class="form-label">Leader Phone <span class="editable-hint">✏ editable</span></label>
@@ -1827,37 +1829,56 @@
           <!-- Email notice -->
           <p class="success-sub" id="successEmailNote" style="font-size:0.8rem;color:rgba(255,255,255,0.35);margin-top:0.8rem;"></p>
 
-          <!-- Amount & mentor -->
-          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;margin:1rem 0;">
+
+          <!-- ── BIG THANK YOU HEADING ── -->
+          <div style="width:100%;max-width:420px;text-align:center;margin-bottom:1.5rem;">
+            <p style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:#fff;letter-spacing:0.04em;line-height:1.1;margin:0;">
+              Thank You for Registering!
+            </p>
+            <p style="font-size:0.92rem;color:rgba(255,255,255,0.55);margin:0.5rem 0 0;line-height:1.6;">
+              Best of luck 🎉 — can't wait to see you on <strong style="color:#a855f7;">25th April</strong> at the college.
+            </p>
+          </div>
+
+          <!-- Amount & mentor badges -->
+          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.2rem;">
             <div style="font-family:monospace;font-size:0.78rem;padding:0.4rem 0.9rem;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);" id="successAmountBadge"></div>
             <div style="font-family:monospace;font-size:0.78rem;padding:0.4rem 0.9rem;border-radius:8px;background:rgba(168,85,247,0.07);border:1px solid rgba(168,85,247,0.2);color:#a855f7;" id="successMentorBadge"></div>
           </div>
 
-          <!-- Registration Dashboard Notice -->
-          <div style="width:100%;max-width:380px;padding:1rem 1.2rem;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:12px;margin-bottom:1.5rem;text-align:center;">
-            <p style="margin:0;font-size:0.82rem;color:#34d399;font-weight:600;line-height:1.5;">✨ Welcome to the Hackathon!</p>
-            <p style="margin:0.25rem 0 0 0;font-size:0.75rem;color:rgba(52,211,153,0.8);line-height:1.5;">Best of luck for the upcoming hackathon, looking forward to seeing you at the college.</p>
+          <!-- Email notice -->
+          <p class="success-sub" id="successEmailNote" style="font-size:0.8rem;color:rgba(255,255,255,0.35);margin-bottom:1.2rem;"></p>
+
+          <!-- ── WHATSAPP GROUP GUIDELINE ── -->
+          <div style="width:100%;max-width:400px;padding:1rem 1.2rem;background:linear-gradient(135deg,rgba(37,211,102,0.1),rgba(37,211,102,0.05));border:1px solid rgba(37,211,102,0.3);border-radius:14px;margin-bottom:1.4rem;text-align:left;">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#25d366" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <span style="font-size:0.82rem;font-weight:700;color:#25d366;">WhatsApp Group — Important</span>
+            </div>
+            <p style="margin:0;font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.65;">
+              Once your payment screenshot is <strong style="color:rgba(255,255,255,0.8);">verified by our team</strong>, you will be added to the official UDBHAV'26 WhatsApp group where all event updates, schedule, and instructions will be shared. Please keep an eye on your messages.
+            </p>
           </div>
 
-          <!-- What's next -->
-          <div style="width:100%;max-width:380px;text-align:left;margin:0.8rem 0 1.5rem;padding:1rem 1.2rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
+          <!-- ── WHAT'S NEXT ── -->
+          <div style="width:100%;max-width:400px;text-align:left;margin-bottom:1.4rem;padding:1rem 1.2rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
             <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:0.8rem;font-family:monospace;">What's Next</p>
-            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.55rem;">
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">✓</span> Check your email for the team code</li>
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">→</span> Save your Team Code somewhere safe</li>
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">⏳</span> Be online at 10:45 AM, 25 Apr 2026</li>
-              <li style="font-size:0.8rem;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:0.55rem;"><span style="color:#a855f7;">💻</span> Bring laptop, charger & ID proof</li>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.65rem;">
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#4ade80;flex-shrink:0;margin-top:1px;">✓</span> Our team will verify your payment screenshot within a few hours</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#25d366;flex-shrink:0;margin-top:1px;">💬</span> After verification, you'll be added to the WhatsApp group</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#a855f7;flex-shrink:0;margin-top:1px;">→</span> Save your Team Code — you'll need it for the PS Drop</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#fbbf24;flex-shrink:0;margin-top:1px;">⏳</span> Be ready at <strong style="color:rgba(255,255,255,0.7);">10:45 AM, 25 April 2026</strong> for PS Drop</li>
+              <li style="font-size:0.8rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:0.6rem;"><span style="color:#60a5fa;flex-shrink:0;margin-top:1px;">💻</span> Bring your laptop, charger &amp; college ID proof</li>
             </ul>
           </div>
 
-          <!-- PS Drop CTA -->
-          <div style="width:100%;max-width:380px;padding:0.9rem 1.2rem;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.18);border-radius:12px;margin-bottom:1.4rem;text-align:left;">
+          <!-- ── PS DROP REMINDER ── -->
+          <div style="width:100%;max-width:400px;padding:0.9rem 1.2rem;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.18);border-radius:12px;margin-bottom:1.4rem;text-align:left;">
             <p style="margin:0;font-size:0.75rem;color:rgba(255,255,255,0.35);line-height:1.6;">📅 <strong style="color:rgba(255,255,255,0.6);">PS Drop: 10:45 AM, 25 April 2026</strong><br>Be ready with your Team Code to select your Problem Statement domain.</p>
           </div>
 
           <!-- CTAs -->
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
-            <!-- Download Receipt Button -->
             <button onclick="downloadReceipt()" class="success-cta" id="downloadReceiptBtn" style="background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.35);color:#a855f7;cursor:pointer;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download Receipt
@@ -1872,7 +1893,6 @@
             </a>
           </div>
 
-        </div>
 
       </section><!-- /.reg-right -->
 
@@ -2774,7 +2794,18 @@
           if (!res.ok || !data.success) {
             // Already paid / registered
             if (data.alreadyPaid) {
-              showToast('warn', 'Registration Complete', 'Your payment is done, no need to register again.');
+              var statusEl = document.getElementById('codeVerifyStatus');
+              if (statusEl) {
+                statusEl.innerHTML = '<div style="margin-top:1rem;padding:1.5rem;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:12px;text-align:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:0.5rem;"><polyline points="20 6 9 17 4 12"/></svg><h3 style="color:#4ade80;margin:0 0 0.4rem;font-size:1.1rem;">Already Registered</h3><p style="color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem;line-height:1.5;">Your payment is verified and your registration is complete!<br>No need to register again. We look forward to seeing you at the hackathon.</p></div>';
+                statusEl.style.display = 'block';
+              }
+              showToast('success', 'Registration Complete', 'You have already been registered, no need to register again.');
+              verifyBtn.disabled = true;
+              verifyBtn.innerHTML = '✓ Registered';
+              verifyBtn.style.background = 'rgba(74,222,128,0.15)';
+              verifyBtn.style.color = '#4ade80';
+              verifyBtn.style.borderColor = 'rgba(74,222,128,0.3)';
+              return;
             } else if (res.status === 404) {
               showToast('error', 'Code Not Found',
                 '\'' + code + '\' doesn\'t match any team. Double-check your shortlisting email.');
@@ -2838,11 +2869,11 @@
           removeBtn + '</div>' +
         '<div class="form-row single">' +
           '<div class="form-field"><label class="form-label">Full Name <span class="req">*</span>' + editHint + '</label>' +
-            '<input type="text" class="form-input dyn-member-name ' + editableClass + '" placeholder="Member full name" autocomplete="off" value="' + nameVal + '" /></div>' +
+            '<input type="text" class="form-input dyn-member-name ' + editableClass + '" placeholder="Member full name" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z\\\\s-]/g, \'\')" value="' + nameVal + '" /></div>' +
         '</div>' +
         '<div class="form-row">' +
           '<div class="form-field"><label class="form-label">Email <span class="req">*</span>' + editHint + '</label>' +
-            '<input type="email" class="form-input dyn-member-email ' + editableClass + '" placeholder="Email address" autocomplete="off" value="' + emailVal + '" required /></div>' +
+            '<input type="email" class="form-input dyn-member-email ' + editableClass + '" placeholder="Email address" autocomplete="off" oninput="this.value = this.value.replace(/[^a-zA-Z0-9.@_-]/g, \'\')" value="' + emailVal + '" required /></div>' +
           '<div class="form-field"><label class="form-label">Phone <span class="req">*</span>' + editHint + '</label>' +
             '<input type="tel" class="form-input dyn-member-phone ' + editableClass + '" placeholder="xxxxxxxxxx" autocomplete="off" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" value="' + phoneVal + '" required /></div>' +
         '</div>';

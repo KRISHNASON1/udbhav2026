@@ -20,6 +20,7 @@ validateEnv();
 import express from 'express';
 import path    from 'path';
 import { fileURLToPath } from 'url';
+import rateLimit from 'express-rate-limit';
 
 // ── Polyfills for ESM ────────────────────────────────────────────────────────
 const __filename = fileURLToPath(import.meta.url);
@@ -91,10 +92,58 @@ const app  = express();
 const PORT = process.env.PORT || 8080;
 const DIST = path.join(__dirname, 'dist');
 
+// ── Security Headers ─────────────────────────────────────────────────────────
+app.use((req, res, next) => {
+  // Prevent XSS attacks in older browsers
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  // Prevent MIME-type sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  // Prevent clickjacking
+  res.setHeader('X-Frame-Options', 'DENY');
+  // Referrer policy
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Remove server fingerprint
+  res.removeHeader('X-Powered-By');
+  next();
+});
+
+// ── Rate Limiters ─────────────────────────────────────────────────────────────
+// Registration endpoint: max 10 submissions per IP per 15 minutes
+const registerLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many registration attempts. Please wait 15 minutes and try again.' },
+});
+
+// Team code lookup: max 30 lookups per IP per 15 minutes
+const teamLookupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many verification attempts. Please wait and try again.' },
+});
+
+// General API limiter: 200 requests per IP per 15 minutes
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many requests. Please slow down.' },
+});
+
+// Apply general API limiter to all /api/* routes
+app.use('/api/', apiLimiter);
+
 // Parse JSON bodies — NOTE: webhook handler needs raw body for signature verification
 // We use express.raw for the webhook route and express.json for everything else
 app.use('/api/cashfree-webhook', express.raw({ type: 'application/json' }));
-app.use(express.json());
+// Limit body size to 2MB to prevent payload bombs
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: false, limit: '2mb' }));
 
 // ── Clean-URL mapping (Combined Portfolio + Udbhav Hackathon) ────────────────
 const cleanRoutes = {
@@ -154,8 +203,8 @@ app.all('/api/create-order',      mountHandler(createOrderHandler));
 app.all('/api/verify-payment',    mountHandler(verifyPaymentHandler));
 app.post('/api/cashfree-webhook', mountHandler(cashfreeWebhookHandler));  // Cashfree payment events
 app.get ('/api/payment-status',   mountHandler(paymentStatusHandler));    // Frontend polling after redirect
-app.all('/api/register',       mountHandler(registerHandler));
-app.all('/api/team',           mountHandler(teamHandler));
+app.post('/api/register', registerLimiter,    mountHandler(registerHandler));
+app.get ('/api/team',    teamLookupLimiter,  mountHandler(teamHandler));
 app.get ('/api/team-dashboard',mountHandler(teamDashboardHandler));
 app.all('/api/spotify',        mountHandler(spotifyHandler));
 

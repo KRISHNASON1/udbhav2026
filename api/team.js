@@ -21,6 +21,7 @@
 import { connectDB }    from './lib/mongodb.js';
 import { Team }         from './models/Team.js';
 import { Registration } from './models/Registration.js';
+import { sanitizeCode } from './lib/sanitize.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  const code = (req.query.code || '').trim().toUpperCase();
+  const code = sanitizeCode(req.query.code);
 
   if (!code) {
     return res.status(400).json({ success: false, error: 'Team code is required.' });
