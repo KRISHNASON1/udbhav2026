@@ -18,6 +18,7 @@ import { ProblemStatement }        from '../models/ProblemStatement.js';
 import { getPSState }              from '../lib/psConfig.js';
 import { emitSlotUpdate }          from '../lib/pusher.js';
 import { rateLimit, getIP, psLog } from '../lib/rateLimiter.js';
+import jwt                         from 'jsonwebtoken';
 
 const CODE_RE = /^UDB-[A-Z0-9]{2,8}$/i;
 
@@ -46,6 +47,21 @@ export default async function handler(req, res) {
   }
   if (!psOrder || isNaN(psOrder) || psOrder < 1) {
     return res.status(400).json({ error: 'invalid_ps_id' });
+  }
+
+  // ── Authentication Check ──────────────────────────────────────────────────
+  const token = req.cookies?.udbhav_session;
+  if (!token) {
+    return res.status(401).json({ error: 'unauthorized', message: 'No active session found. Please log in again.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ADMIN_SECRET || 'udbhav26_secure_secret');
+    if (decoded.teamCode !== teamCode) {
+      return res.status(403).json({ error: 'forbidden', message: 'Access denied for this team.' });
+    }
+  } catch (err) {
+    return res.status(401).json({ error: 'unauthorized', message: 'Session expired or invalid. Please log in again.' });
   }
 
   // ── State guard ────────────────────────────────────────────────────────────

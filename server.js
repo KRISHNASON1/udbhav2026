@@ -22,6 +22,7 @@ import path    from 'path';
 import fs      from 'fs';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 
 // ── Polyfills for ESM ────────────────────────────────────────────────────────
 const __filename = fileURLToPath(import.meta.url);
@@ -144,6 +145,24 @@ const apiLimiter = rateLimit({
   message: { success: false, error: 'Too many requests. Please slow down.' },
 });
 
+// Auth endpoint limiter: max 5 login attempts per 15 mins
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many login attempts. Please wait 15 minutes.' },
+});
+
+// Upload limiter: max 3 requests per hour
+const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many upload attempts. Please try again later.' },
+});
+
 // Apply general API limiter to all /api/* routes
 app.use('/api/', apiLimiter);
 
@@ -153,6 +172,7 @@ app.use('/api/cashfree-webhook', express.raw({ type: 'application/json' }));
 // Limit body size to 10MB to accommodate base64-encoded receipt images
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(cookieParser());
 
 // ── Clean-URL mapping (Combined Portfolio + Udbhav Hackathon) ────────────────
 const cleanRoutes = {
@@ -279,10 +299,10 @@ app.get ('/api/admin/submissions',  mountHandler(listSubmissionsHandler));
 app.get('/api/winners', mountHandler(publicWinnersHandler));
 
 // ── Team Auth API ─────────────────────────────────────────────────────────────
-app.post('/api/auth/team', mountHandler(teamAuthHandler));
+app.post('/api/auth/team', authLimiter, mountHandler(teamAuthHandler));
 
 // ── Mentorship API ────────────────────────────────────────────────────────────
-app.post('/api/mentorship/opt', mountHandler(optMentorshipHandler));
+app.post('/api/mentorship/opt', uploadLimiter, mountHandler(optMentorshipHandler));
 
 // ── Clean URL Routes ──────────────────────────────────────────────────────────
 for (const [route, file] of Object.entries(cleanRoutes)) {

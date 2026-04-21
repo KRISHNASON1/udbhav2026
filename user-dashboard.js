@@ -197,9 +197,11 @@ const Dashboard = {
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const idInput = document.getElementById('teamId-input');
+                const emailInput = document.getElementById('leaderEmail-input');
                 const teamCode = idInput.value.trim();
+                const leaderEmail = emailInput ? emailInput.value.trim() : '';
 
-                if (!teamCode) return;
+                if (!teamCode || !leaderEmail) return;
 
                 // UI Loading State
                 loginBtn.disabled = true;
@@ -212,7 +214,8 @@ const Dashboard = {
                     const res = await fetch('/api/auth/team', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ teamCode })
+                        credentials: 'include',
+                        body: JSON.stringify({ teamCode, leaderEmail })
                     });
 
                     const data = await res.json();
@@ -487,6 +490,7 @@ const Dashboard = {
             const res = await fetch('/api/submissions/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({
                     teamId: this.teamId,
                     type: action,
@@ -513,17 +517,14 @@ const Dashboard = {
 
     async fetchStats(id) {
         try {
-            const res = await fetch(`/api/team-dashboard?code=${id}`);
+            const res = await fetch(`/api/team-dashboard?code=${id}`, {
+                credentials: 'include'
+            });
             const data = await res.json();
 
-            // If server denies access (e.g. payment pending), force logout
-            if (res.status === 403 || !data.success) {
+            if (res.status === 401 || res.status === 403) {
+                console.warn('Session invalid or unauthorized, logging out.');
                 this.logout();
-                const loginError = document.getElementById('loginError');
-                if (loginError) {
-                    loginError.textContent = data.message || 'Access Denied. Only fully paid teams can access the dashboard.';
-                    loginError.style.opacity = '1';
-                }
                 return;
             }
 
@@ -577,6 +578,7 @@ const Dashboard = {
             const res = await fetch('/api/mentorship/opt', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ teamCode: this.teamId, receiptUrl: base64 })
             });
             const data = await res.json();

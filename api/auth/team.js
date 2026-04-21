@@ -8,19 +8,21 @@
 
 import { connectDB } from '../lib/mongodb.js';
 import { Registration } from '../models/Registration.js';
+import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  const { teamCode } = req.body;
+  const { teamCode, leaderEmail } = req.body;
 
-  if (!teamCode) {
-    return res.status(400).json({ success: false, error: 'Team ID is required.' });
+  if (!teamCode || !leaderEmail) {
+    return res.status(400).json({ success: false, error: 'Team ID and Leader Email are required.' });
   }
 
   const formattedCode = teamCode.trim().toUpperCase();
+  const formattedEmail = leaderEmail.trim().toLowerCase();
 
   try {
     await connectDB();
@@ -48,6 +50,28 @@ export default async function handler(req, res) {
         status: status
       });
     }
+
+    // Verify leader email
+    const storedEmail = (activeTeam.leader?.email || '').trim().toLowerCase();
+    if (storedEmail !== formattedEmail) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid Leader Email for this Team ID.'
+      });
+    }
+
+    // Success - Create JWT
+    const token = jwt.sign(
+      { teamCode: activeTeam.code || activeTeam.teamCode },
+      process.env.ADMIN_SECRET || 'udbhav26_secure_secret',
+      { expiresIn: '48h' }
+    );
+
+    // Set HttpOnly cookie
+    res.setHeader(
+      'Set-Cookie', 
+      `udbhav_session=${token}; HttpOnly; Path=/; Max-Age=172800; SameSite=Strict`
+    );
 
     // Success - Return team metadata
     return res.status(200).json({

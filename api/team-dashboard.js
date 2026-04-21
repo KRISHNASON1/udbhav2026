@@ -24,6 +24,7 @@ import { connectDB }       from './lib/mongodb.js';
 import { Team }            from './models/Team.js';
 import { Registration }    from './models/Registration.js';
 import { ProblemStatement } from './models/ProblemStatement.js';
+import jwt                 from 'jsonwebtoken';
 
 const CODE_RE = /^UDB-[A-Z0-9]{2,8}$/i;
 
@@ -36,6 +37,21 @@ export default async function handler(req, res) {
 
   if (!code || !CODE_RE.test(code)) {
     return res.status(400).json({ error: 'invalid_format', message: 'Invalid team code format. Expected: UDB-XXXX' });
+  }
+
+  // ── Authentication Check ──────────────────────────────────────────────────
+  const token = req.cookies?.udbhav_session;
+  if (!token) {
+    return res.status(401).json({ error: 'unauthorized', message: 'No active session found. Please log in again.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ADMIN_SECRET || 'udbhav26_secure_secret');
+    if (decoded.teamCode !== code) {
+      return res.status(403).json({ error: 'forbidden', message: 'Access denied for this team.' });
+    }
+  } catch (err) {
+    return res.status(401).json({ error: 'unauthorized', message: 'Session expired or invalid. Please log in again.' });
   }
 
   try {
