@@ -40,7 +40,6 @@ steps:
       - '--region=$_REGION'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--traffic=LATEST'
       - '--quiet'
 
 images:
