@@ -232,6 +232,22 @@ export async function teamsDeleteHandler(req, res) {
   }
 }
 
+/** GET /api/admin/teams/:id - fetch one team with PS details */
+export async function teamsGetHandler(req, res) {
+  if (!authGuard(req, res)) return;
+  try {
+    await connectDB();
+    const { id } = req.params;
+    const team = await Team.findById(id).populate('psSelectionId').lean();
+    if (!team) return res.status(404).json({ success: false, error: 'Team not found.' });
+
+    return res.status(200).json({ success: true, team });
+  } catch (err) {
+    console.error('[admin/teams] get error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
 // ── GENERATE CODES  POST /api/admin/teams/generate-codes ─────────────────────
 export async function generateCodesHandler(req, res) {
   if (!authGuard(req, res)) return;

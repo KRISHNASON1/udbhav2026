@@ -54,6 +54,7 @@ import { paymentsHandler } from './api/admin/payments.js';
 import { psStatsHandler }  from './api/admin/ps-stats.js';
 import {
   teamsListHandler,
+  teamsGetHandler,
   teamsAddHandler,
   teamsImportHandler,
   teamsUpdateHandler,
@@ -168,6 +169,7 @@ app.get   ('/api/admin/ps-stats',         mountHandler(psStatsHandler));
 
 // ── Admin Teams API ───────────────────────────────────────────────────────────
 app.get   ('/api/admin/teams',                mountHandler(teamsListHandler));
+app.get   ('/api/admin/teams/:id',            mountHandler(teamsGetHandler));
 app.post  ('/api/admin/teams/import',         mountHandler(teamsImportHandler));
 app.post  ('/api/admin/teams/generate-codes', mountHandler(generateCodesHandler));
 app.post  ('/api/admin/teams',                mountHandler(teamsAddHandler));
