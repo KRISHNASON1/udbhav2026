@@ -1,18 +1,38 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><title>UDBHAV'26</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;700&family=Syne:wght@400;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;700&family=Syne:wght@400;800&family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
 <style>
 :root{--white:#f5f5f3;--black:#080808;--accent:#e8ff47;--red:#ff3333;--dim:rgba(245,245,243,.15)}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-family:'Syne',sans-serif}
-.s{position:absolute;inset:0;opacity:0;transition:opacity 1.3s cubic-bezier(.4,0,.2,1);overflow:hidden;display:grid}
-.s.on{opacity:1;z-index:10}
+.s{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 1.3s cubic-bezier(.4,0,.2,1),visibility 0s 1.3s;overflow:hidden;display:grid;pointer-events:none}
+.s.on{opacity:1;visibility:visible;z-index:10;transition:opacity 1.3s cubic-bezier(.4,0,.2,1),visibility 0s 0s;pointer-events:all}
+/* PARTICLE BG */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
 /* UI */
-#ui{position:fixed;bottom:0;left:0;right:0;z-index:99;pointer-events:none}
+#ui{position:fixed;bottom:0;left:0;right:0;z-index:99;pointer-events:none;display:flex;flex-direction:column;align-items:center}
 #dots{display:flex;justify-content:center;gap:8px;padding:20px;pointer-events:all}
 .d{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.2);cursor:pointer;transition:all .3s;border:none}
 .d.on{width:24px;background:var(--white)}
 #bar{height:2px;background:linear-gradient(90deg,var(--accent),var(--white));width:0%;transition:width .08s linear}
+/* NAV ARROWS */
+.nav-arr{position:fixed;top:50%;z-index:99;transform:translateY(-50%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--white);width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.nav-arr:hover{background:rgba(232,255,71,.15);border-color:var(--accent);box-shadow:0 0 20px rgba(232,255,71,.2)}
+#arrL{left:24px}
+#arrR{right:24px}
+/* SLIDE ENTRANCE ANIMS */
+@keyframes fadeSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeSlideLeft{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes scaleIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes glitch{0%,100%{text-shadow:none}20%{text-shadow:-3px 0 var(--red),3px 0 cyan}40%{text-shadow:3px 0 var(--red),-3px 0 cyan}60%{text-shadow:-2px 2px var(--accent)}80%{text-shadow:2px -2px var(--red)}}
+@keyframes typeFlicker{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes aurora{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.s.on .anim-up{animation:fadeSlideUp .9s cubic-bezier(.22,1,.36,1) both}
+.s.on .anim-up2{animation:fadeSlideUp .9s cubic-bezier(.22,1,.36,1) .15s both}
+.s.on .anim-up3{animation:fadeSlideUp .9s cubic-bezier(.22,1,.36,1) .3s both}
+.s.on .anim-up4{animation:fadeSlideUp .9s cubic-bezier(.22,1,.36,1) .45s both}
+.s.on .anim-left{animation:fadeSlideLeft .9s cubic-bezier(.22,1,.36,1) .2s both}
+.s.on .anim-scale{animation:scaleIn .8s cubic-bezier(.22,1,.36,1) .1s both}
 /* Shared utilities */
 .label{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.2em;text-transform:uppercase;opacity:.4;color:var(--white)}
 .num-huge{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,22vw,420px);line-height:.85;color:var(--white);letter-spacing:-.02em}
@@ -176,6 +196,40 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-
 #s12 .joke:last-child{border:none;padding:0}
 #s12 .joke .q{font-family:'DM Serif Display',serif;font-size:clamp(16px,1.8vw,26px);font-style:italic;line-height:1.3;color:#111}
 #s12 .joke .src{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.8vw,12px);letter-spacing:.15em;color:#999;text-transform:uppercase}
+/* ── HINGLISH QUOTE SLIDES ── */
+.hq-slide{place-items:center;text-align:center;overflow:hidden}
+.hq-slide::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 120%,rgba(232,255,71,.06),transparent 60%)}
+.hq-slide .hq-wrap{display:flex;flex-direction:column;align-items:center;gap:36px;max-width:75vw;z-index:2;position:relative}
+.hq-slide .hq-emoji{font-size:clamp(50px,8vw,100px);filter:drop-shadow(0 0 20px rgba(232,255,71,.3))}
+.hq-slide .hq-text{font-family:'Outfit',sans-serif;font-size:clamp(28px,5vw,80px);font-weight:900;color:var(--white);line-height:1.1;letter-spacing:-.01em}
+.hq-slide .hq-text em{color:var(--accent);font-style:normal}
+.hq-slide .hq-sub{font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1.1vw,16px);letter-spacing:.2em;color:rgba(245,245,243,.3);text-transform:uppercase}
+.hq-slide .hq-bg-text{position:absolute;font-family:'Bebas Neue',sans-serif;font-size:clamp(100px,30vw,500px);color:rgba(245,245,243,.02);line-height:1;user-select:none;white-space:nowrap}
+#s15{background:#0a0a0a}
+#s16{background:#080810}
+#s17{background:#100808}
+#s18{background:#080808}
+#s19{background:#0a0808}
+#s20{background:#08080a}
+
+/* ── TONTE / ROAST SLIDE ── */
+.tonte-slide{place-items:center;text-align:center}
+.tonte-slide .t-wrap{display:flex;flex-direction:column;align-items:center;gap:32px;max-width:70vw;z-index:2}
+.tonte-slide .t-icon{font-size:clamp(40px,6vw,80px)}
+.tonte-slide .t-head{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,120px);color:var(--white);line-height:.9;letter-spacing:.02em}
+.tonte-slide .t-body{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(22px,3vw,50px);color:rgba(245,245,243,.7);line-height:1.3}
+.tonte-slide .t-body em{color:var(--accent);font-style:normal}
+.tonte-slide .t-tag{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.9vw,13px);letter-spacing:.25em;color:rgba(245,245,243,.2);text-transform:uppercase}
+#s21{background:linear-gradient(135deg,#0a0a0a,#0d0808)}
+#s22{background:linear-gradient(135deg,#080a0a,#0a080d)}
+
+/* ── VIBE CHECK SLIDE ── */
+#s23{background:#080808;place-items:center}
+#s23 .vibe-wrap{display:flex;flex-direction:column;align-items:center;gap:48px;z-index:2}
+#s23 .vibe-title{font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(60px,12vw,200px);background:linear-gradient(135deg,var(--accent),#ff6b6b,#4ecdc4,var(--accent));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:aurora 4s ease infinite;line-height:1}
+#s23 .vibe-sub{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(18px,2.5vw,40px);color:rgba(245,245,243,.5);max-width:60vw;text-align:center;line-height:1.4}
+#s23 .vibe-tags{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+#s23 .vibe-tag{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.9vw,13px);letter-spacing:.15em;color:var(--accent);border:1px solid rgba(232,255,71,.2);padding:8px 20px;border-radius:100px;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -183,10 +237,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-
 <!-- S1: IDENTITY -->
 <div class="s on" id="s1">
   <div class="main">
-    <div class="label">India's Premier Hackathon</div>
-    <h1>UDBHAV<br>'26</h1>
-    <div class="sub">25–26 April 2026 &nbsp;·&nbsp; Sage University, Indore</div>
-    <div class="pill">
+    <div class="label anim-up">India's Premier Hackathon</div>
+    <h1 class="anim-up2">UDBHAV<br>'26</h1>
+    <div class="sub anim-up3">25–26 April 2026 &nbsp;·&nbsp; Sage University, Indore</div>
+    <div class="pill anim-up4">
       <div class="dot-live"></div>
       <span>₹45,000 Prize Pool &nbsp;·&nbsp; 50 Teams &nbsp;·&nbsp; 24 Hours</span>
     </div>
@@ -196,8 +250,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-
 <!-- S2: QUOTE — Kent Beck -->
 <div class="s" id="s2">
   <div class="wrap">
-    <div class="qs">"First, solve the problem.<br>Then, write the code."</div>
-    <div class="attr">— John Johnson &nbsp;·&nbsp; Applied to every hackathon, ever</div>
+    <div class="qs anim-scale">"First, solve the problem.<br>Then, write the code."</div>
+    <div class="attr anim-up3">— John Johnson &nbsp;·&nbsp; Applied to every hackathon, ever</div>
   </div>
 </div>
 
@@ -217,11 +271,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-
 <!-- S4: MEME — EDITORIAL WHITE -->
 <div class="s" id="s4">
   <div class="wrap">
-    <div class="label">Developer wisdom</div>
-    <h2>It works<br>on my<br>machine.</h2>
-    <div class="accent-line"></div>
-    <p>"Any fool can write code a computer can understand. Good programmers write code that humans can understand."</p>
-    <div class="mono">— Martin Fowler &nbsp;·&nbsp; Refactoring, 1999</div>
+    <div class="label anim-up">Developer wisdom</div>
+    <h2 class="anim-up2">It works<br>on my<br>machine.</h2>
+    <div class="accent-line anim-up3"></div>
+    <p class="anim-up3">"Any fool can write code a computer can understand. Good programmers write code that humans can understand."</p>
+    <div class="mono anim-up4">— Martin Fowler &nbsp;·&nbsp; Refactoring, 1999</div>
   </div>
 </div>
 
@@ -445,24 +499,176 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-
   </div>
 </div>
 
+<!-- S15: HINGLISH — Raat ke 3 baje -->
+<div class="s hq-slide" id="s15">
+  <div class="hq-bg-text">NEEND</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">😴</div>
+    <div class="hq-text anim-up2">Raat ke 3 baje,<br><em>code chal raha hai</em><br>par dimag nahi.</div>
+    <div class="hq-sub anim-up3">— Every hackathon participant at 3AM</div>
+  </div>
+</div>
+
+<!-- S16: HINGLISH — Jugaad -->
+<div class="s hq-slide" id="s16">
+  <div class="hq-bg-text">JUGAAD</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">🔧</div>
+    <div class="hq-text anim-up2">Innovation nahi mila<br>toh <em>Jugaad</em> laga do,<br>yahi toh India hai.</div>
+    <div class="hq-sub anim-up3">— Proudly desi engineering</div>
+  </div>
+</div>
+
+<!-- S17: HINGLISH — Chai -->
+<div class="s hq-slide" id="s17">
+  <div class="hq-bg-text">CHAI</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">☕</div>
+    <div class="hq-text anim-up2">Ek aur <em>chai</em> piyo,<br>phir sab theek<br>ho jayega.</div>
+    <div class="hq-sub anim-up3">— Universal Indian debugging technique</div>
+  </div>
+</div>
+
+<!-- S18: HINGLISH — Last minute -->
+<div class="s hq-slide" id="s18">
+  <div class="hq-bg-text">PANIC</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">🔥</div>
+    <div class="hq-text anim-up2">Deadline se <em>1 ghanta pehle</em><br>sabse zyada<br>productivity aati hai.</div>
+    <div class="hq-sub anim-up3">— Proven by every student, always</div>
+  </div>
+</div>
+
+<!-- S19: HINGLISH — WiFi -->
+<div class="s hq-slide" id="s19">
+  <div class="hq-bg-text">WIFI</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">📶</div>
+    <div class="hq-text anim-up2">WiFi slow hai ya<br><em>mera code heavy</em> hai,<br>ye toh research ka topic hai.</div>
+    <div class="hq-sub anim-up3">— College WiFi survivors</div>
+  </div>
+</div>
+
+<!-- S20: HINGLISH — Demo day -->
+<div class="s hq-slide" id="s20">
+  <div class="hq-bg-text">DEMO</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">🎭</div>
+    <div class="hq-text anim-up2">Demo mein <em>confidence</em> rakh,<br>judge ko bug dikhna<br>nahi chahiye.</div>
+    <div class="hq-sub anim-up3">— Hackathon presentation 101</div>
+  </div>
+</div>
+
+<!-- S21: TONTE — Sleep deprivation -->
+<div class="s tonte-slide" id="s21">
+  <div class="t-wrap">
+    <div class="t-icon anim-up">💀</div>
+    <div class="t-head anim-up2">TONTE OF<br>THE DAY</div>
+    <div class="t-body anim-up3">"Bhai <em>all-nighter</em> maarta hoon"<br>— phir subah tak sirf <em>README.md</em> likha</div>
+    <div class="t-tag anim-up4">Hackathon reality check · 2026</div>
+  </div>
+</div>
+
+<!-- S22: TONTE — Frontend vs Backend -->
+<div class="s tonte-slide" id="s22">
+  <div class="t-wrap">
+    <div class="t-icon anim-up">⚔️</div>
+    <div class="t-head anim-up2">FRONTEND<br>VS BACKEND</div>
+    <div class="t-body anim-up3">"CSS toh <em>5 minute</em> ka kaam hai"<br>— 6 ghante baad: div still not centered</div>
+    <div class="t-tag anim-up4">Every team's internal war · always</div>
+  </div>
+</div>
+
+<!-- S23: VIBE CHECK -->
+<div class="s" id="s23">
+  <div class="vibe-wrap">
+    <div class="vibe-title anim-scale">VIBE<br>CHECK ✓</div>
+    <div class="vibe-sub anim-up3">"Agar code compile ho gaya toh celebration, nahi hua toh debugging ka time."</div>
+    <div class="vibe-tags anim-up4">
+      <span class="vibe-tag">#BuildBreakShip</span>
+      <span class="vibe-tag">#Udbhav26</span>
+      <span class="vibe-tag">#24HoursOfChaos</span>
+      <span class="vibe-tag">#JugaadTech</span>
+    </div>
+  </div>
+</div>
+
+<canvas id="particles"></canvas>
+<button class="nav-arr" id="arrL">&#8592;</button>
+<button class="nav-arr" id="arrR">&#8594;</button>
 <div id="ui">
   <div id="dots"></div>
   <div id="bar"></div>
 </div>
 
 <script>
-var DUR=5*60*1000,TICK=80,cur=0,elapsed=0,tmr=null;
+var DUR=15000,TICK=80,cur=0,elapsed=0,tmr=null;
 var ss=document.querySelectorAll('.s'),bar=document.getElementById('bar'),dw=document.getElementById('dots');
 ss.forEach(function(_,i){var d=document.createElement('div');d.className='d'+(i===0?' on':'');d.onclick=function(){go(i);};dw.appendChild(d);});
+
+// Reset animations on slide change
+function resetAnims(slide){
+  var els=slide.querySelectorAll('[class*=anim-]');
+  els.forEach(function(el){
+    var cl=el.className;el.className='';void el.offsetWidth;el.className=cl;
+  });
+}
+
 function go(i){
   clearInterval(tmr);
   ss[cur].classList.remove('on');document.querySelectorAll('.d')[cur].classList.remove('on');
   cur=i;ss[cur].classList.add('on');document.querySelectorAll('.d')[cur].classList.add('on');
+  resetAnims(ss[cur]);
   elapsed=0;bar.style.transition='none';bar.style.width='0%';
   setTimeout(function(){bar.style.transition='width '+TICK+'ms linear';run();},60);
 }
 function run(){tmr=setInterval(function(){elapsed+=TICK;bar.style.width=((elapsed/DUR)*100)+'%';if(elapsed>=DUR){clearInterval(tmr);go((cur+1)%ss.length);}},TICK);}
 run();
+
+// Arrow buttons
+document.getElementById('arrL').onclick=function(){go((cur-1+ss.length)%ss.length);};
+document.getElementById('arrR').onclick=function(){go((cur+1)%ss.length);};
+// Keyboard
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowLeft')go((cur-1+ss.length)%ss.length);
+  if(e.key==='ArrowRight')go((cur+1)%ss.length);
+});
+
+/* ── PARTICLE CANVAS ── */
+(function(){
+  var c=document.getElementById('particles'),ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  var pts=[];
+  for(var i=0;i<60;i++){
+    pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+      r:Math.random()*2+.5,dx:(Math.random()-.5)*.3,dy:(Math.random()-.5)*.3,
+      o:Math.random()*.3+.05});
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      p.x+=p.dx;p.y+=p.dy;
+      if(p.x<0)p.x=c.width;if(p.x>c.width)p.x=0;
+      if(p.y<0)p.y=c.height;if(p.y>c.height)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(232,255,71,'+p.o+')';ctx.fill();
+    }
+    // Connect nearby
+    for(var i=0;i<pts.length;i++){
+      for(var j=i+1;j<pts.length;j++){
+        var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<150){
+          ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle='rgba(232,255,71,'+(0.04*(1-d/150))+')';ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 
 /* ── LIVE COUNTDOWN LOGIC ── */
 function pad(n){return String(n).padStart(2,'0');}
@@ -494,11 +700,8 @@ function countdown(target,ids,msgEl,doneMsg,barEl,startMs){
   setInterval(tick,1000);
 }
 
-// Target: 25 April 2026, 10:00 AM IST (UTC+5:30 = 04:30 UTC)
 var hackStart=new Date('2026-04-25T04:30:00Z').getTime();
-// Target: 25 April 2026, 10:45 AM IST
 var psStart=new Date('2026-04-25T05:15:00Z').getTime();
-// Reference: today as rough start for bar
 var pageLoad=Date.now();
 
 countdown(
@@ -518,3 +721,4 @@ countdown(
 );
 </script>
 </body></html>
+
