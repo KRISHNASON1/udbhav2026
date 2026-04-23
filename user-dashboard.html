@@ -333,15 +333,35 @@
             <button class="modal-close absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all z-10">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <h2 id="modal-title" class="text-2xl font-black font-heading tracking-tight uppercase mb-6">Submission</h2>
+            <h2 id="modal-title" class="text-2xl font-black font-heading tracking-tight uppercase mb-2">Submission</h2>
+            <!-- Status badge: shows draft/final status -->
+            <div id="submission-status" class="mb-6"></div>
+
             <form id="submission-form" class="space-y-4">
-                <input type="url" required placeholder="Submission URL (Drive/Github)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white">
-                <textarea rows="3" placeholder="Additional Notes..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white"></textarea>
-                <div class="p-4 bg-primary/5 rounded-xl border border-primary/10 flex gap-3 text-xs text-white/60">
-                    <input type="checkbox" required class="mt-1">
-                    <span>Authorized by Team Leader</span>
+                <div>
+                    <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1.5 block">Submission URL</label>
+                    <input type="url" id="sub-link-input" required placeholder="Paste your link (Drive / Github)..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:border-primary/40 focus:outline-none transition-colors">
                 </div>
-                <button type="submit" class="w-full h-14 bg-white text-black font-black rounded-xl hover:scale-105 transition-all uppercase">Submit Now</button>
+                <div>
+                    <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1.5 block">Description / Notes</label>
+                    <textarea rows="3" id="sub-desc-input" placeholder="Additional notes about your submission..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:border-primary/40 focus:outline-none transition-colors resize-none"></textarea>
+                </div>
+
+                <!-- Confirmation checkbox (for final submit) -->
+                <div id="sub-confirm-box" class="p-4 bg-primary/5 rounded-xl border border-primary/10 flex gap-3 text-xs text-white/60">
+                    <input type="checkbox" id="sub-confirm-check" class="mt-0.5 accent-primary">
+                    <span>I confirm this is our final submission. <strong class="text-white/80">This action cannot be undone.</strong></span>
+                </div>
+
+                <!-- Two-button layout -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button" id="save-draft-btn" class="h-14 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 hover:border-white/20 transition-all uppercase text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> Save Draft
+                    </button>
+                    <button type="button" id="final-submit-btn" class="h-14 bg-white text-black font-black rounded-xl hover:scale-[1.02] transition-all uppercase text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100" disabled>
+                        <i data-lucide="send" class="w-4 h-4"></i> Final Submit
+                    </button>
+                </div>
             </form>
         </div>
     </div>

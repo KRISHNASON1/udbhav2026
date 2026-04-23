@@ -30,12 +30,56 @@ const Dashboard = {
 
     init() {
         this.checkAuth();
-        this.renderTimeline();
-        this.setupEventListeners();
-        this.startTimers();
-        this.initializeIcons();
-        this.initEthereal();
+        this.syncSchedule().then(() => {
+            this.renderTimeline();
+            this.setupEventListeners();
+            this.startTimers();
+            this.initializeIcons();
+            this.initEthereal();
+        });
     },
+
+    async syncSchedule() {
+        try {
+            const res = await fetch('/api/schedule');
+            const data = await res.json();
+            if (data.success && data.config) {
+                const config = data.config;
+                
+                // 1. Sync Timeline Stages
+                if (config.timelineStages && config.timelineStages.length > 0) {
+                    this.timelineStages = config.timelineStages;
+                }
+
+                // 2. Sync Target Date
+                if (config.targetDate) {
+                    this.targetDate = new Date(config.targetDate);
+                }
+
+                // 3. Sync Links Visibility (update data-visible-after attributes)
+                if (config.links) {
+                    const mapping = {
+                        'resources': config.links.resources,
+                        'mentorship': config.links.mentorship,
+                        'github-submission': config.links.githubSubmission,
+                        'ppt-submission': config.links.pptSubmission,
+                        'project-submission': config.links.projectSubmission
+                    };
+
+                    document.querySelectorAll('[data-action]').forEach(el => {
+                        const action = el.getAttribute('data-action');
+                        if (mapping[action]) {
+                            // Convert to local ISO string format that updateTimeline expects
+                            el.setAttribute('data-visible-after', mapping[action]);
+                        }
+                    });
+                }
+            }
+        } catch (err) {
+            console.error("Failed to sync schedule:", err);
+        }
+    },
+
 
     initEthereal() {
         const hueEl = document.getElementById('etherHueRotate');
@@ -199,12 +243,26 @@ const Dashboard = {
             btn.addEventListener('click', () => this.closeActiveModal());
         });
 
-        // Submission Form
-        const subForm = document.getElementById('submission-form');
-        if (subForm) {
-            subForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                this.handleSubmit(subForm);
+        // Submission: Save Draft button
+        const saveDraftBtn = document.getElementById('save-draft-btn');
+        if (saveDraftBtn) {
+            saveDraftBtn.addEventListener('click', () => this.handleSubmit(false));
+        }
+
+        // Submission: Final Submit button
+        const finalSubmitBtn = document.getElementById('final-submit-btn');
+        if (finalSubmitBtn) {
+            finalSubmitBtn.addEventListener('click', () => {
+                if (!confirm('Are you sure? Once finalized, you cannot edit this submission.')) return;
+                this.handleSubmit(true);
+            });
+        }
+
+        // Checkbox toggles Final Submit button
+        const confirmCheck = document.getElementById('sub-confirm-check');
+        if (confirmCheck && finalSubmitBtn) {
+            confirmCheck.addEventListener('change', () => {
+                finalSubmitBtn.disabled = !confirmCheck.checked;
             });
         }
     },
@@ -269,9 +327,14 @@ const Dashboard = {
             }
         });
         
-        // Reset forms if any
+        // Reset forms & state
         const subForm = document.getElementById('submission-form');
         if (subForm) subForm.reset();
+        const confirmCheck = document.getElementById('sub-confirm-check');
+        if (confirmCheck) confirmCheck.checked = false;
+        const finalBtn = document.getElementById('final-submit-btn');
+        if (finalBtn) finalBtn.disabled = true;
+        this._currentSubmissionType = null;
     },
 
     decryptPS() {
@@ -499,15 +562,24 @@ const Dashboard = {
         }, 5000);
     },
 
-    async handleSubmit(form) {
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = 'Uploading...';
+    async handleSubmit(finalSubmit = false) {
+        const linkInput = document.getElementById('sub-link-input');
+        const descInput = document.getElementById('sub-desc-input');
+        const type = this._currentSubmissionType;
 
-        const linkInput = form.querySelector('input[type="url"]');
-        const notesInput = form.querySelector('textarea');
-        const action = document.getElementById('modal-title').textContent.toLowerCase().replace(' ', '-');
+        if (!linkInput || !linkInput.value.trim()) {
+            this.showToast('Please enter a submission link.', 'error');
+            linkInput?.focus();
+            return;
+        }
+
+        // Determine which button was clicked and show loading
+        const btn = finalSubmit
+            ? document.getElementById('final-submit-btn')
+            : document.getElementById('save-draft-btn');
+        const originalHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = finalSubmit ? 'Submitting...' : 'Saving...';
 
         try {
             const res = await fetch('/api/submissions/submit', {
@@ -515,26 +587,116 @@ const Dashboard = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     teamId: this.teamId,
-                    type: action,
-                    submissionLink: linkInput.value,
-                    description: notesInput.value
+                    type,
+                    submissionLink: linkInput.value.trim(),
+                    description: descInput?.value?.trim() || '',
+                    finalSubmit,
                 })
             });
 
             const data = await res.json();
             if (data.success) {
-                alert('Submission successful!');
-                this.closeActiveModal();
-                form.reset();
+                this.showToast(data.message || (finalSubmit ? 'Final submission recorded!' : 'Draft saved!'));
+                if (finalSubmit) {
+                    // Lock the modal UI
+                    this._lockSubmissionUI();
+                }
             } else {
                 throw new Error(data.error || 'Submission failed');
             }
         } catch (err) {
-            alert('Submission failed: ' + err.message);
+            this.showToast('Error: ' + err.message, 'error');
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
+            btn.innerHTML = originalHTML;
+            if (!finalSubmit) btn.disabled = false;
+            this.initializeIcons();
         }
+    },
+
+    /** Lock submission form after final submit */
+    _lockSubmissionUI() {
+        const linkInput = document.getElementById('sub-link-input');
+        const descInput = document.getElementById('sub-desc-input');
+        const saveBtn = document.getElementById('save-draft-btn');
+        const finalBtn = document.getElementById('final-submit-btn');
+        const confirmBox = document.getElementById('sub-confirm-box');
+
+        if (linkInput) { linkInput.disabled = true; linkInput.classList.add('opacity-50'); }
+        if (descInput) { descInput.disabled = true; descInput.classList.add('opacity-50'); }
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.classList.add('opacity-30', 'cursor-not-allowed'); }
+        if (finalBtn) { finalBtn.disabled = true; finalBtn.innerHTML = '<i data-lucide="lock" class="w-4 h-4"></i> Submitted'; finalBtn.classList.add('opacity-30'); }
+        if (confirmBox) confirmBox.classList.add('hidden');
+
+        const statusEl = document.getElementById('submission-status');
+        if (statusEl) {
+            statusEl.innerHTML = `<span class="inline-flex items-center gap-1.5 bg-green-500/10 text-green-400 text-[10px] font-bold px-3 py-1 rounded-full border border-green-500/20 uppercase tracking-wider"><i data-lucide="check-circle-2" class="w-3 h-3"></i> Finalized</span>`;
+        }
+        this.initializeIcons();
+    },
+
+    /** Fetch existing submission data for pre-fill */
+    async _loadExistingSubmission(type) {
+        try {
+            const res = await fetch(`/api/submissions/get-by-team?teamId=${this.teamId}&type=${type}`);
+            const data = await res.json();
+            if (data.success && data.submission) {
+                return data.submission;
+            }
+        } catch { /* ignore */ }
+        return null;
+    },
+
+    /** Prepare the submission modal — pre-fill data and handle lock state */
+    async _prepareSubmissionModal(action) {
+        const linkInput   = document.getElementById('sub-link-input');
+        const descInput   = document.getElementById('sub-desc-input');
+        const saveBtn     = document.getElementById('save-draft-btn');
+        const finalBtn    = document.getElementById('final-submit-btn');
+        const confirmBox  = document.getElementById('sub-confirm-box');
+        const confirmCheck = document.getElementById('sub-confirm-check');
+        const statusEl    = document.getElementById('submission-status');
+
+        // Reset everything to default state
+        if (linkInput) { linkInput.disabled = false; linkInput.value = ''; linkInput.classList.remove('opacity-50'); }
+        if (descInput) { descInput.disabled = false; descInput.value = ''; descInput.classList.remove('opacity-50'); }
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.classList.remove('opacity-30', 'cursor-not-allowed'); }
+        if (finalBtn) {
+            finalBtn.disabled = true;
+            finalBtn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Final Submit';
+            finalBtn.classList.remove('opacity-30');
+        }
+        if (confirmBox) confirmBox.classList.remove('hidden');
+        if (confirmCheck) confirmCheck.checked = false;
+        if (statusEl) statusEl.innerHTML = '<span class="text-[10px] text-white/30 uppercase tracking-widest font-bold">Loading...</span>';
+
+        // Fetch existing submission
+        const existing = await this._loadExistingSubmission(action);
+
+        if (existing) {
+            // Pre-fill the form
+            if (linkInput) linkInput.value = existing.submissionLink || '';
+            if (descInput) descInput.value = existing.description || '';
+
+            if (existing.finalSubmitted) {
+                // Already finalized — lock everything
+                this._lockSubmissionUI();
+            } else {
+                // Draft exists — show draft badge
+                if (statusEl) {
+                    const savedTime = existing.updatedAt
+                        ? new Date(existing.updatedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true, day: 'numeric', month: 'short' })
+                        : '';
+                    statusEl.innerHTML = `<span class="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-400 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-wider"><i data-lucide="pencil" class="w-3 h-3"></i> Draft saved${savedTime ? ' · ' + savedTime : ''}</span>`;
+                }
+            }
+        } else {
+            // No existing submission
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="inline-flex items-center gap-1.5 text-white/20 text-[10px] font-bold uppercase tracking-wider"><i data-lucide="circle-dashed" class="w-3 h-3"></i> No submission yet</span>';
+            }
+        }
+
+        this.initializeIcons();
     },
 
     async fetchStats(id) {
@@ -628,7 +790,9 @@ const Dashboard = {
             m.classList.remove('hidden');
             
             if (id === 'submission-modal') {
+                this._currentSubmissionType = action;
                 document.getElementById('modal-title').textContent = action.replace(/-/g, ' ').toUpperCase();
+                this._prepareSubmissionModal(action);
             }
 
             if (action === 'mentorship') {

@@ -73,8 +73,12 @@ import {
 import submitHandler           from './api/submissions/submit.js';
 import listSubmissionsHandler  from './api/submissions/list.js';
 import getSubmissionHandler    from './api/submissions/get.js';
+import getByTeamHandler        from './api/submissions/get-by-team.js';
 import listHandler   from './api/submissions/list.js';
 import teamAuthHandler from './api/auth/team.js';
+import scheduleHandler from './api/schedule.js';
+import { getScheduleHandler, updateScheduleHandler } from './api/admin/schedule.js';
+
 
 
 // ── App setup ────────────────────────────────────────────────────────────────
@@ -123,6 +127,7 @@ const cleanRoutes = {
   '/admin/ps-stats':           'admin/ps-stats.html',
   '/admin/winners':            'admin/winners.html',
   '/admin/submissions':        'admin/submissions.html',
+  '/admin/schedule':           'admin/schedule.html',
 };
 
 // ── Vercel-handler adapter ────────────────────────────────────────────────────
@@ -147,7 +152,9 @@ app.get ('/api/payment-status',   mountHandler(paymentStatusHandler));    // Fro
 app.all('/api/register',       mountHandler(registerHandler));
 app.all('/api/team',           mountHandler(teamHandler));
 app.get ('/api/team-dashboard',mountHandler(teamDashboardHandler));
+app.get ('/api/schedule',       mountHandler(scheduleHandler));
 app.all('/api/spotify',        mountHandler(spotifyHandler));
+
 
 // ── PS Drop Public API ────────────────────────────────────────────────────────
 app.get ('/api/ps/status',      mountHandler(psStatusHandler));
@@ -166,6 +173,9 @@ app.post  ('/api/admin/ps/stop-drop',  mountHandler(stopDropHandler));
 app.get   ('/api/admin/ps/stats',      mountHandler(statsHandler));
 app.get   ('/api/admin/payments',      mountHandler(paymentsHandler));
 app.get   ('/api/admin/ps-stats',         mountHandler(psStatsHandler));
+app.get   ('/api/admin/schedule',         mountHandler(getScheduleHandler));
+app.post  ('/api/admin/schedule',         mountHandler(updateScheduleHandler));
+
 
 // ── Admin Teams API ───────────────────────────────────────────────────────────
 app.get   ('/api/admin/teams',                mountHandler(teamsListHandler));
@@ -194,6 +204,7 @@ app.get('/api/winners', mountHandler(publicWinnersHandler));
 // ── Submissions API ───────────────────────────────────────────────────────────
 app.post('/api/submissions/submit', mountHandler(submitHandler));
 app.get ('/api/submissions/get',    mountHandler(getSubmissionHandler));
+app.get ('/api/submissions/get-by-team', mountHandler(getByTeamHandler));
 app.get ('/api/admin/submissions',  mountHandler(listSubmissionsHandler));
 
 
