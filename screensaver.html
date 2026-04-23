@@ -1,0 +1,520 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><title>UDBHAV'26</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;700&family=Syne:wght@400;800&display=swap" rel="stylesheet">
+<style>
+:root{--white:#f5f5f3;--black:#080808;--accent:#e8ff47;--red:#ff3333;--dim:rgba(245,245,243,.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--black);font-family:'Syne',sans-serif}
+.s{position:absolute;inset:0;opacity:0;transition:opacity 1.3s cubic-bezier(.4,0,.2,1);overflow:hidden;display:grid}
+.s.on{opacity:1;z-index:10}
+/* UI */
+#ui{position:fixed;bottom:0;left:0;right:0;z-index:99;pointer-events:none}
+#dots{display:flex;justify-content:center;gap:8px;padding:20px;pointer-events:all}
+.d{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.2);cursor:pointer;transition:all .3s;border:none}
+.d.on{width:24px;background:var(--white)}
+#bar{height:2px;background:linear-gradient(90deg,var(--accent),var(--white));width:0%;transition:width .08s linear}
+/* Shared utilities */
+.label{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.2em;text-transform:uppercase;opacity:.4;color:var(--white)}
+.num-huge{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,22vw,420px);line-height:.85;color:var(--white);letter-spacing:-.02em}
+.serif{font-family:'DM Serif Display',serif}
+@keyframes breathe{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes slide-up{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── S1: IDENTITY — pure black, editorial ── */
+#s1{background:var(--black);place-items:center;text-align:center}
+#s1::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+#s1 .main{display:flex;flex-direction:column;align-items:center;gap:32px}
+#s1 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,18vw,340px);color:var(--white);line-height:.85;letter-spacing:.02em}
+#s1 .sub{font-size:clamp(14px,1.4vw,20px);letter-spacing:.35em;color:rgba(245,245,243,.5);text-transform:uppercase;font-weight:400}
+#s1 .pill{display:flex;align-items:center;gap:16px;border:1px solid var(--dim);padding:10px 24px;border-radius:100px;margin-top:8px}
+#s1 .dot-live{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:breathe 2s infinite}
+#s1 .pill span{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.15em;color:rgba(245,245,243,.6)}
+
+/* ── S2: QUOTE — large serif on dark ── */
+#s2{background:#0d0d0d;place-items:center}
+#s2 .wrap{max-width:78vw;display:flex;flex-direction:column;gap:48px}
+#s2 .qs{font-family:'DM Serif Display',serif;font-size:clamp(28px,4.5vw,72px);color:var(--white);line-height:1.15;font-style:italic;position:relative}
+#s2 .qs::before{content:'\201C';position:absolute;top:-.4em;left:-.15em;font-size:3em;color:var(--accent);opacity:.25;font-style:normal;line-height:1}
+#s2 .attr{font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1.1vw,16px);letter-spacing:.2em;color:rgba(245,245,243,.35);text-transform:uppercase;border-top:1px solid var(--dim);padding-top:24px}
+
+/* ── S3: STATS — numbers as graphic ── */
+#s3{background:var(--black);grid-template-rows:1fr auto;padding:8vh 8vw}
+#s3 .grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;flex:1;align-self:start;margin-top:6vh}
+#s3 .cell{padding:6vh 4vw;border:1px solid var(--dim);display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+#s3 .cell::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}
+#s3 .cell-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,9vw,150px);color:var(--white);line-height:1}
+#s3 .cell-lbl{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.25em;color:rgba(245,245,243,.35);text-transform:uppercase}
+#s3 .cell-accent .cell-num{color:var(--accent)}
+#s3 .header{grid-column:1/-1;padding-bottom:3vh;border-bottom:1px solid var(--dim)}
+
+/* ── S4: MEME EDITORIAL — white bg, raw type ── */
+#s4{background:var(--white);color:var(--black);place-items:center}
+#s4 .wrap{width:80vw;display:flex;flex-direction:column;gap:3vh;align-items:flex-start}
+#s4 h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,12vw,220px);line-height:.85;letter-spacing:-.01em;color:var(--black)}
+#s4 .accent-line{width:80px;height:6px;background:var(--red)}
+#s4 p{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(20px,2.5vw,40px);color:#333;max-width:55vw;line-height:1.4}
+#s4 .mono{font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1.1vw,16px);color:#888;letter-spacing:.1em;margin-top:2vh}
+
+/* ── S5: TERMINAL — premium dark mono ── */
+#s5{background:#0a0a0a;align-items:start;justify-items:start;padding:10vh 8vw}
+#s5 pre{font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.4vw,20px);line-height:2;color:rgba(245,245,243,.75);white-space:pre}
+#s5 .ok{color:#4ade80}
+#s5 .err{color:var(--red)}
+#s5 .dim{color:rgba(245,245,243,.25)}
+#s5 .cur{display:inline-block;width:.55em;height:1.2em;background:var(--white);vertical-align:text-bottom;animation:breathe .9s steps(2) infinite}
+#s5 .prompt-line{color:var(--accent);font-weight:700}
+
+/* ── S6: QUOTE 2 — dark with large number motif ── */
+#s6{background:#0a0a0a;place-items:center}
+#s6 .big{position:absolute;font-family:'Bebas Neue',sans-serif;font-size:45vw;color:rgba(245,245,243,.03);line-height:1;letter-spacing:-.03em;user-select:none;right:-5vw;bottom:-10vh}
+#s6 .content{z-index:2;max-width:65vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:40px}
+#s6 .tag{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,.9vw,13px);letter-spacing:.3em;color:var(--accent);text-transform:uppercase}
+#s6 .qs{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,56px);color:var(--white);line-height:1.2;font-style:italic}
+#s6 .attr{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,.9vw,13px);letter-spacing:.2em;color:rgba(245,245,243,.3);text-transform:uppercase}
+
+/* ── S7: MARQUEE HYPE — kinetic type ── */
+#s7{background:var(--black);display:flex;flex-direction:column;justify-content:center;overflow:hidden;gap:0}
+#s7 .row{white-space:nowrap;display:flex;width:max-content;padding:8px 0}
+#s7 .row span{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,13vw,220px);padding:0 40px;color:var(--white);opacity:.08;letter-spacing:.04em}
+#s7 .row.lit span{opacity:.85}
+#s7 .row span.a{color:var(--accent);opacity:1}
+#s7 .row-inner{display:flex;animation:marquee 18s linear infinite}
+#s7 .row.rev .row-inner{animation-direction:reverse}
+
+/* ── S8: SCHEDULE SLIDE — clean dark ── */
+#s8{background:#0d0d0d;align-items:center;justify-items:start;padding:10vh 8vw;grid-template-rows:auto 1fr}
+#s8 .head{display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--dim);padding-bottom:4vh;width:100%;grid-column:1/-1}
+#s8 h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,8vw,130px);color:var(--white);line-height:.9}
+#s8 .tl{display:flex;flex-direction:column;gap:0;width:100%;max-width:900px;align-self:center;justify-self:center;margin-top:4vh}
+#s8 .ev{display:grid;grid-template-columns:160px 24px 1fr;align-items:start;gap:0 24px;padding:20px 0;border-bottom:1px solid var(--dim)}
+#s8 .ev:last-child{border:none}
+#s8 .ev-time{font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1vw,15px);color:rgba(245,245,243,.3);padding-top:3px;letter-spacing:.1em}
+#s8 .ev-dot{width:10px;height:10px;border-radius:50%;background:var(--dim);border:1px solid rgba(245,245,243,.2);margin-top:5px;flex-shrink:0}
+#s8 .ev.hot .ev-dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px var(--accent)}
+#s8 .ev-name{font-size:clamp(16px,1.5vw,22px);color:var(--white);font-weight:600;letter-spacing:.01em}
+#s8 .ev-sub{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,.9vw,13px);color:rgba(245,245,243,.3);margin-top:4px;letter-spacing:.05em}
+
+/* ── TIMER SLIDES SHARED ── */
+.tmr-slide{place-items:center;text-align:center}
+.tmr-slide .t-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.3em;text-transform:uppercase;margin-bottom:40px}
+.tmr-slide .t-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,96px);line-height:1;margin-bottom:60px}
+.tmr-units{display:flex;align-items:flex-start;gap:clamp(20px,4vw,60px)}
+.tmr-unit{display:flex;flex-direction:column;align-items:center;gap:12px}
+.tmr-val{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,16vw,260px);line-height:.85;letter-spacing:-.02em;min-width:2ch;text-align:center;transition:color .3s}
+.tmr-lbl{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.3em;text-transform:uppercase}
+.tmr-sep{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,12vw,200px);line-height:.85;padding-top:.05em;opacity:.2}
+.tmr-msg{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(16px,1.8vw,28px);margin-top:50px;max-width:60vw;line-height:1.4}
+.tmr-done .tmr-val{color:var(--accent)}
+
+/* ── S13: HACKATHON TIMER ── */
+#s13{background:#080808}
+#s13::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+#s13::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,245,243,.1),transparent)}
+#s13 .t-eyebrow{color:var(--accent)}
+#s13 .t-title{color:var(--white)}
+#s13 .tmr-val{color:var(--white)}
+#s13 .tmr-lbl{color:rgba(245,245,243,.35)}
+#s13 .tmr-sep{color:var(--white)}
+#s13 .tmr-msg{color:rgba(245,245,243,.5)}
+#s13 .t-bar{position:absolute;bottom:0;left:0;height:1px;background:var(--accent);transition:width 1s linear}
+
+/* ── S14: PS DROP TIMER ── */
+#s14{background:#0d0505}
+#s14::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(255,51,51,.08),transparent 65%)}
+#s14 .t-eyebrow{color:var(--red)}
+#s14 .t-title{color:var(--white)}
+#s14 .tmr-val{color:var(--white)}
+#s14 .tmr-lbl{color:rgba(245,245,243,.35)}
+#s14 .tmr-sep{color:var(--red)}
+#s14 .tmr-msg{color:rgba(245,245,243,.5)}
+#s14 .t-badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(255,51,51,.3);padding:8px 20px;border-radius:100px;margin-bottom:40px}
+#s14 .t-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:breathe 1.2s infinite}
+#s14 .t-badge span{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:rgba(255,51,51,.8);text-transform:uppercase}
+
+/* ── S9: BENTO MEME GRID ── */
+#s9{background:#0d0d0d;padding:5vh 5vw;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:10px}
+#s9 .b-header{grid-column:1/-1;padding-bottom:3vh;border-bottom:1px solid var(--dim);display:flex;justify-content:space-between;align-items:flex-end}
+#s9 .b-header h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,90px);color:var(--white);line-height:1}
+.bc{border:1px solid var(--dim);padding:30px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.bc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:.3s}
+.bc .bt{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.8vw,12px);letter-spacing:.2em;color:rgba(245,245,243,.3);text-transform:uppercase;margin-bottom:12px}
+.bc .bh{font-family:'DM Serif Display',serif;font-size:clamp(18px,2vw,30px);color:var(--white);line-height:1.2;font-style:italic}
+.bc .ba{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.8vw,11px);color:rgba(245,245,243,.25);letter-spacing:.15em;margin-top:16px}
+.bc.wide{grid-column:span 2}
+.bc.tall{grid-row:span 2}
+.bc.hi{background:rgba(232,255,71,.04);border-color:rgba(232,255,71,.2)}
+.bc.hi .bh{color:var(--accent)}
+.bc .bnum{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,8vw,120px);color:var(--white);line-height:1;opacity:.15;position:absolute;bottom:-10px;right:10px}
+
+/* ── S10: BENTO INFO GRID ── */
+#s10{background:var(--black);padding:5vh 5vw;display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:10px}
+#s10 .b-header{grid-column:1/-1;padding-bottom:3vh;border-bottom:1px solid var(--dim);display:flex;justify-content:space-between;align-items:flex-end}
+#s10 .b-header h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,90px);color:var(--white);line-height:1}
+#s10 .bc-main{grid-column:1;grid-row:2/4;border:1px solid var(--dim);padding:40px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(160deg,rgba(232,255,71,.06),transparent)}
+#s10 .bc-main .big-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(100px,16vw,260px);color:var(--accent);line-height:.85;letter-spacing:-.02em}
+#s10 .bc-main .lbl{font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1vw,16px);letter-spacing:.25em;color:rgba(245,245,243,.4);text-transform:uppercase;margin-top:16px}
+#s10 .bc-main .sub{font-size:clamp(14px,1.3vw,20px);color:rgba(245,245,243,.6);margin-top:8px;font-weight:400}
+
+/* ── S11: MEME — 99 BUGS ── */
+#s11{background:#111;place-items:center;text-align:center}
+#s11 .wrap{display:flex;flex-direction:column;align-items:center;gap:40px;max-width:75vw}
+#s11 .big-meme{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,160px);color:var(--white);line-height:.9;letter-spacing:-.01em}
+#s11 .big-meme em{color:var(--accent);font-style:normal}
+#s11 .divider{width:60px;height:3px;background:var(--accent)}
+#s11 .body-text{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(18px,2vw,32px);color:rgba(245,245,243,.65);line-height:1.4}
+#s11 .mono-tag{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,.9vw,13px);letter-spacing:.25em;color:rgba(245,245,243,.25);text-transform:uppercase}
+
+/* ── S12: MEME — TODO ── */
+#s12{background:var(--white);color:var(--black);padding:8vh 8vw;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:6vw}
+#s12 .left{display:flex;flex-direction:column;gap:24px}
+#s12 .left .label{color:rgba(8,8,8,.4)}
+#s12 h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,10vw,160px);line-height:.85;color:var(--black)}
+#s12 .red-bar{width:100px;height:8px;background:var(--red)}
+#s12 .right{display:flex;flex-direction:column;gap:32px;border-left:2px solid rgba(8,8,8,.1);padding-left:6vw}
+#s12 .joke{display:flex;flex-direction:column;gap:8px;padding-bottom:32px;border-bottom:1px solid rgba(8,8,8,.1)}
+#s12 .joke:last-child{border:none;padding:0}
+#s12 .joke .q{font-family:'DM Serif Display',serif;font-size:clamp(16px,1.8vw,26px);font-style:italic;line-height:1.3;color:#111}
+#s12 .joke .src{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.8vw,12px);letter-spacing:.15em;color:#999;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- S1: IDENTITY -->
+<div class="s on" id="s1">
+  <div class="main">
+    <div class="label">India's Premier Hackathon</div>
+    <h1>UDBHAV<br>'26</h1>
+    <div class="sub">25–26 April 2026 &nbsp;·&nbsp; Sage University, Indore</div>
+    <div class="pill">
+      <div class="dot-live"></div>
+      <span>₹45,000 Prize Pool &nbsp;·&nbsp; 50 Teams &nbsp;·&nbsp; 24 Hours</span>
+    </div>
+  </div>
+</div>
+
+<!-- S2: QUOTE — Kent Beck -->
+<div class="s" id="s2">
+  <div class="wrap">
+    <div class="qs">"First, solve the problem.<br>Then, write the code."</div>
+    <div class="attr">— John Johnson &nbsp;·&nbsp; Applied to every hackathon, ever</div>
+  </div>
+</div>
+
+<!-- S3: STATS -->
+<div class="s" id="s3">
+  <div class="header">
+    <div class="label">Event at a Glance</div>
+  </div>
+  <div class="grid">
+    <div class="cell cell-accent"><div class="cell-num">24</div><div class="cell-lbl">Hours non-stop</div></div>
+    <div class="cell"><div class="cell-num">50</div><div class="cell-lbl">Teams competing</div></div>
+    <div class="cell"><div class="cell-num">200+</div><div class="cell-lbl">Participants</div></div>
+    <div class="cell cell-accent"><div class="cell-num">₹45K</div><div class="cell-lbl">Prize pool</div></div>
+  </div>
+</div>
+
+<!-- S4: MEME — EDITORIAL WHITE -->
+<div class="s" id="s4">
+  <div class="wrap">
+    <div class="label">Developer wisdom</div>
+    <h2>It works<br>on my<br>machine.</h2>
+    <div class="accent-line"></div>
+    <p>"Any fool can write code a computer can understand. Good programmers write code that humans can understand."</p>
+    <div class="mono">— Martin Fowler &nbsp;·&nbsp; Refactoring, 1999</div>
+  </div>
+</div>
+
+<!-- S5: TERMINAL -->
+<div class="s" id="s5">
+<pre>
+<span class="dim">─────────────────────────────────────────────</span>
+<span class="dim"> UDBHAV'26 SYSTEM BOOT  //  25 APR 2026</span>
+<span class="dim">─────────────────────────────────────────────</span>
+
+<span class="prompt-line">$</span> checking prerequisites...
+
+  <span class="ok">✓</span>  caffeine         <span class="dim">loaded (∞ cups)</span>
+  <span class="ok">✓</span>  stack-overflow   <span class="dim">connected</span>
+  <span class="ok">✓</span>  github-copilot   <span class="dim">active</span>
+  <span class="err">✗</span>  sleep            <span class="dim">not found — skipping</span>
+  <span class="ok">✓</span>  panic-mode       <span class="dim">standby</span>
+
+<span class="prompt-line">$</span> starting hackathon in 3... 2... 1...
+
+<span class="prompt-line">$</span> <span class="cur"></span>
+</pre>
+</div>
+
+<!-- S6: QUOTE 2 -->
+<div class="s" id="s6">
+  <div class="big">26</div>
+  <div class="content">
+    <div class="tag">Hour 01 vs Hour 23</div>
+    <div class="qs">"Hour 1: I can build anything.<br><br>Hour 23: why is Hello World not compiling."</div>
+    <div class="attr">— Every hackathon participant, always</div>
+  </div>
+</div>
+
+<!-- S7: MARQUEE HYPE -->
+<div class="s" id="s7">
+  <div class="row">
+    <div class="row-inner">
+      <span>UDBHAV</span><span class="a">'26</span><span>BUILD</span><span>BREAK</span><span>SHIP</span><span>UDBHAV</span><span class="a">'26</span><span>BUILD</span><span>BREAK</span><span>SHIP</span>
+    </div>
+  </div>
+  <div class="row rev lit">
+    <div class="row-inner">
+      <span>25 APR</span><span class="a">2026</span><span>SAGE UNIVERSITY</span><span>INDORE</span><span>25 APR</span><span class="a">2026</span><span>SAGE UNIVERSITY</span><span>INDORE</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-inner">
+      <span>₹45,000</span><span class="a">PRIZE</span><span>50 TEAMS</span><span>24 HOURS</span><span>₹45,000</span><span class="a">PRIZE</span><span>50 TEAMS</span><span>24 HOURS</span>
+    </div>
+  </div>
+</div>
+
+<!-- S8: SCHEDULE -->
+<div class="s" id="s8">
+  <div class="head">
+    <div class="label">25 – 26 April 2026</div>
+    <h2>The Schedule</h2>
+  </div>
+  <div class="tl">
+    <div class="ev hot">
+      <div class="ev-time">8:00 AM</div><div class="ev-dot"></div>
+      <div><div class="ev-name">Doors Open &amp; Check-In</div><div class="ev-sub">ID verification → kit → room allocation</div></div>
+    </div>
+    <div class="ev hot">
+      <div class="ev-time">10:00 AM</div><div class="ev-dot"></div>
+      <div><div class="ev-name">Orientation &amp; PS Drop ⚡</div><div class="ev-sub">Problem statements revealed — sprint begins</div></div>
+    </div>
+    <div class="ev">
+      <div class="ev-time">1:00 PM</div><div class="ev-dot"></div>
+      <div><div class="ev-name">Lunch</div><div class="ev-sub">Fuel up. Don't stop.</div></div>
+    </div>
+    <div class="ev">
+      <div class="ev-time">8:00 PM</div><div class="ev-dot"></div>
+      <div><div class="ev-name">Power Dinner</div><div class="ev-sub">Mentor walkthrough rounds</div></div>
+    </div>
+    <div class="ev hot">
+      <div class="ev-time">10:00 AM+1</div><div class="ev-dot"></div>
+      <div><div class="ev-name">Final Submissions &amp; Judging</div><div class="ev-sub">26 April — 24 hours complete</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S9: BENTO MEME GRID -->
+<div class="s" id="s9">
+  <div class="b-header">
+    <h2>Developer<br>Proverbs</h2>
+    <div class="label">Hackathon survival guide</div>
+  </div>
+  <div class="bc wide hi">
+    <div class="bt">Universal truth</div>
+    <div class="bh">"Sleep is for the weak.<br>Coffee is for the strong."</div>
+    <div class="ba">Attributed to every developer at 3am</div>
+    <div class="bnum">01</div>
+  </div>
+  <div class="bc">
+    <div class="bt">Stack Overflow</div>
+    <div class="bh">"If it's down, the hackathon is cancelled."</div>
+    <div class="ba">Incident report, 2024</div>
+  </div>
+  <div class="bc">
+    <div class="bt">Git wisdom</div>
+    <div class="bh">"It worked before I touched it."</div>
+    <div class="ba">Every developer, twice a day</div>
+  </div>
+  <div class="bc">
+    <div class="bt">Deployment</div>
+    <div class="bh">"Works on my machine" is a valid production environment.</div>
+    <div class="ba">DevOps proverb</div>
+  </div>
+  <div class="bc wide">
+    <div class="bt">Powered by</div>
+    <div class="bh">"Caffeine, Panic, and Stack Overflow — the holy trinity of hackathons."</div>
+    <div class="ba">Attributed to UDBHAV'26 participants</div>
+    <div class="bnum">02</div>
+  </div>
+</div>
+
+<!-- S10: BENTO INFO GRID -->
+<div class="s" id="s10">
+  <div class="b-header">
+    <h2>Why<br>Compete?</h2>
+    <div class="label">UDBHAV'26 · Sage University</div>
+  </div>
+  <div class="bc-main">
+    <div class="big-num">₹45K</div>
+    <div class="lbl">Total Prize Pool</div>
+    <div class="sub">Cash prizes across 3 categories + certificates, mentorship &amp; industry spotlight.</div>
+  </div>
+  <div class="bc">
+    <div class="bt">Teams</div>
+    <div class="bh" style="font-style:normal;font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,6vw,90px);color:var(--white);line-height:1">50</div>
+    <div class="ba">Spots available</div>
+  </div>
+  <div class="bc">
+    <div class="bt">Duration</div>
+    <div class="bh" style="font-style:normal;font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,6vw,90px);color:var(--white);line-height:1">24H</div>
+    <div class="ba">Non-stop building</div>
+  </div>
+  <div class="bc hi">
+    <div class="bt">Date</div>
+    <div class="bh">25–26 April 2026</div>
+    <div class="ba">Sage University, Indore</div>
+  </div>
+  <div class="bc">
+    <div class="bt">Mentors</div>
+    <div class="bh">Live guidance from industry professionals throughout the event.</div>
+    <div class="ba">All tracks covered</div>
+  </div>
+</div>
+
+<!-- S11: 99 BUGS MEME -->
+<div class="s" id="s11">
+  <div class="wrap">
+    <div class="mono-tag">Programmer mathematics</div>
+    <div class="big-meme">99 bugs<br>in the code.<br>fix one.<br><em>127 bugs.</em></div>
+    <div class="divider"></div>
+    <div class="body-text">"The best method for accelerating a computer is the one that boosts it by 9.8 m/s²"</div>
+    <div class="mono-tag">— Unknown engineer, probably correct</div>
+  </div>
+</div>
+
+<!-- S12: TODO MEME — WHITE SPLIT -->
+<div class="s" id="s12">
+  <div class="left">
+    <div class="label">Developer folklore</div>
+    <h2>//TODO:<br>Fix<br>Later.</h2>
+    <div class="red-bar"></div>
+  </div>
+  <div class="right">
+    <div class="joke">
+      <div class="q">"That comment was added in 2021. The function it refers to no longer exists."</div>
+      <div class="src">git blame — every codebase</div>
+    </div>
+    <div class="joke">
+      <div class="q">"A user interface is like a joke. If you have to explain it, it's not that good."</div>
+      <div class="src">Martin LeBlanc</div>
+    </div>
+    <div class="joke">
+      <div class="q">"Measuring programming progress by lines of code is like measuring flight progress by fuel consumed."</div>
+      <div class="src">Bill Gates</div>
+    </div>
+  </div>
+</div>
+
+<!-- S13: HACKATHON COUNTDOWN -->
+<div class="s tmr-slide" id="s13">
+  <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:2">
+    <div class="t-eyebrow">Hackathon begins in</div>
+    <div class="t-title">UDBHAV'26 &mdash; 25 April 2026, 10:00 AM</div>
+    <div class="tmr-units" id="hTimer">
+      <div class="tmr-unit"><div class="tmr-val" id="hDays">--</div><div class="tmr-lbl">Days</div></div>
+      <div class="tmr-sep">:</div>
+      <div class="tmr-unit"><div class="tmr-val" id="hHours">--</div><div class="tmr-lbl">Hours</div></div>
+      <div class="tmr-sep">:</div>
+      <div class="tmr-unit"><div class="tmr-val" id="hMins">--</div><div class="tmr-lbl">Mins</div></div>
+      <div class="tmr-sep">:</div>
+      <div class="tmr-unit"><div class="tmr-val" id="hSecs">--</div><div class="tmr-lbl">Secs</div></div>
+    </div>
+    <div class="tmr-msg" id="hMsg">&ldquo;The best time to start was yesterday. The second best time is right now.&rdquo;</div>
+  </div>
+  <div class="t-bar" id="hBar" style="width:0%"></div>
+</div>
+
+<!-- S14: PS DROP TIMER -->
+<div class="s tmr-slide" id="s14">
+  <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:2">
+    <div class="t-badge"><div class="t-badge-dot"></div><span>Problem Statement Drop</span></div>
+    <div class="t-eyebrow">PS revealed in</div>
+    <div class="t-title">25 April 2026, 10:45 AM &mdash; Choose your battlefield</div>
+    <div class="tmr-units" id="psTimer">
+      <div class="tmr-unit"><div class="tmr-val" id="psDays">--</div><div class="tmr-lbl">Days</div></div>
+      <div class="tmr-sep">:</div>
+      <div class="tmr-unit"><div class="tmr-val" id="psHours">--</div><div class="tmr-lbl">Hours</div></div>
+      <div class="tmr-sep">:</div>
+      <div class="tmr-unit"><div class="tmr-val" id="psMins">--</div><div class="tmr-lbl">Mins</div></div>
+      <div class="tmr-sep">:</div>
+      <div class="tmr-unit"><div class="tmr-val" id="psSecs">--</div><div class="tmr-lbl">Secs</div></div>
+    </div>
+    <div class="tmr-msg" id="psMsg">&ldquo;10 problem statements. 5 teams per PS. 15 minutes to pick your fate.&rdquo;</div>
+  </div>
+</div>
+
+<div id="ui">
+  <div id="dots"></div>
+  <div id="bar"></div>
+</div>
+
+<script>
+var DUR=5*60*1000,TICK=80,cur=0,elapsed=0,tmr=null;
+var ss=document.querySelectorAll('.s'),bar=document.getElementById('bar'),dw=document.getElementById('dots');
+ss.forEach(function(_,i){var d=document.createElement('div');d.className='d'+(i===0?' on':'');d.onclick=function(){go(i);};dw.appendChild(d);});
+function go(i){
+  clearInterval(tmr);
+  ss[cur].classList.remove('on');document.querySelectorAll('.d')[cur].classList.remove('on');
+  cur=i;ss[cur].classList.add('on');document.querySelectorAll('.d')[cur].classList.add('on');
+  elapsed=0;bar.style.transition='none';bar.style.width='0%';
+  setTimeout(function(){bar.style.transition='width '+TICK+'ms linear';run();},60);
+}
+function run(){tmr=setInterval(function(){elapsed+=TICK;bar.style.width=((elapsed/DUR)*100)+'%';if(elapsed>=DUR){clearInterval(tmr);go((cur+1)%ss.length);}},TICK);}
+run();
+
+/* ── LIVE COUNTDOWN LOGIC ── */
+function pad(n){return String(n).padStart(2,'0');}
+function countdown(target,ids,msgEl,doneMsg,barEl,startMs){
+  var t=new Date(target).getTime();
+  function tick(){
+    var now=Date.now(),diff=t-now;
+    if(diff<=0){
+      ids.d.textContent='00';ids.h.textContent='00';ids.m.textContent='00';ids.s.textContent='00';
+      if(msgEl)msgEl.textContent=doneMsg;
+      [ids.d,ids.h,ids.m,ids.s].forEach(function(el){el.closest('.tmr-unit').classList.add('tmr-done');});
+      if(barEl)barEl.style.width='100%';
+      return;
+    }
+    var days=Math.floor(diff/86400000);
+    var hrs=Math.floor((diff%86400000)/3600000);
+    var mins=Math.floor((diff%3600000)/60000);
+    var secs=Math.floor((diff%60000)/1000);
+    ids.d.textContent=pad(days);
+    ids.h.textContent=pad(hrs);
+    ids.m.textContent=pad(mins);
+    ids.s.textContent=pad(secs);
+    if(barEl&&startMs){
+      var total=t-startMs,elapsed=total-(diff);
+      barEl.style.width=Math.min(100,(elapsed/total)*100)+'%';
+    }
+  }
+  tick();
+  setInterval(tick,1000);
+}
+
+// Target: 25 April 2026, 10:00 AM IST (UTC+5:30 = 04:30 UTC)
+var hackStart=new Date('2026-04-25T04:30:00Z').getTime();
+// Target: 25 April 2026, 10:45 AM IST
+var psStart=new Date('2026-04-25T05:15:00Z').getTime();
+// Reference: today as rough start for bar
+var pageLoad=Date.now();
+
+countdown(
+  hackStart,
+  {d:document.getElementById('hDays'),h:document.getElementById('hHours'),m:document.getElementById('hMins'),s:document.getElementById('hSecs')},
+  document.getElementById('hMsg'),
+  'The hackathon has begun. Build something incredible.',
+  document.getElementById('hBar'),
+  pageLoad
+);
+countdown(
+  psStart,
+  {d:document.getElementById('psDays'),h:document.getElementById('psHours'),m:document.getElementById('psMins'),s:document.getElementById('psSecs')},
+  document.getElementById('psMsg'),
+  'Problem Statements are LIVE. Choose your battlefield.',
+  null,null
+);
+</script>
+</body></html>

@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UDBHAV'26 Participant Guidelines — Everything you need to know for the hackathon." />
+  <title>Participant Guidelines — UDBHAV'26</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,900;1,300;1,400&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="stylesheet" href="/mobile-perf.css" />
+
+  <style>
+    /* ══════════════════════════════════════════════════════
+       GUIDELINES PAGE (Reusing COC Styles)
+       ══════════════════════════════════════════════════════ */
+
+    /* ── HERO ────────────────────────────────────────────── */
+    .coc-hero {
+      position: relative; z-index: 10;
+      min-height: 72vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 140px 2rem 80px;
+      overflow: hidden;
+    }
+    .coc-hero__glow {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 65% 55% at 50% 60%, rgba(59, 130, 246, 0.11) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 40% at 30% 30%, rgba(147, 197, 253, 0.05) 0%, transparent 70%);
+      animation: coc-glow 7s ease-in-out infinite alternate;
+    }
+    @keyframes coc-glow {
+      from { opacity: 0.6; transform: scale(1); }
+      to   { opacity: 1; transform: scale(1.06); }
+    }
+    .coc-hero__eyebrow {
+      position: relative; z-index: 1;
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+      padding: 0.38rem 1rem; border-radius: 999px; margin-bottom: 2rem;
+      opacity: 0; transform: translateY(20px);
+      animation: cocFadeUp 0.7s 0.05s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .coc-hero__eyebrow svg { color: #3b82f6; }
+    .coc-hero__title {
+      position: relative; z-index: 1;
+      font-family: 'Inter', sans-serif; font-weight: 900;
+      font-size: clamp(3rem, 8vw, 7.5rem);
+      line-height: 0.9; letter-spacing: -0.05em; text-transform: uppercase;
+      color: #fff; margin-bottom: 0.8rem;
+      opacity: 0; transform: translateY(40px);
+      animation: cocFadeUp 0.9s 0.15s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .coc-hero__title em {
+      font-style: italic; font-family: 'Fraunces', serif;
+      font-weight: 700; color: rgba(255,255,255,0.35); font-size: 0.88em; display: block;
+    }
+    .coc-hero__sub {
+      position: relative; z-index: 1;
+      font-family: 'Inter', sans-serif; font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      font-weight: 300; color: rgba(255,255,255,0.42); max-width: 580px; line-height: 1.75;
+      margin-bottom: 2.5rem;
+      opacity: 0; transform: translateY(30px);
+      animation: cocFadeUp 0.85s 0.28s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .coc-hero__scroll {
+      position: absolute; bottom: 2.2rem; left: 50%; transform: translateX(-50%); z-index: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      font-family: 'Inter', sans-serif; font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.18);
+      opacity: 0; animation: cocFadeUp 0.8s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .coc-hero__scroll-line {
+      width: 1px; height: 38px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+      animation: coc-scroll-line 2s ease-in-out infinite;
+    }
+    @keyframes coc-scroll-line {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.4); opacity: 0.3; }
+    }
+
+    /* ── QUICK SUMMARY STRIP ─────────────────────────────── */
+    .coc-summary {
+      position: relative; z-index: 10;
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 6rem) 5rem;
+    }
+    .coc-summary__grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem;
+    }
+    .coc-summary__card {
+      padding: 1.5rem; border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.025);
+      display: flex; flex-direction: column; gap: 0.6rem;
+      position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(24px);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .coc-summary__card.revealed { animation: cocFadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .coc-summary__card:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.14); }
+    .coc-summary__card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      border-radius: 20px 20px 0 0; opacity: 0; transition: opacity 0.3s;
+    }
+    .coc-summary__card:hover::before { opacity: 1; }
+    .coc-summary__card--info::before   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+    .coc-summary__icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .coc-summary__card--info .coc-summary__icon { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
+
+    .coc-summary__label {
+      font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #60a5fa;
+    }
+
+    .coc-summary__title {
+      font-family: 'Inter', sans-serif; font-weight: 800;
+      font-size: 1.15rem; color: #fff; line-height: 1.2;
+    }
+    .coc-summary__text {
+      font-family: 'Inter', sans-serif; font-size: 0.82rem;
+      font-weight: 300; line-height: 1.65; color: rgba(255,255,255,0.42);
+    }
+
+    /* ── DIVIDER ─────────────────────────────────────────── */
+    .coc-divider {
+      position: relative; z-index: 10; height: 1px;
+      max-width: 1200px; margin: 0 auto;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent);
+    }
+
+    /* ── MAIN SECTIONS ───────────────────────────────────── */
+    .coc-body {
+      position: relative; z-index: 10;
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 6rem) 2rem;
+      display: grid; grid-template-columns: 260px 1fr; gap: 4rem; align-items: start;
+    }
+
+    /* Sticky sidebar nav */
+    .coc-sidebar {
+      position: sticky; top: 100px;
+    }
+    .coc-sidebar__label {
+      font-family: 'Inter', sans-serif; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); margin-bottom: 1.2rem; display: block;
+    }
+    .coc-sidebar__nav { display: flex; flex-direction: column; gap: 0.2rem; }
+    .coc-nav-link {
+      font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 400;
+      color: rgba(255,255,255,0.35); text-decoration: none; padding: 0.45rem 0.8rem;
+      border-radius: 8px; border-left: 2px solid transparent;
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .coc-nav-link:hover { color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.04); }
+    .coc-nav-link.active { color: #93c5fd; border-left-color: #3b82f6; background: rgba(59, 130, 246, 0.07); }
+    .coc-nav-link svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* Content area */
+    .coc-content { padding: 5rem 0 6rem; }
+
+    .coc-section {
+      margin-bottom: 5rem;
+      opacity: 0; transform: translateY(24px);
+    }
+    .coc-section.revealed { animation: cocFadeUp 0.75s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+    .coc-section__anchor {
+      display: block; position: relative; top: -90px; visibility: hidden;
+    }
+    .coc-section__header {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+    }
+    .coc-section__icon {
+      width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(59, 130, 246, 0.25); background: rgba(59, 130, 246, 0.08);
+    }
+    .coc-section__num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.2);
+    }
+    .coc-section__title {
+      font-family: 'Inter', sans-serif; font-weight: 900;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      letter-spacing: -0.04em; color: #fff; line-height: 1.1;
+    }
+    .coc-section__title em {
+      font-style: italic; font-family: 'Fraunces', serif; color: rgba(255,255,255,0.38);
+    }
+
+    /* Rule list */
+    .coc-rules { display: flex; flex-direction: column; gap: 1rem; }
+    .coc-rule {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      padding: 1.4rem 1.5rem; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.02);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .coc-rule:hover { border-color: rgba(255,255,255,0.13); background: rgba(255,255,255,0.035); }
+    .coc-rule__dot {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    .coc-rule__dot--ok    { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.22); }
+    .coc-rule__dot--warn  { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.22); }
+    .coc-rule__dot--no    { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.22); }
+    .coc-rule__dot--info  { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.22); }
+    .coc-rule__body {}
+    .coc-rule__title {
+      font-family: 'Inter', sans-serif; font-weight: 700;
+      font-size: 0.92rem; color: #fff; margin-bottom: 0.3rem; line-height: 1.3;
+    }
+    .coc-rule__desc {
+      font-family: 'Inter', sans-serif; font-size: 0.8rem;
+      font-weight: 300; line-height: 1.65; color: rgba(255,255,255,0.42);
+    }
+    .coc-rule__desc strong {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+    }
+
+    /* Callout block */
+    .coc-callout {
+      border-radius: 18px; padding: 1.8rem 2rem;
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      margin: 2rem 0;
+    }
+    .coc-callout--blue {
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      background: rgba(59, 130, 246, 0.06);
+    }
+    .coc-callout--amber {
+      border: 1px solid rgba(251,191,36,0.2);
+      background: rgba(251,191,36,0.04);
+    }
+    .coc-callout--red {
+      border: 1px solid rgba(239,68,68,0.18);
+      background: rgba(239,68,68,0.04);
+    }
+    .coc-callout__icon {
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .coc-callout__text {
+      font-family: 'Inter', sans-serif; font-size: 0.85rem;
+      font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.5);
+    }
+    .coc-callout__text strong {
+      font-weight: 700; color: rgba(255,255,255,0.82); display: block; margin-bottom: 0.3rem;
+    }
+
+    /* Two column list */
+    .coc-two-col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+
+    /* Last-updated badge */
+    .coc-meta {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 400;
+      color: rgba(255,255,255,0.25); margin-bottom: 3rem;
+    }
+    .coc-meta__dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #3b82f6; flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .coc-body { grid-template-columns: 1fr; gap: 0; }
+      .coc-sidebar { display: none; }
+      .coc-summary__grid { grid-template-columns: repeat(2, 1fr); }
+      .coc-two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .coc-hero { padding: 120px 1.5rem 60px; }
+      .coc-summary__grid { grid-template-columns: 1fr; }
+    }
+
+    @keyframes cocFadeUp { to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+
+<body>
+
+  <div class="cursor-arrow" id="cursorArrow" aria-hidden="true"></div>
+  <div class="canvas1" id="canvas1"></div>
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div class="mouse-glow" id="mouseGlow" aria-hidden="true"></div>
+
+  <!-- ── Navbar ─────────────────────────────────────────────────── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <img src="/logo.png" alt="Vedansh logo" class="nav-logo-img" id="logoImg" />
+    </div>
+    <div class="nav-right">
+      <div class="nav-pill" id="navPill">
+        <ul class="nav-links" role="navigation" aria-label="Main navigation">
+          <li><a href="/" class="nav-link" id="nav-home"><span class="link-text">Home</span></a></li>
+          <li><a href="/about.html" class="nav-link" id="nav-about"><span class="link-text">About</span></a></li>
+          <li><a href="/schedule.html" class="nav-link" id="nav-work"><span class="link-text">Schedule</span></a></li>
+          <li><a href="/problem-statement.html" class="nav-link" id="nav-blogs"><span class="link-text">Problem Statement</span></a></li>
+          <li class="nav-more-wrap" id="navMoreWrap">
+            <a href="#" class="nav-link nav-more" id="nav-more" role="button" aria-haspopup="menu" aria-expanded="false">
+              <span class="link-text">More</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <div class="more-dropdown" id="moreDropdown" role="menu">
+              <div class="md-grid">
+                <a href="/winners.html" class="md-feature" role="menuitem" tabindex="-1">
+                  <div class="md-feature__bg-icon" aria-hidden="true">
+                    <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+                  </div>
+                  <span class="md-feature__title">Winner</span>
+                  <span class="md-feature__desc">Hackathon winners &amp; achievements</span>
+                </a>
+                <div class="md-items">
+                  <a href="/guidelines.html" class="md-item active" role="menuitem" tabindex="-1">
+                    <div class="md-item__icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <div class="md-item__body">
+                      <span class="md-item__title">Guidelines</span>
+                      <span class="md-item__desc">Participant rules</span>
+                    </div>
+                  </a>
+                  <a href="/code-of-conduct.html" class="md-item" role="menuitem" tabindex="-1">
+                    <div class="md-item__icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
+                    <div class="md-item__body">
+                      <span class="md-item__title">Code of Conduct</span>
+                      <span class="md-item__desc">Rules &amp; Behaviour</span>
+                    </div>
+                  </a>
+                  <a href="/our-team.html" class="md-item" role="menuitem" tabindex="-1">
+                    <div class="md-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                    <div class="md-item__body"><span class="md-item__title">Our Team</span><span class="md-item__desc">Meet the builders</span></div>
+                  </a>
+                  <a href="/sponsors.html" class="md-item" role="menuitem" tabindex="-1">
+                    <div class="md-item__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/><path d="M8 17V5l12-2v12"/></svg></div>
+                    <div class="md-item__body"><span class="md-item__title">Sponsors</span><span class="md-item__desc">Our partners</span></div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="nav-pill-sep" aria-hidden="true"></div>
+        <a href="/register.html" class="btn-cta" id="bookCallBtn">Register</a>
+      </div>
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg class="menu-toggle-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+          <path class="mti-path1" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"/>
+          <path d="M7 16 27 16"/>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile-only navbar pill (hidden on desktop) -->
+    <div class="mobile-nav-pill" id="mobileNavPill">
+      <a href="/" class="mobile-nav-logo" aria-label="UDBHAV'26 Home">
+        <img src="/logo.png" alt="UDBHAV'26" class="mobile-logo-img" />
+      </a>
+      <div class="mobile-nav-right">
+        <a href="/register.html" class="mobile-nav-cta" id="mobileRegisterBtn">Register</a>
+        <button class="mobile-hamburger" id="mobileMenuBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenuDrawer">
+          <span class="mhb-line"></span>
+          <span class="mhb-line"></span>
+          <span class="mhb-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile navigation drawer -->
+    <div class="mobile-menu-drawer" id="mobileMenuDrawer" aria-hidden="true">
+      <nav class="mmd-nav" aria-label="Mobile navigation">
+        <a href="/" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          <span class="mmd-link-text">Home</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/guidelines.html" class="mmd-link mmd-link--active">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="mmd-link-text">Guidelines</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/code-of-conduct.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+          <span class="mmd-link-text">Code of Conduct</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/schedule.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          <span class="mmd-link-text">Schedule</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="/user-dashboard.html" class="mmd-link">
+          <span class="mmd-link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+          <span class="mmd-link-text">Team Dashboard</span>
+          <svg class="mmd-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </nav>
+      <div class="mmd-footer">
+        <a href="/register.html" class="mmd-cta-btn">Register Now →</a>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- Mobile nav hamburger controller -->
+  <script>
+    (function() {
+      var btn = document.getElementById('mobileMenuBtn');
+      var drawer = document.getElementById('mobileMenuDrawer');
+      var pill = document.getElementById('mobileNavPill');
+      if (!btn || !drawer) return;
+      function openMenu() { btn.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); drawer.classList.add('is-open'); drawer.setAttribute('aria-hidden','false'); document.body.classList.add('mobile-menu-open'); }
+      function closeMenu() { btn.classList.remove('is-open'); btn.setAttribute('aria-expanded','false'); drawer.classList.remove('is-open'); drawer.setAttribute('aria-hidden','true'); document.body.classList.remove('mobile-menu-open'); }
+      btn.addEventListener('click', function() { drawer.classList.contains('is-open') ? closeMenu() : openMenu(); });
+      drawer.querySelectorAll('.mmd-link').forEach(function(l) { l.addEventListener('click', closeMenu); });
+      window.addEventListener('resize', function() { if (window.innerWidth > 768) closeMenu(); });
+      if (pill) { pill.addEventListener('click', function(e) { if (e.target.closest('a, button')) return; window.location.href = '/'; }); }
+    })();
+  </script>
+
+  <!-- ══════════════════════════════════════════════════════
+       MAIN
+       ══════════════════════════════════════════════════════ -->
+  <main>
+
+    <!-- ── HERO ────────────────────────────────────────────── -->
+    <section class="coc-hero" aria-labelledby="cocHeroTitle">
+      <div class="coc-hero__glow" aria-hidden="true"></div>
+      <p class="coc-hero__eyebrow">
+        <svg width="7" height="7" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+        OFFLINE ROUND
+      </p>
+      <h1 class="coc-hero__title" id="cocHeroTitle">
+        Participant<br><em>Guidelines</em>
+      </h1>
+      <p class="coc-hero__sub">
+        This document contains everything you need to know for UDBHAV’26. For the full event schedule, tracks, and live updates, visit udbhav26.in before and during the event.
+      </p>
+      <div class="coc-hero__scroll" aria-hidden="true">
+        <div class="coc-hero__scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ── SUMMARY CARDS ──────────────────────────────────── -->
+    <div class="coc-summary">
+      <div class="coc-summary__grid">
+
+        <div class="coc-summary__card coc-summary__card--info js-scroll-reveal">
+          <div class="coc-summary__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </div>
+          <span class="coc-summary__label">Date</span>
+          <div class="coc-summary__title">25–26 April 2026</div>
+        </div>
+
+        <div class="coc-summary__card coc-summary__card--info js-scroll-reveal" style="animation-delay:0.1s">
+          <div class="coc-summary__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          </div>
+          <span class="coc-summary__label">Venue</span>
+          <div class="coc-summary__title">Sage University, Indore</div>
+        </div>
+
+        <div class="coc-summary__card coc-summary__card--info js-scroll-reveal" style="animation-delay:0.2s">
+          <div class="coc-summary__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <span class="coc-summary__label">Duration</span>
+          <div class="coc-summary__title">24 Hours</div>
+        </div>
+
+        <div class="coc-summary__card coc-summary__card--info js-scroll-reveal" style="animation-delay:0.3s">
+          <div class="coc-summary__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><line x1="12" y1="18" x2="12" y2="22"></line><line x1="12" y1="2" x2="12" y2="6"></line></svg>
+          </div>
+          <span class="coc-summary__label">Prize Pool</span>
+          <div class="coc-summary__title">₹45,000</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="coc-divider"></div>
+
+    <!-- ── BODY — sidebar + content ──────────────────────── -->
+    <div class="coc-body">
+
+      <!-- Sticky sidebar -->
+      <nav class="coc-sidebar" aria-label="Section navigation">
+        <span class="coc-sidebar__label">On this page</span>
+        <div class="coc-sidebar__nav">
+          <a href="#arrival" class="coc-nav-link active" data-section="arrival">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+            01 Arrival &amp; Check-In
+          </a>
+          <a href="#id-verification" class="coc-nav-link" data-section="id-verification">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
+            02 ID Verification
+          </a>
+          <a href="#schedule" class="coc-nav-link" data-section="schedule">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            03 Event Schedule
+          </a>
+          <a href="#ps-drop" class="coc-nav-link" data-section="ps-drop">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            04 PS Drop
+          </a>
+          <a href="#iot-track" class="coc-nav-link" data-section="iot-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            05 IoT Track
+          </a>
+          <a href="#judging" class="coc-nav-link" data-section="judging">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            06 Judging Criteria
+          </a>
+          <a href="#mentor" class="coc-nav-link" data-section="mentor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            07 Mentor Guidelines
+          </a>
+          <a href="#contact" class="coc-nav-link" data-section="contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            Contact
+          </a>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <div class="coc-content">
+
+        <!-- 01 ARRIVAL & CHECK-IN -->
+        <section class="coc-section js-scroll-reveal" id="arrival">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">01 —</div>
+              <h2 class="coc-section__title">Arrival &amp; <em>Check-In</em></h2>
+            </div>
+          </div>
+          
+          <div class="coc-rules">
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Timeline</div>
+                <div class="coc-rule__desc">
+                  <strong>8:00 AM – 9:30 AM</strong> on 25 April 2026<br>
+                  <strong>10:00 AM sharp</strong> — be seated in the Seminar Hall by 9:30 AM
+                </div>
+              </div>
+            </div>
+
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Process</div>
+                <div class="coc-rule__desc">
+                  ID Verification → Attendance → Kit Handover → Room Allocation<br><br>
+                  After collecting your kit and room allocation, proceed directly to the Seminar Hall for the pre-orientation assembly. All team members must complete this process within the check-in window.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="coc-callout coc-callout--amber">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="coc-callout__text">
+              <strong>Important</strong>
+              Do not arrive late. Teams that miss the check-in window without prior communication to the organisers risk losing their slot. If you anticipate a delay, contact us immediately.
+            </div>
+          </div>
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 02 IDENTITY VERIFICATION -->
+        <section class="coc-section js-scroll-reveal" id="id-verification">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">02 —</div>
+              <h2 class="coc-section__title">Identity <em>Verification</em></h2>
+            </div>
+          </div>
+
+          <p style="color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem;">
+            Every team member must carry BOTH of the following documents at the time of check-in. Entry will not be permitted without valid identity proof.
+          </p>
+
+          <div class="coc-two-col">
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Government Photo ID</div>
+                <div class="coc-rule__desc">Aadhaar Card, Passport, Voter ID, or Driving Licence</div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">College / Institution ID</div>
+                <div class="coc-rule__desc">Valid student ID card issued by your college or university</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="coc-callout coc-callout--red">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="coc-callout__text">
+              <strong>Zero Tolerance</strong>
+              Misrepresentation of identity or institutional affiliation at verification will result in immediate disqualification of the entire team, with no refund. Refer to the Code of Conduct for full details.
+            </div>
+          </div>
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 03 EVENT SCHEDULE -->
+        <section class="coc-section js-scroll-reveal" id="schedule">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">03 —</div>
+              <h2 class="coc-section__title">Event <em>Schedule</em></h2>
+            </div>
+          </div>
+          
+          <div class="coc-rules">
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">24-Hour Timeline</div>
+                <div class="coc-rule__desc">The complete 24-hour event timeline — from doors open at 8:00 AM on 25 April to the closing ceremony at 11:00 AM on 26 April — is published on the official website. Check the website before the event for any last-minute updates or announcements. <br><br>
+                <a href="/schedule.html" style="color: #60a5fa; text-decoration: none; font-weight: 500;">&rarr; View Full Schedule</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 04 PROBLEM STATEMENT (PS) DROP -->
+        <section class="coc-section js-scroll-reveal" id="ps-drop">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">04 —</div>
+              <h2 class="coc-section__title">PS <em>Drop</em></h2>
+            </div>
+          </div>
+
+          <div class="coc-summary__grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: #fff; line-height: 1;">10</div>
+              <div style="font-family: 'Inter', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Problem Statements</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: #fff; line-height: 1;">5</div>
+              <div style="font-family: 'Inter', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Max Teams per PS</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: #fff; line-height: 1;">15 <span style="font-size:1.5rem">min</span></div>
+              <div style="font-family: 'Inter', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Selection Window</div>
+            </div>
+          </div>
+
+          <h3 style="font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 1.5rem;">Step-by-Step Process</h3>
+
+          <div class="coc-rules">
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info" style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.8rem; color: #3b82f6;">1</div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Attend Orientation First</div>
+                <div class="coc-rule__desc">Participate in the full orientation session in the Seminar Hall. The PS Drop happens after orientation — approximately at 10:45 AM.</div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info" style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.8rem; color: #3b82f6;">2</div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Be at Your Hacking Station by 10:45 AM</div>
+                <div class="coc-rule__desc">All team members must be at their designated stations when the PS Drop goes live. The selection window is strictly 15 minutes.</div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info" style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.8rem; color: #3b82f6;">3</div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">PS Drop Happens on the Website</div>
+                <div class="coc-rule__desc">Visit udbhav26.in/ps at drop time. All 10 problem statements are revealed simultaneously. You will need your Team Code to access and select a PS.</div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info" style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.8rem; color: #3b82f6;">4</div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">First Come, First Served — Any Team Can Pick Any PS</div>
+                <div class="coc-rule__desc">Each PS can be claimed by a maximum of 5 teams. There is no allocation based on Round 1 results — all 50 shortlisted teams compete equally.</div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info" style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.8rem; color: #3b82f6;">5</div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Selection is Final</div>
+                <div class="coc-rule__desc">Once your team confirms a PS, it cannot be changed. Your entire 24-hour build must align with the chosen problem statement.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="coc-callout coc-callout--amber">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="coc-callout__text">
+              <strong>Timing Note</strong>
+              The 10:45 AM PS Drop time is tentative and subject to change. The organising team may adjust the exact timing depending on how orientation progresses. Any change will be announced live at the venue. Stay in the hall until officially directed.
+            </div>
+          </div>
+
+          <div class="coc-callout coc-callout--blue">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="coc-callout__text">
+              <strong>Technical Issue?</strong>
+              If the website is slow, unresponsive, or you encounter any error during PS selection — do not panic. Connect with a nearby volunteer immediately. Every issue will be resolved promptly, and no team will be unfairly disadvantaged due to a technical fault on our end.
+            </div>
+          </div>
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 05 IOT TRACK -->
+        <section class="coc-section js-scroll-reveal" id="iot-track">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">05 —</div>
+              <h2 class="coc-section__title">IoT Track — <em>Early PS Drop</em></h2>
+            </div>
+          </div>
+
+          <p style="color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem;">
+            Participants on the Smart Cities & IoT track require physical sensors, microcontrollers, and hardware components to build their solution. Sourcing hardware takes time. To ensure IoT teams arrive fully prepared, their problem statement will be revealed two days before the main event.
+          </p>
+
+          <div class="coc-two-col">
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">All Other Tracks</div>
+                <div class="coc-rule__desc"><strong>25 Apr</strong><br>PS Drop at ~10:45 AM on event day</div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Smart Cities &amp; IoT Track</div>
+                <div class="coc-rule__desc"><strong>23 Apr</strong><br>Early PS Drop — 2 days before the event</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="coc-callout coc-callout--blue" style="margin-top: 1.5rem;">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div class="coc-callout__text">
+              IoT teams will receive their PS via official channels (email + WhatsApp) on 23rd April 2026. Use the two days to procure sensors, modules, and any hardware your solution requires. Arrive at the venue on 25th April ready to build.
+            </div>
+          </div>
+
+          <div class="coc-callout coc-callout--red" style="margin-top: 1.5rem;">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="coc-callout__text">
+              <strong>Important</strong>
+              Although the PS is revealed early, the build window starts at 11:00 AM on 25th April — the same as all other teams. The early drop is strictly for hardware procurement. No development or prototyping should begin before the official hackathon start time.
+            </div>
+          </div>
+
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 06 JUDGING CRITERIA -->
+        <section class="coc-section js-scroll-reveal" id="judging">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">06 —</div>
+              <h2 class="coc-section__title">Judging <em>Criteria</em></h2>
+            </div>
+          </div>
+
+          <p style="color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem;">
+            A detailed judging rubric — covering all evaluation criteria, weights, and scoring guidelines — will be provided to all shortlisted teams separately.
+          </p>
+
+          <div class="coc-callout coc-callout--blue">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div class="coc-callout__text">
+              Watch for official communication via email and WhatsApp for the Judging Criteria document.
+            </div>
+          </div>
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 07 MENTOR GUIDELINES -->
+        <section class="coc-section js-scroll-reveal" id="mentor">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="coc-section__num">07 —</div>
+              <h2 class="coc-section__title">Mentor <em>Guidelines</em></h2>
+            </div>
+          </div>
+
+          <p style="color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem;">
+            For teams that opted for the Mentor Session (additional ₹300 fee), detailed guidelines on how to approach, interact with, and get the most out of your mentor sessions will be communicated separately.
+          </p>
+
+          <div class="coc-callout coc-callout--blue">
+            <div class="coc-callout__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div class="coc-callout__text">
+              All participants are reminded that interactions with mentors and judges must remain professional and respectful at all times. Soliciting preferential treatment or advance disclosure of judging criteria is strictly prohibited per the Code of Conduct (Section 5.3).
+            </div>
+          </div>
+        </section>
+
+        <div class="coc-divider" style="margin: 0 0 4rem;"></div>
+
+        <!-- 08 CONTACT -->
+        <section class="coc-section js-scroll-reveal" id="contact">
+          <span class="coc-section__anchor"></span>
+          <div class="coc-section__header">
+            <div class="coc-section__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </div>
+            <div>
+              <h2 class="coc-section__title">Contact the <em>Organisers</em></h2>
+            </div>
+          </div>
+
+          <div class="coc-two-col" style="gap:1rem">
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Lead Organiser</div>
+                <div class="coc-rule__desc">
+                  <strong>Rishabh Vyas</strong><br>
+                  <a href="mailto:rishabhvyas222@gmail.com" style="color:#60a5fa;text-decoration:none;">rishabhvyas222@gmail.com</a><br>
+                  +91 95756 25112
+                </div>
+              </div>
+            </div>
+            <div class="coc-rule">
+              <div class="coc-rule__dot coc-rule__dot--info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="coc-rule__body">
+                <div class="coc-rule__title">Co-Lead Organiser</div>
+                <div class="coc-rule__desc">
+                  <strong>Prince Yadav</strong><br>
+                  <a href="mailto:princeyadav810py@gmail.com" style="color:#60a5fa;text-decoration:none;">princeyadav810py@gmail.com</a><br>
+                  +91 85914 42334
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /coc-content -->
+    </div><!-- /coc-body -->
+
+    <!-- ── CINEMATIC FOOTER ────────────────────────────────── -->
+    <div class="cf-wrapper" id="cinematicFooterWrapper">
+      <footer class="cf-footer" id="cinematicFooter" aria-label="Site footer">
+        <div class="cf-aurora" aria-hidden="true"></div>
+        <div class="cf-grid-bg" aria-hidden="true"></div>
+        <div class="cf-giant-text" id="cfGiantText" aria-hidden="true">UDBHAV'26</div>
+        <div class="cf-marquee-wrap" aria-hidden="true">
+          <div class="cf-marquee-track">
+            <div class="cf-marquee-item"><span>Creative Engineer</span> <span class="cf-star">✦</span><span>Full Stack Dev</span> <span class="cf-star cf-star--sec">✦</span><span>UI / UX Design</span> <span class="cf-star">✦</span><span>Open to Work</span> <span class="cf-star cf-star--sec">✦</span><span>Based in India</span> <span class="cf-star">✦</span></div>
+            <div class="cf-marquee-item" aria-hidden="true"><span>Creative Engineer</span> <span class="cf-star">✦</span><span>Full Stack Dev</span> <span class="cf-star cf-star--sec">✦</span><span>UI / UX Design</span> <span class="cf-star">✦</span><span>Open to Work</span> <span class="cf-star cf-star--sec">✦</span><span>Based in India</span> <span class="cf-star">✦</span></div>
+          </div>
+        </div>
+        <div class="cf-center" id="cfCenter">
+          <h2 class="cf-heading">Ready to begin?</h2>
+          <div class="cf-links"><div class="cf-primary-pills"><a href="/register.html" class="cf-pill cf-pill--primary js-magnetic" id="cfBtnRegister">Register</a></div>
+            <div class="cf-secondary-pills" style="margin-top:0.75rem;">
+              <a href="/legal.html#terms" class="cf-pill cf-pill--ghost js-magnetic">Terms</a>
+              <a href="/legal.html#privacy" class="cf-pill cf-pill--ghost js-magnetic">Privacy</a>
+              <a href="/legal.html#refund" class="cf-pill cf-pill--ghost js-magnetic">Refund Policy</a>
+              <a href="/contact.html" class="cf-pill cf-pill--ghost js-magnetic">Contact Us</a>
+            </div></div>
+        </div>
+        <div class="cf-bottom-bar">
+          <p class="cf-copyright">© 2026 UDBHAV'26. All rights reserved. By Alta School of Technology.</p>
+          <div class="cf-badge"><span class="cf-badge-text">Crafted with</span><span class="cf-heart" aria-hidden="true">❤</span><span class="cf-badge-text">by</span><span class="cf-badge-name">UDBHAV'26</span></div>
+          <button class="cf-pill cf-pill--icon js-magnetic" id="cfBackToTop" aria-label="Back to top">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+  </main>
+
+  <script type="module" src="/mobile-perf.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true, smoothTouch: false });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    const cursor = document.getElementById('cursorArrow');
+    if (cursor) {
+      document.addEventListener('mousemove', e => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+      document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('is-hovering'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('is-hovering'));
+      });
+      document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+      document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+    }
+
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.js-scroll-reveal').forEach(el => {
+        ScrollTrigger.create({ trigger: el, start: 'top 88%', onEnter: () => el.classList.add('revealed'), once: true });
+      });
+
+      // Footer
+      const wrapper = document.getElementById('cinematicFooterWrapper'), giantTxt = document.getElementById('cfGiantText'), center = document.getElementById('cfCenter');
+      if (wrapper && giantTxt && center) {
+        gsap.fromTo(giantTxt, { y: '15vh', scale: 0.85, opacity: 0 }, { y: '0vh', scale: 1, opacity: 1, ease: 'power1.out', scrollTrigger: { trigger: wrapper, start: 'top bottom', end: 'top 0%', scrub: 1.5 } });
+        gsap.fromTo(center, { y: 70, opacity: 0 }, { y: 0, opacity: 1, ease: 'power3.out', scrollTrigger: { trigger: wrapper, start: 'top 60%', end: 'top -20%', scrub: 1 } });
+      }
+      document.getElementById('cfBackToTop')?.addEventListener('click', () => lenis.scrollTo(0, { duration: 1.2 }));
+      document.querySelectorAll('#cinematicFooter .js-magnetic').forEach(el => {
+        el.addEventListener('mousemove', e => {
+          const r = el.getBoundingClientRect(), x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2;
+          gsap.to(el, { x: x * 0.38, y: y * 0.38, rotationX: -y * 0.14, rotationY: x * 0.14, scale: 1.06, ease: 'power2.out', duration: 0.4, overwrite: 'auto' });
+        });
+        el.addEventListener('mouseleave', () => gsap.to(el, { x: 0, y: 0, rotationX: 0, rotationY: 0, scale: 1, ease: 'elastic.out(1,0.3)', duration: 1.2, overwrite: 'auto' }));
+      });
+
+      // Navbar scroll behavior
+      const navPill = document.getElementById('navPill'), navbar = document.getElementById('navbar');
+      const navDivider = document.querySelector('.logo-divider'), taglineDot = document.querySelector('.tagline-dot'), logoTagline = document.querySelector('.logo-tagline');
+      if (navbar && navPill && window.innerWidth > 768) {
+        const wipeEls = [logoTagline, taglineDot, navDivider].filter(Boolean);
+        gsap.set(wipeEls, { clipPath: 'inset(0 0% 0 0 round 2px)' });
+        let transformed = false;
+        ScrollTrigger.create({ trigger: document.body, start: 'top top-=80',
+          onEnter: () => {
+            if (transformed) return; transformed = true;
+            gsap.to(wipeEls, { clipPath: 'inset(0 100% 0 0 round 2px)', duration: 0.22, ease: 'power3.in', stagger: { each: 0.06, from: 'start' } });
+            const navRect = navbar.getBoundingClientRect(), pillRect = navPill.getBoundingClientRect();
+            gsap.to(navPill, { x: (navRect.left + navRect.width / 2) - (pillRect.left + pillRect.width / 2), duration: 0.7, ease: 'power3.out', delay: 0.1 });
+          },
+          onLeaveBack: () => {
+            if (!transformed) return; transformed = false;
+            gsap.to(navPill, { x: 0, duration: 0.6, ease: 'power3.inOut' });
+            gsap.to(wipeEls, { clipPath: 'inset(0 0% 0 0 round 2px)', duration: 0.3, ease: 'power2.out', stagger: { each: 0.07, from: 'end' }, delay: 0.25 });
+          }
+        });
+      }
+
+      // Sidebar active link on scroll
+      const sections = document.querySelectorAll('.coc-section[id]');
+      const navLinks = document.querySelectorAll('.coc-nav-link[data-section]');
+      ScrollTrigger.create({
+        onUpdate: () => {
+          let current = '';
+          sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) current = s.id; });
+          navLinks.forEach(l => l.classList.toggle('active', l.dataset.section === current));
+        }
+      });
+    }
+
+    // More dropdown
+    (function() {
+      const trigger = document.getElementById('nav-more'), dropdown = document.getElementById('moreDropdown'), wrap = document.getElementById('navMoreWrap');
+      if (!trigger || !dropdown) return;
+      let ct = null;
+      const o = () => { clearTimeout(ct); dropdown.classList.remove('closing'); dropdown.classList.add('open'); trigger.setAttribute('aria-expanded','true'); };
+      const c = () => { if (!dropdown.classList.contains('open')) return; dropdown.classList.add('closing'); trigger.setAttribute('aria-expanded','false'); ct = setTimeout(() => dropdown.classList.remove('open','closing'), 160); };
+      trigger.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); dropdown.classList.contains('open') ? c() : o(); });
+      document.addEventListener('click', e => { if (wrap && !wrap.contains(e.target)) c(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && dropdown.classList.contains('open')) { c(); trigger.focus(); } });
+    })();
+
+  })();
+  </script>
+
+</body>
+</html>
