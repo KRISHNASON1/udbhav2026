@@ -8,6 +8,7 @@
 
 import { connectDB } from '../lib/mongodb.js';
 import { Registration } from '../models/Registration.js';
+import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -39,17 +40,30 @@ export default async function handler(req, res) {
       });
     }
 
-    // Restriction: Allow 'paid' and 'pending' teams to enter
+    // Restriction: Only allow 'paid' teams to enter
     const status = activeTeam.paymentStatus;
-    if (status !== 'paid' && status !== 'pending') {
+    if (status !== 'paid') {
       return res.status(403).json({
         success: false,
-        error: 'Access Denied. Registration not found for this status.',
+        error: 'Access Denied. Only teams with successful payments can access the dashboard.',
         status: status
       });
     }
-    // Restriction: All registered teams can access the command center now
-    // Payment status check removed as requested
+
+
+
+    // Success - Create JWT
+    const token = jwt.sign(
+      { teamCode: activeTeam.code || activeTeam.teamCode },
+      process.env.ADMIN_SECRET || 'udbhav26_secure_secret',
+      { expiresIn: '48h' }
+    );
+
+    // Set HttpOnly cookie
+    res.setHeader(
+      'Set-Cookie', 
+      `udbhav_session=${token}; HttpOnly; Path=/; Max-Age=172800; SameSite=Strict`
+    );
 
     // Success - Return team metadata
     return res.status(200).json({

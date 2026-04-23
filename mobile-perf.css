@@ -117,7 +117,7 @@ html { -webkit-overflow-scrolling: touch; }
 
 /* ── B1. GLOBAL: Prevent horizontal overflow at any breakpoint  */
 html, body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 img, video, svg, canvas {

@@ -24,6 +24,7 @@ import { connectDB }       from './lib/mongodb.js';
 import { Team }            from './models/Team.js';
 import { Registration }    from './models/Registration.js';
 import { ProblemStatement } from './models/ProblemStatement.js';
+import jwt                 from 'jsonwebtoken';
 
 const CODE_RE = /^UDB-[A-Z0-9]{2,8}$/i;
 
@@ -36,6 +37,21 @@ export default async function handler(req, res) {
 
   if (!code || !CODE_RE.test(code)) {
     return res.status(400).json({ error: 'invalid_format', message: 'Invalid team code format. Expected: UDB-XXXX' });
+  }
+
+  // ── Authentication Check ──────────────────────────────────────────────────
+  const token = req.cookies?.udbhav_session;
+  if (!token) {
+    return res.status(401).json({ error: 'unauthorized', message: 'No active session found. Please log in again.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ADMIN_SECRET || 'udbhav26_secure_secret');
+    if (decoded.teamCode !== code) {
+      return res.status(403).json({ error: 'forbidden', message: 'Access denied for this team.' });
+    }
+  } catch (err) {
+    return res.status(401).json({ error: 'unauthorized', message: 'Session expired or invalid. Please log in again.' });
   }
 
   try {
@@ -73,14 +89,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Allow paid OR pending (previously strictly required paid)
-    if (team.paymentStatus !== 'paid' && team.paymentStatus !== 'pending') {
+    // Restriction: Only allow 'paid' teams
+    if (team.paymentStatus !== 'paid') {
       return res.status(403).json({
         error:   'access_denied',
-        message: 'Access denied for this status: ' + team.paymentStatus,
+        message: 'Access denied. Only fully paid teams can access the dashboard.',
       });
     }
-    // Payment status check removed as requested
 
     // Prefer Registration members (has email), fall back to Team.members
     let leader  = team.leader;
@@ -89,6 +104,18 @@ export default async function handler(req, res) {
     if (reg) {
       leader  = reg.leader  || leader;
       members = reg.members || members;
+    }
+
+    // ── Auto-approve mentorship for ₹1100 teams ────────────────────────────
+    if (team.totalAmount >= 1100 && team.mentorshipStatus !== 'approved') {
+      const updateFields = { mentorSession: true, mentorshipStatus: 'approved' };
+      await Promise.all([
+        Team.findOneAndUpdate({ code }, { $set: updateFields }),
+        Registration.findOneAndUpdate({ teamCode: code }, { $set: updateFields }),
+      ]);
+      // Reflect in the response object
+      team.mentorSession    = true;
+      team.mentorshipStatus = 'approved';
     }
 
     // ── PS Selection ────────────────────────────────────────────────────────

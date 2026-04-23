@@ -85,45 +85,45 @@ export async function registrationsListHandler(req, res) {
   }
 }
 
-// ── UPDATE PAYMENT  PATCH /api/admin/registrations/:id ───────────────────────
+// ── UPDATE PAYMENT & MENTORSHIP  PATCH /api/admin/registrations/:id ───────────────────────
 export async function registrationUpdateHandler(req, res) {
   if (!authGuard(req, res)) return;
   try {
     await connectDB();
     const { id } = req.params;
-    const { paymentStatus } = req.body || {};
-
-    if (!['pending', 'paid', 'failed'].includes(paymentStatus)) {
-      return res.status(400).json({ success: false, error: 'Invalid paymentStatus. Use: pending, paid, failed.' });
-    }
+    const updates = req.body || {};
 
     // Fetch BEFORE update so we always have teamCode
     const existing = await Registration.findById(id).lean();
     if (!existing) return res.status(404).json({ success: false, error: 'Registration not found.' });
 
+    const allowed = ['paymentStatus', 'mentorshipStatus', 'mentorSession', 'mentorshipReceiptUrl', 'mentor'];
+    const validUpdates = {};
+    for (const key of allowed) {
+      if (updates[key] !== undefined) validUpdates[key] = updates[key];
+    }
+
+    if (Object.keys(validUpdates).length === 0) {
+      return res.status(400).json({ success: false, error: 'No valid fields to update.' });
+    }
+
     const reg = await Registration.findByIdAndUpdate(
       id,
-      { $set: { paymentStatus } },
+      { $set: validUpdates },
       { new: true }
     );
 
     // Sync to Teams collection by teamCode
     const teamCode = existing.teamCode;
-    console.log(`[admin/registrations] Updating paymentStatus=${paymentStatus} for id=${id}, teamCode=${teamCode}`);
-
     if (teamCode) {
       const teamResult = await Team.findOneAndUpdate(
         { code: teamCode },
-        { $set: { paymentStatus } },
+        { $set: validUpdates },
         { new: true }
       );
       if (teamResult) {
-        console.log(`[admin/registrations] Synced Team ${teamCode} paymentStatus → ${paymentStatus}`);
-      } else {
-        console.warn(`[admin/registrations] No Team found with code=${teamCode} to sync`);
+        console.log(`[admin/registrations] Synced Team ${teamCode} updates:`, Object.keys(validUpdates));
       }
-    } else {
-      console.warn(`[admin/registrations] Registration ${id} has no teamCode — cannot sync to Teams collection`);
     }
 
     return res.status(200).json({ success: true, registration: reg });

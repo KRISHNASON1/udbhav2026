@@ -18,6 +18,7 @@ function cleanUrlPlugin() {
     '/our-team':          '/our-team.html',
     '/register':          '/register.html',
     '/dashboard':         '/user-dashboard.html',
+    '/user-dashboard':    '/user-dashboard.html',
     '/contact':           '/contact.html',
     '/legal':             '/legal.html',
     '/admin/login':           '/admin/login.html',

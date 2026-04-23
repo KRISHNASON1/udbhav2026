@@ -697,6 +697,10 @@
        ══════════════════════════════════════════════════════════════════ -->
   <section class="sch-section" id="scheduleSection" aria-label="Hackathon Schedule">
 
+    <div class="sch-bg-glow" aria-hidden="true"></div>
+    <div class="sch-bg-grid" aria-hidden="true"></div>
+    <div class="sch-bg-noise" aria-hidden="true"></div>
+
     <div class="sch-container">
 
       <!-- Header -->
@@ -1102,15 +1106,25 @@
   <!-- ══════════════════════════════════════════════════════════════════
        FAQ SECTION
        ══════════════════════════════════════════════════════════════════ -->
-  <section class="faq-section" id="faqSection" aria-label="Frequently Asked Questions">
+  <section class="faq-section" id="faqSection" aria-label="Frequently Asked Questions" style="position: relative; overflow: hidden;">
 
     <!-- Ethereal background (matches about section) -->
     <div class="faq-bg-glow" aria-hidden="true"></div>
     <div class="faq-bg-grid" aria-hidden="true"></div>
 
-    <div class="faq-container">
+    <!-- Floating Background Images -->
+    <img src="/question_mark.png" alt="" aria-hidden="true" style="position: absolute; top: 10%; left: 2%; width: 180px; opacity: 0.3; transform: rotate(-20deg); pointer-events: none; z-index: 0;">
+    <img src="/question_mark.png" alt="" aria-hidden="true" style="position: absolute; top: 60%; right: 2%; width: 220px; opacity: 0.25; transform: rotate(15deg); pointer-events: none; z-index: 0;">
+    <img src="/question_mark.png" alt="" aria-hidden="true" style="position: absolute; bottom: 10%; left: 8%; width: 120px; opacity: 0.35; transform: rotate(-10deg); pointer-events: none; z-index: 0;">
 
-      <!-- Header -->
+    <img src="/adtherate.png" alt="" aria-hidden="true" style="position: absolute; top: 25%; right: 5%; width: 150px; opacity: 0.3; transform: rotate(25deg); pointer-events: none; z-index: 0;">
+
+    <img src="/exclamation_mark.png" alt="" aria-hidden="true" style="position: absolute; top: 40%; left: 1%; width: 140px; opacity: 0.35; transform: rotate(-15deg); pointer-events: none; z-index: 0;">
+    <img src="/exclamation_mark.png" alt="" aria-hidden="true" style="position: absolute; bottom: 15%; right: 16%; width: 160px; opacity: 0.3; transform: rotate(10deg); pointer-events: none; z-index: 0;">
+
+    <div class="faq-container" style="position: relative; z-index: 1;">
+
+      <!-- Header --> 
       <div class="faq-header">
         <span class="faq-pre-label">QUICK ANSWERS</span>
         <h2 class="faq-title">Got <em>Questions?</em></h2>
@@ -1226,8 +1240,9 @@
 
   <!-- ══════════════════════════════════════════════════════════════════
        SPONSORS SECTION — Pyramid Layout
+       (Temporarily commented out/hidden as requested)
        ══════════════════════════════════════════════════════════════════ -->
-  <section class="sponsors-section" id="sponsorsSection" aria-label="Our Sponsors">
+  <section class="sponsors-section" id="sponsorsSection" aria-label="Our Sponsors" style="display: none;">
 
     <!-- Background -->
     <div class="sponsors-bg-glow" aria-hidden="true"></div>

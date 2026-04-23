@@ -15,6 +15,7 @@
 
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
+import { connectDB } from '../lib/mongodb.js';
 import { rateLimit, getIP } from '../lib/rateLimiter.js';
 
 // ── Inline AdminUser model (avoids issues with model re-registration) ─────────
@@ -64,6 +65,7 @@ export default async function handler(req, res) {
 
   // ── Look up admin user from MongoDB ──────────────────────────────────────────
   try {
+    await connectDB();
     const Model = getAdminUserModel();
     const adminUser = await Model.findOne({ username: username.toLowerCase().trim() });
 

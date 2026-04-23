@@ -1142,7 +1142,7 @@
             const btn = e.target;
             btn.disabled = true; btn.textContent = 'Approving...';
             try {
-              const res = await fetch('/api/admin/teams/' + id, {
+              const res = await fetch('/api/admin/registrations/' + id, {
                 method: 'PATCH',
                 headers: apiHeaders(),
                 body: JSON.stringify({ mentorshipStatus: 'approved', mentorSession: true })
@@ -1161,7 +1161,7 @@
             const btn = e.target;
             btn.disabled = true; btn.textContent = 'Rejecting...';
             try {
-              const res = await fetch('/api/admin/teams/' + id, {
+              const res = await fetch('/api/admin/registrations/' + id, {
                 method: 'PATCH',
                 headers: apiHeaders(),
                 body: JSON.stringify({ mentorshipStatus: 'not_requested', mentorshipReceiptUrl: null })
@@ -1187,7 +1187,7 @@
                 linkedin: document.getElementById('mentorLinkedin').value
               };
               
-              const res = await fetch('/api/admin/teams/' + id, {
+              const res = await fetch('/api/admin/registrations/' + id, {
                 method: 'PATCH',
                 headers: apiHeaders(),
                 body: JSON.stringify({ mentor })

@@ -54,7 +54,7 @@ async function run() {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    const csvContent = fs.readFileSync(path.resolve(__dirname, '../full_num3.csv'), 'utf8');
+    const csvContent = fs.readFileSync(path.resolve(__dirname, '../final_remaining_teams (2).csv'), 'utf8');
     const lines = csvContent.split('\n').filter(line => line.trim().length > 0);
     const headers = parseCSVLine(lines[0]);
 
@@ -106,7 +106,7 @@ async function run() {
 
         const teamData = teamsMap.get(code);
 
-        if (userType === 'Team Leader') {
+        if (userType && (userType.toLowerCase() === 'team leader' || userType.toLowerCase() === 'lead')) {
             teamData.leader = { name, email, phone };
         } else {
             teamData.members.push({ name, email, phone });
