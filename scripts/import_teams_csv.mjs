@@ -54,7 +54,7 @@ async function run() {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    const csvContent = fs.readFileSync(path.resolve(__dirname, '../SELECT_only_with_ids.csv'), 'utf8');
+    const csvContent = fs.readFileSync(path.resolve(__dirname, '../final_remaining_teams (2).csv'), 'utf8');
     const lines = csvContent.split('\n').filter(line => line.trim().length > 0);
     const headers = parseCSVLine(lines[0]);
 
