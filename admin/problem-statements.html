@@ -879,6 +879,18 @@
         const descPrev  = ps.description
           ? `<div class="ps-desc-preview">${escHtml(ps.description.substring(0, 120))}${ps.description.length > 120 ? '…' : ''}</div>`
           : '';
+
+        let selectedTeamsHtml = '';
+        if (ps.selectedBy && ps.selectedBy.length > 0) {
+          selectedTeamsHtml = '<div style="margin-top:0.6rem; display:flex; flex-wrap:wrap; gap:0.4rem;">' +
+            ps.selectedBy.map(t => 
+              `<span style="display:inline-flex; align-items:center; gap:0.3rem; padding:0.25rem 0.5rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:6px; font-size:0.65rem; color:rgba(255,255,255,0.6);">
+                <strong style="color:rgba(255,255,255,0.9); font-family:var(--font-mono, monospace);">${escHtml(t.code)}</strong> ${escHtml(t.name)}
+              </span>`
+            ).join('') +
+            '</div>';
+        }
+
         return `
           <li class="ps-item" data-order="${ps.order}">
             <div class="ps-order-badge">PS${orderPad}</div>
@@ -889,6 +901,7 @@
                 <span class="ps-slots-text"><strong>${ps.slotsTaken}</strong> / ${ps.slotsTotal} slots taken (${slotsPct}%)</span>
               </div>
               ${descPrev}
+              ${selectedTeamsHtml}
             </div>
             <div class="ps-actions">
               <button class="ps-item-action ps-item-action--edit" title="Edit" data-action="edit" data-order="${ps.order}">

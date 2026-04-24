@@ -476,9 +476,128 @@ const Dashboard = {
                 if (countdownEl) countdownEl.classList.add('hidden');
                 if (releasedEl) releasedEl.classList.remove('hidden');
                 if (contentEl) contentEl.classList.add('hidden');
-                if (noSelEl) noSelEl.classList.remove('hidden');
+                if (noSelEl) {
+                    noSelEl.classList.remove('hidden');
+                    if (this.psState === 'active') {
+                        this.renderPSSelectionGrid();
+                    } else if (this.psState === 'closed') {
+                        noSelEl.innerHTML = `
+                            <i data-lucide="lock" class="w-12 h-12 text-white/20 mx-auto mb-4"></i>
+                            <h3 class="text-xl font-black font-heading mb-2 text-white/60 uppercase">Selection Closed</h3>
+                            <p class="text-white/30 text-sm mb-6">The Problem Statement selection window has ended.</p>
+                        `;
+                    }
+                }
                 this.initializeIcons();
             }
+        }
+    },
+
+    // ── Inline PS Selection ──────────────────────────────────────────────────
+    
+    escHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    },
+
+    renderPSSelectionGrid() {
+        const container = document.getElementById('ps-no-selection');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div class="mb-6">
+                <h3 class="text-xl font-black font-heading mb-2 text-white/60 uppercase">Select Your Problem Statement</h3>
+                <p class="text-white/30 text-sm">Choose carefully. Once locked in, it cannot be changed.</p>
+            </div>
+            <div id="dashboard-ps-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                <div class="text-white/30 text-center col-span-full py-4"><span class="animate-pulse">Loading available Problem Statements...</span></div>
+            </div>
+        `;
+
+        this.startPSPolling();
+    },
+
+    startPSPolling() {
+        if (this.psPollTimer) clearInterval(this.psPollTimer);
+        this.fetchAndRenderPSList();
+        this.psPollTimer = setInterval(() => this.fetchAndRenderPSList(), 4000);
+    },
+
+    stopPSPolling() {
+        if (this.psPollTimer) {
+            clearInterval(this.psPollTimer);
+            this.psPollTimer = null;
+        }
+    },
+
+    async fetchAndRenderPSList() {
+        try {
+            const res = await fetch('/api/ps/list');
+            const data = await res.json();
+            if (res.ok && data.psList) {
+                const grid = document.getElementById('dashboard-ps-grid');
+                if (!grid) return;
+                
+                if (data.psList.length === 0) {
+                     grid.innerHTML = '<div class="text-white/30 text-center col-span-full py-4">No Problem Statements released yet.</div>';
+                     return;
+                }
+
+                grid.innerHTML = data.psList.map(ps => {
+                    const isFull = ps.isFull || (ps.slotsTaken >= ps.slotsTotal);
+                    const btnClass = isFull 
+                        ? 'bg-white/5 text-white/20 cursor-not-allowed'
+                        : 'bg-primary/20 text-primary hover:bg-primary hover:text-white border border-primary/20';
+                    
+                    return `
+                    <div class="glass-dark border border-white/5 p-5 rounded-2xl relative ${isFull ? 'opacity-60' : ''} hover:border-white/10 transition-colors">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-mono font-bold text-white/40 uppercase">PS ${String(ps.order).padStart(2, '0')}</span>
+                            <span class="text-[10px] font-bold px-2 py-1 rounded bg-white/5 ${isFull ? 'text-red-400' : 'text-white/40'}">${ps.slotsTaken}/${ps.slotsTotal} Slots</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white mb-2 line-clamp-2">${this.escHtml(ps.title)}</h4>
+                        <div class="text-xs text-white/40 mb-4 line-clamp-2">${this.escHtml(ps.domain || '')}</div>
+                        
+                        <button onclick="Dashboard.selectPS(${ps.order}, '${this.escHtml(ps.title).replace(/'/g, "\\'")}')" 
+                                class="w-full py-2.5 rounded-xl text-xs font-bold uppercase transition-all ${btnClass}"
+                                ${isFull ? 'disabled' : ''}>
+                            ${isFull ? 'FULL' : 'SELECT'}
+                        </button>
+                    </div>`;
+                }).join('');
+            }
+        } catch (e) {
+            console.error('Failed to fetch PS list', e);
+        }
+    },
+
+    async selectPS(psId, title) {
+        if (!confirm(`Are you sure you want to select:\n\n${title}\n\nThis action is PERMANENT and cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/ps/select', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ teamCode: this.teamId, psId: psId })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                this.showToast('Success', 'Problem Statement selected successfully!', 'success');
+                this.stopPSPolling();
+                this.fetchStats(this.teamId); // Refresh UI to show selected PS
+            } else {
+                this.showToast('Selection Failed', data.message || 'Please try again.', 'error');
+                this.fetchAndRenderPSList(); // refresh the grid immediately
+            }
+        } catch (err) {
+            this.showToast('Network Error', 'Could not connect to server.', 'error');
         }
     },
 

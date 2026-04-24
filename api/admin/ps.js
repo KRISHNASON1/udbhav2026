@@ -15,6 +15,7 @@
 import { connectDB }         from '../lib/mongodb.js';
 import { PSDropConfig }      from '../models/PSDropConfig.js';
 import { ProblemStatement }  from '../models/ProblemStatement.js';
+import { Team }              from '../models/Team.js';
 import { invalidatePSCache } from '../lib/psConfig.js';
 import { emitDropStatus }    from '../lib/pusher.js';
 import { psLog, getIP }      from '../lib/rateLimiter.js';
@@ -262,10 +263,18 @@ export async function statsHandler(req, res) {
   try {
     await connectDB();
 
-    const [psList, cfg] = await Promise.all([
+    const [psList, cfg, teamsWithPS] = await Promise.all([
       ProblemStatement.find({}).sort({ order: 1 }).lean(),
       PSDropConfig.findById('singleton').lean(),
+      Team.find({ psSelectionId: { $ne: null } }).select('code teamName psSelectionId').lean()
     ]);
+
+    const teamsByPsId = {};
+    for (const t of teamsWithPS) {
+      const psId = t.psSelectionId.toString();
+      if (!teamsByPsId[psId]) teamsByPsId[psId] = [];
+      teamsByPsId[psId].push({ code: t.code, name: t.teamName });
+    }
 
     return res.status(200).json({
       config: cfg,
@@ -278,6 +287,7 @@ export async function statsHandler(req, res) {
         slotsTaken:  ps.slotsTaken,
         slotsTotal:  ps.slotsTotal,
         isFull:      ps.slotsTaken >= ps.slotsTotal,
+        selectedBy:  teamsByPsId[ps._id.toString()] || [],
       })),
     });
   } catch (err) {
