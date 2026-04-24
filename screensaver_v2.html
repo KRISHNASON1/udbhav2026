@@ -1453,53 +1453,59 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:'Syne',sans-serif
 </div>
 
 <!-- ══════════════════════════
-     SLIDE 15: QUOTES CAROUSEL
+     SLIDE 15-20: HINGLISH QUOTES
 ══════════════════════════ -->
-<div class="s" id="s15">
-  <div class="poster-content">
-    <div class="sponsor-row anim-up">
-       <img src="public/Alta.png" class="alta-logo" alt="Alta">
-       <img src="public/vite.svg" class="vite-logo" alt="Vite">
-    </div>
-    <div class="poster-title anim-up2">
-       UDBHAV 2026<br><span style="font-size: 0.4em; letter-spacing: 0.2em; color: var(--accent2); text-shadow: none;">HACKATHON</span>
-    </div>
-    
-    <div class="qc-container anim-up3">
-       <button class="qc-arr" id="qcPrev">&#8592;</button>
-       <div class="qc-display" id="qcDisplay">
-          <!-- Populated by JS -->
-       </div>
-       <button class="qc-arr" id="qcNext">&#8594;</button>
-    </div>
+<div class="s hq-slide" id="s15">
+  <div class="hq-bg-text">NEEND</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">😴</div>
+    <div class="hq-text anim-up2">Raat ke 3 baje,<br><em>code chal raha hai</em><br>par dimag nahi.</div>
+    <div class="hq-sub anim-up3">— Every hackathon participant at 3AM</div>
+  </div>
+</div>
 
-    <!-- Hidden Quote Data -->
-    <div id="qcData" style="display: none;">
-      <div class="q-item">
-        <div class="qc-text">Raat ke 3 baje, <em>code chal raha hai</em> par dimag nahi.</div>
-        <div class="qc-sub">— Every hackathon participant at 3AM</div>
-      </div>
-      <div class="q-item">
-        <div class="qc-text">Innovation nahi mila toh <em>Jugaad</em> laga do, yahi toh India hai.</div>
-        <div class="qc-sub">— Proudly desi engineering</div>
-      </div>
-      <div class="q-item">
-        <div class="qc-text">Ek aur <em>chai</em> piyo, phir sab theek ho jayega.</div>
-        <div class="qc-sub">— Universal Indian debugging technique</div>
-      </div>
-      <div class="q-item">
-        <div class="qc-text">Deadline se <em>1 ghanta pehle</em> sabse zyada productivity aati hai.</div>
-        <div class="qc-sub">— Proven by every student, always</div>
-      </div>
-      <div class="q-item">
-        <div class="qc-text">Internet slow nahi hai bhai, tera <em>infinite loop</em> CPU ki jaan le raha hai.</div>
-        <div class="qc-sub">— Debugging truths</div>
-      </div>
-      <div class="q-item">
-        <div class="qc-text">Demo mein <em>confidence</em> rakh, judge ko bug dikhna nahi chahiye.</div>
-        <div class="qc-sub">— Hackathon presentation 101</div>
-      </div>
-    </div>
+<div class="s hq-slide" id="s16">
+  <div class="hq-bg-text">JUGAAD</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">🔧</div>
+    <div class="hq-text anim-up2">Innovation nahi mila<br>toh <em>Jugaad</em> laga do,<br>yahi toh India hai.</div>
+    <div class="hq-sub anim-up3">— Proudly desi engineering</div>
+  </div>
+</div>
+
+<div class="s hq-slide" id="s17">
+  <div class="hq-bg-text">CHAI</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">☕</div>
+    <div class="hq-text anim-up2">Ek aur <em>chai</em> piyo,<br>phir sab theek<br>ho jayega.</div>
+    <div class="hq-sub anim-up3">— Universal Indian debugging technique</div>
+  </div>
+</div>
+
+<div class="s hq-slide" id="s18">
+  <div class="hq-bg-text">PANIC</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">🔥</div>
+    <div class="hq-text anim-up2">Deadline se <em>1 ghanta pehle</em><br>sabse zyada<br>productivity aati hai.</div>
+    <div class="hq-sub anim-up3">— Proven by every student, always</div>
+  </div>
+</div>
+
+<div class="s hq-slide" id="s19">
+  <div class="hq-bg-text">WIFI</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">📶</div>
+    <div class="hq-text anim-up2">WiFi slow hai ya<br><em>mera code heavy</em> hai,<br>research ka topic hai.</div>
+    <div class="hq-sub anim-up3">— College WiFi survivors</div>
+  </div>
+</div>
+
+<div class="s hq-slide" id="s20">
+  <div class="hq-bg-text">DEMO</div>
+  <div class="hq-wrap">
+    <div class="hq-emoji anim-up">🎭</div>
+    <div class="hq-text anim-up2">Demo mein <em>confidence</em> rakh,<br>judge ko bug dikhna<br>nahi chahiye.</div>
+    <div class="hq-sub anim-up3">— Hackathon presentation 101</div>
   </div>
 </div>
 
@@ -1880,37 +1886,6 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft') go((cur - 1 + ss.length) % ss.length);
   if (e.key === 'ArrowRight') go((cur + 1) % ss.length);
 });
-
-/* ══════════════════════════
-   QUOTES CAROUSEL LOGIC
-══════════════════════════ */
-var qcIdx = 0;
-var qcItems = document.querySelectorAll('#qcData .q-item');
-var qcDisplay = document.getElementById('qcDisplay');
-
-function showQc(idx) {
-  if (!qcItems.length || !qcDisplay) return;
-  qcIdx = (idx + qcItems.length) % qcItems.length;
-  qcDisplay.innerHTML = qcItems[qcIdx].innerHTML;
-  
-  // Re-trigger animation
-  var txt = qcDisplay.querySelector('.qc-text');
-  var sub = qcDisplay.querySelector('.qc-sub');
-  if (txt) { txt.style.animation = 'none'; void txt.offsetWidth; txt.style.animation = 'fadeSlideUp 0.6s ease-out'; }
-  if (sub) { sub.style.animation = 'none'; void sub.offsetWidth; sub.style.animation = 'fadeSlideUp 0.6s ease-out 0.1s both'; }
-}
-
-if (document.getElementById('qcPrev')) {
-  document.getElementById('qcPrev').addEventListener('click', function(e) {
-    e.stopPropagation();
-    showQc(qcIdx - 1);
-  });
-  document.getElementById('qcNext').addEventListener('click', function(e) {
-    e.stopPropagation();
-    showQc(qcIdx + 1);
-  });
-  showQc(0);
-}
 
 /* ══════════════════════════
    SURVIVAL TIPS ROTATOR
