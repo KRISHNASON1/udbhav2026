@@ -141,13 +141,28 @@ const teamLookupLimiter = rateLimit({
   message: { success: false, error: 'Too many verification attempts. Please wait and try again.' },
 });
 
-// General API limiter: 200 requests per IP per 15 minutes
+// General API limiter: 1000 requests per IP per 15 minutes
+// Skip /api/admin/* (handled by adminApiLimiter) and /api/ps/* (handled by psPublicLimiter)
+// so those dedicated higher limits are the only ones that apply to those paths.
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'Too many requests. Please slow down.' },
+  skip: (req) =>
+    req.path.startsWith('/api/admin/') ||
+    req.path.startsWith('/api/ps/'),
+});
+
+// PS public limiter: very permissive — all teams poll /api/ps/status & /api/ps/list
+// simultaneously during the PS drop window.
+const psPublicLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'PS API rate limit exceeded. Please wait a moment.' },
 });
 
 // Auth endpoint limiter: max 5 login attempts per 15 mins
@@ -181,7 +196,11 @@ const adminApiLimiter = rateLimit({
 // Apply admin limiter first (higher limit for /api/admin/*)
 app.use('/api/admin/', adminApiLimiter);
 
+// Apply PS public limiter before general limiter (all teams poll during PS drop)
+app.use('/api/ps/', psPublicLimiter);
+
 // Apply general API limiter to all other /api/* routes
+// (admin and ps routes are skipped via the skip() function above)
 app.use('/api/', apiLimiter);
 
 // Parse JSON bodies — NOTE: webhook handler needs raw body for signature verification
