@@ -570,15 +570,16 @@ const Dashboard = {
         
         container.innerHTML = `
             <div class="mb-6">
-                <h3 class="text-xl font-black font-heading mb-2 text-white/60 uppercase">Select Your Problem Statement</h3>
-                <p class="text-white/30 text-sm">Choose carefully. Once locked in, it cannot be changed.</p>
+                <h3 class="text-xl font-black font-heading mb-2 text-white/60 uppercase">Problem Statements Released</h3>
+                <p class="text-white/30 text-sm">The problem statements are now live. Please proceed to the Problem Statement page to view and lock in your selection.</p>
             </div>
-            <div id="dashboard-ps-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
-                <div class="text-white/30 text-center col-span-full py-4"><span class="animate-pulse">Loading available Problem Statements...</span></div>
+            <div class="text-center py-6">
+                <a href="/problem-statement.html" class="inline-flex items-center justify-center px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] uppercase tracking-wider text-sm hover:scale-105">
+                    Select Problem Statement <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                </a>
             </div>
         `;
-
-        this.startPSPolling();
+        this.initializeIcons();
     },
 
     startPSPolling() {

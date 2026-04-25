@@ -1199,8 +1199,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:'Syne',sans-serif
   <div class="orbit-ring"></div>
   <div class="orbit-ring2"></div>
   <div class="main">
+    <div class="presented-by anim-up" style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 15px;">presented by</div>
+    <div class="logos anim-up" style="display: flex; gap: 30px; justify-content: center; align-items: center; margin-bottom: 30px;">
+      <img src="public/Alta.png" alt="Alta" style="height: 65px; filter: brightness(0) invert(1);">
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <img src="public/sage.png" alt="Sage" style="height: 80px; filter: brightness(0) invert(1);">
+    </div>
     <div class="label anim-up">India's Premier Hackathon</div>
-    <h1 class="anim-up2 glitch-on">UDBHAV<br>'26</h1>
+    <h1 class="anim-up2 glitch-on">UDBHAV'26</h1>
     <div class="sub anim-up3">25–26 April 2026 &nbsp;·&nbsp; Sage University, Indore</div>
     <div class="pill anim-up4">
       <div class="dot-live"></div>
@@ -1454,95 +1460,201 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:'Syne',sans-serif
   </div>
 </div>
 
-<!-- ══════════════════════════
-     SLIDE 13: HACKATHON COUNTDOWN
-══════════════════════════ -->
-<div class="s tmr-slide" id="s13">
-  <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:2">
-    <div class="t-eyebrow anim-up">Hackathon begins in</div>
-    <div class="t-title anim-up2">UDBHAV'26 &mdash; 25 April 2026, 10:00 AM</div>
-    <div class="tmr-units anim-up3" id="hTimer">
-      <div class="tmr-unit"><div class="tmr-val" id="hDays">--</div><div class="tmr-lbl">Days</div></div>
-      <div class="tmr-sep">:</div>
-      <div class="tmr-unit"><div class="tmr-val" id="hHours">--</div><div class="tmr-lbl">Hours</div></div>
-      <div class="tmr-sep">:</div>
-      <div class="tmr-unit"><div class="tmr-val" id="hMins">--</div><div class="tmr-lbl">Mins</div></div>
-      <div class="tmr-sep">:</div>
-      <div class="tmr-unit"><div class="tmr-val" id="hSecs">--</div><div class="tmr-lbl">Secs</div></div>
-    </div>
-    <div class="tmr-msg anim-up4" id="hMsg">&ldquo;The best time to start was yesterday. The second best time is right now.&rdquo;</div>
-  </div>
-  <div class="t-bar" id="hBar" style="width:0%"></div>
-</div>
+
 
 <!-- ══════════════════════════
-     SLIDE 14: PS DROP TIMER
+     BRUTALIST CSS FOR QUOTES
 ══════════════════════════ -->
-<div class="s tmr-slide" id="s14">
-  <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:2">
-    <div class="t-badge anim-up"><div class="t-badge-dot"></div><span>Problem Statement Drop</span></div>
-    <div class="t-eyebrow anim-up2">PS revealed in</div>
-    <div class="t-title anim-up3">25 April 2026, 10:45 AM &mdash; Choose your battlefield</div>
-    <div class="tmr-units anim-up4" id="psTimer">
-      <div class="tmr-unit"><div class="tmr-val" id="psDays">--</div><div class="tmr-lbl">Days</div></div>
-      <div class="tmr-sep">:</div>
-      <div class="tmr-unit"><div class="tmr-val" id="psHours">--</div><div class="tmr-lbl">Hours</div></div>
-      <div class="tmr-sep">:</div>
-      <div class="tmr-unit"><div class="tmr-val" id="psMins">--</div><div class="tmr-lbl">Mins</div></div>
-      <div class="tmr-sep">:</div>
-      <div class="tmr-unit"><div class="tmr-val" id="psSecs">--</div><div class="tmr-lbl">Secs</div></div>
-    </div>
-    <div class="tmr-msg anim-up5" id="psMsg">&ldquo;10 problem statements. 5 teams per PS. 15 minutes to pick your fate.&rdquo;</div>
-  </div>
-</div>
+<style>
+.brut-wrap {
+  width: 100vw; height: 100vh;
+  display: grid; grid-template-columns: 1fr 2fr;
+  background: transparent;
+  position: relative; overflow: hidden;
+}
+.brut-left {
+  border-right: 1px solid rgba(255,255,255,0.1);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 8vh 4vw;
+  position: relative;
+  background: rgba(6, 4, 15, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.brut-right {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8vh 8vw;
+  position: relative;
+  background: rgba(6, 4, 15, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.brut-logo-area {
+  display: flex; align-items: center; gap: 20px;
+}
+.brut-logo-area img {
+  height: 30px; filter: brightness(0) invert(1); opacity: 0.7;
+}
+.brut-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(150px, 20vw, 400px);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255,255,255,0.1);
+  position: absolute; bottom: -5vh; left: -2vw;
+}
+.brut-quote-mark {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(200px, 30vw, 600px);
+  color: var(--accent);
+  opacity: 0.1;
+  position: absolute; top: -10vh; left: -5vw;
+  line-height: 1; pointer-events: none;
+}
+.brut-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 80px);
+  font-style: italic;
+  color: var(--white);
+  line-height: 1.1;
+  position: relative;
+  z-index: 2;
+}
+.brut-text em {
+  font-style: normal;
+  color: var(--black);
+  background: var(--accent);
+  padding: 0 10px;
+}
+.brut-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(12px, 1.2vw, 16px);
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  margin-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 20px;
+  display: inline-block;
+}
+</style>
 
 <!-- ══════════════════════════
-     SLIDE 15: QUOTES CAROUSEL
+     SLIDE 15: QUOTE 1
 ══════════════════════════ -->
 <div class="s" id="s15">
-  <div class="poster-content">
-    <div class="sponsor-row anim-up">
-       <img src="public/Alta.png" class="alta-logo" alt="Alta">
-       <img src="public/vite.svg" class="vite-logo" alt="Vite">
+  <div class="brut-wrap">
+    <div class="brut-left anim-left">
+      <div class="brut-logo-area">
+        <img src="public/Alta.png" alt="Alta">
+        <img src="public/sage.png" alt="Sage">
+      </div>
+      <div class="brut-number">01</div>
     </div>
-    <div class="poster-title anim-up2">
-       UDBHAV 2026<br><span style="font-size: 0.4em; letter-spacing: 0.2em; color: var(--accent2); text-shadow: none;">HACKATHON</span>
+    <div class="brut-right">
+      <div class="brut-quote-mark">"</div>
+      <div class="brut-text anim-up2">Raat ke 3 baje, <em style="background: var(--accent);">code chal raha hai</em> par dimag nahi.</div>
+      <div class="brut-sub anim-up3">— Every hackathon participant at 3AM</div>
     </div>
-    
-    <div class="qc-container anim-up3">
-       <button class="qc-arr" id="qcPrev">&#8592;</button>
-       <div class="qc-display" id="qcDisplay">
-          <!-- Populated by JS -->
-       </div>
-       <button class="qc-arr" id="qcNext">&#8594;</button>
-    </div>
+  </div>
+</div>
 
-    <!-- Hidden Quote Data -->
-    <div id="qcData" style="display: none;">
-      <div class="q-item">
-        <div class="qc-text">Raat ke 3 baje, <em>code chal raha hai</em> par dimag nahi.</div>
-        <div class="qc-sub">— Every hackathon participant at 3AM</div>
+<!-- ══════════════════════════
+     SLIDE 16: QUOTE 2
+══════════════════════════ -->
+<div class="s" id="s16">
+  <div class="brut-wrap">
+    <div class="brut-left anim-left">
+      <div class="brut-logo-area">
+        <img src="public/Alta.png" alt="Alta">
+        <img src="public/sage.png" alt="Sage">
       </div>
-      <div class="q-item">
-        <div class="qc-text">Innovation nahi mila toh <em>Jugaad laga do</em>, yahi toh India hai.</div>
-        <div class="qc-sub">— Proudly desi engineering</div>
+      <div class="brut-number">02</div>
+    </div>
+    <div class="brut-right">
+      <div class="brut-quote-mark" style="color: var(--accent2);">"</div>
+      <div class="brut-text anim-up2">Innovation nahi mila toh <em style="background: var(--accent2);">Jugaad laga do</em>, yahi toh India hai.</div>
+      <div class="brut-sub anim-up3">— Proudly desi engineering</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SLIDE 17: QUOTE 3
+══════════════════════════ -->
+<div class="s" id="s17">
+  <div class="brut-wrap">
+    <div class="brut-left anim-left">
+      <div class="brut-logo-area">
+        <img src="public/Alta.png" alt="Alta">
+        <img src="public/sage.png" alt="Sage">
       </div>
-      <div class="q-item">
-        <div class="qc-text">Ek aur <em>chai piyo</em>, phir sab theek ho jayega.</div>
-        <div class="qc-sub">— Universal Indian debugging technique</div>
+      <div class="brut-number">03</div>
+    </div>
+    <div class="brut-right">
+      <div class="brut-quote-mark" style="color: #00f0ff;">"</div>
+      <div class="brut-text anim-up2">Ek aur <em style="background: #00f0ff;">chai piyo</em>, phir sab theek ho jayega.</div>
+      <div class="brut-sub anim-up3">— Universal Indian debugging technique</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SLIDE 18: QUOTE 4
+══════════════════════════ -->
+<div class="s" id="s18">
+  <div class="brut-wrap">
+    <div class="brut-left anim-left">
+      <div class="brut-logo-area">
+        <img src="public/Alta.png" alt="Alta">
+        <img src="public/sage.png" alt="Sage">
       </div>
-      <div class="q-item">
-        <div class="qc-text">Deadline se <em>1 ghanta pehle</em> sabse zyada productivity aati hai.</div>
-        <div class="qc-sub">— Proven by every student, always</div>
+      <div class="brut-number">04</div>
+    </div>
+    <div class="brut-right">
+      <div class="brut-quote-mark" style="color: #ff3333;">"</div>
+      <div class="brut-text anim-up2">Deadline se <em style="background: #ff3333; color: white;">1 ghanta pehle</em> sabse zyada productivity aati hai.</div>
+      <div class="brut-sub anim-up3">— Proven by every student, always</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SLIDE 19: QUOTE 5
+══════════════════════════ -->
+<div class="s" id="s19">
+  <div class="brut-wrap">
+    <div class="brut-left anim-left">
+      <div class="brut-logo-area">
+        <img src="public/Alta.png" alt="Alta">
+        <img src="public/sage.png" alt="Sage">
       </div>
-      <div class="q-item">
-        <div class="qc-text">WiFi slow hai ya <em>mera code heavy hai?</em> Ye toh ab research ka topic ban gaya hai.</div>
-        <div class="qc-sub">— Deep thoughts during compiling</div>
+      <div class="brut-number">05</div>
+    </div>
+    <div class="brut-right">
+      <div class="brut-quote-mark" style="color: #e8ff47;">"</div>
+      <div class="brut-text anim-up2">WiFi slow hai ya <em style="background: #e8ff47;">mera code heavy hai?</em> Ye toh research ka topic hai.</div>
+      <div class="brut-sub anim-up3">— Deep thoughts during compiling</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SLIDE 20: QUOTE 6
+══════════════════════════ -->
+<div class="s" id="s20">
+  <div class="brut-wrap">
+    <div class="brut-left anim-left">
+      <div class="brut-logo-area">
+        <img src="public/Alta.png" alt="Alta">
+        <img src="public/sage.png" alt="Sage">
       </div>
-      <div class="q-item">
-        <div class="qc-text">Demo mein <em>confidence</em> rakh, judge ko bug dikhna nahi chahiye.</div>
-        <div class="qc-sub">— Hackathon presentation 101</div>
-      </div>
+      <div class="brut-number">06</div>
+    </div>
+    <div class="brut-right">
+      <div class="brut-quote-mark" style="color: #4ade80;">"</div>
+      <div class="brut-text anim-up2">Demo mein <em style="background: #4ade80;">confidence</em> rakh, judge ko bug dikhna nahi chahiye.</div>
+      <div class="brut-sub anim-up3">— Hackathon presentation 101</div>
     </div>
   </div>
 </div>
@@ -1554,7 +1666,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:'Syne',sans-serif
   <div class="t-wrap glass-panel">
     <div class="t-icon anim-up">💀</div>
     <div class="t-head anim-up2">TONTE OF<br>THE DAY</div>
-    <div class="t-body anim-up3">"Bhai <em>all-nighter</em> maarta hoon"<br>— phir subah tak sirf <em>README.md</em> likha</div>
+    <div class="t-body anim-up3">"12 hours styling the <em>UI</em>"<br>— 5 minutes left for <em>API integration</em></div>
     <div class="t-tag anim-up4">Hackathon reality check · 2026</div>
   </div>
 </div>
@@ -1581,17 +1693,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:'Syne',sans-serif
       <span class="vibe-tag">#24HoursOfChaos</span>
       <span class="vibe-tag">#JugaadTech</span>
     </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════
-     SLIDE 24: POSTURE CHECK
-══════════════════════════ -->
-<div class="s" id="s24" style="place-items:center;text-align:center;background:transparent;">
-  <div class="glass-panel" style="padding:8vh 6vw;display:flex;flex-direction:column;align-items:center;gap:28px;max-width:70vw;z-index:2;">
-    <div class="anim-up" style="font-size:clamp(60px,8vw,115px);animation-name:floatY,fadeSlideUp;animation-duration:4s,0.9s;animation-iteration-count:infinite,1;">🧘‍♂️</div>
-    <h2 class="anim-up2" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,10vw,175px);color:var(--accent);line-height:0.9;text-shadow:0 0 60px rgba(232,255,71,0.3);">POSTURE CHECK</h2>
-    <div class="anim-up3" style="font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.4vw,22px);color:var(--white);text-transform:uppercase;letter-spacing:.2em;opacity:0.7;">Straighten your back. Drink some water. Blink.</div>
   </div>
 </div>
 
@@ -1862,6 +1963,291 @@ Worth it?                                 =  <span class="ok">ABSOLUTELY</span><
   </div>
 </div>
 
+<!-- ══════════════════════════
+     IMPORTED SLIDES (Prize & Phases)
+══════════════════════════ -->
+<style>
+/* S37: PRIZE BREAKDOWN */
+#s37{background:#06041a;padding:2vh 4vw;overflow:hidden;display:flex;flex-direction:column;gap:1.5vh}
+#s37::before{content:'';position:absolute;width:55vw;height:55vw;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.08),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+#s37::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);pointer-events:none}
+#s37 .pz-head{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:2}
+#s37 .pz-head h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,64px);color:var(--white);line-height:1}
+#s37 .pz-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;flex:1;align-items:stretch;position:relative;z-index:2}
+#s37 .pz-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:clamp(10px,1vh,16px) clamp(10px,1vw,16px);background:rgba(168,85,247,.02);border:1px solid rgba(168,85,247,.1);border-radius:16px;backdrop-filter:blur(8px);position:relative;text-align:center;transition:border-color .4s,box-shadow .4s}
+#s37 .pz-card::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.25),transparent)}
+#s37 .pz-card.gold{border-color:rgba(255,215,0,.25);background:rgba(255,215,0,.03);box-shadow:0 0 40px rgba(255,215,0,.04)}
+#s37 .pz-card.gold .pz-amount{color:#ffd700;filter:drop-shadow(0 0 25px rgba(255,215,0,.4))}
+#s37 .pz-card.gold .pz-icon{filter:drop-shadow(0 0 15px rgba(255,215,0,.5))}
+#s37 .pz-card.silver .pz-amount{color:#c0c0c0;filter:drop-shadow(0 0 20px rgba(192,192,192,.3))}
+#s37 .pz-card.bronze .pz-amount{color:#cd7f32;filter:drop-shadow(0 0 20px rgba(205,127,50,.3))}
+#s37 .pz-icon{font-size:clamp(20px,3vw,40px)}
+#s37 .pz-rank{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.85vw,13px);letter-spacing:.3em;color:rgba(245,245,243,.3);text-transform:uppercase}
+#s37 .pz-amount{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,64px);color:var(--accent);line-height:1}
+#s37 .pz-desc{font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.75vw,11px);letter-spacing:.15em;color:rgba(245,245,243,.25)}
+#s37 .pz-total{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 0;border-top:1px solid rgba(168,85,247,.1)}
+#s37 .pz-total span{font-family:'IBM Plex Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.2em;color:rgba(168,85,247,.5);text-transform:uppercase}
+#s37 .pz-total strong{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,3vw,36px);color:var(--accent);filter:drop-shadow(0 0 20px rgba(168,85,247,.3))}
+
+/* S38: ROUND 3 ATTENTION GRABBER */
+#s38{background:#04020f;place-items:center;overflow:hidden;text-align:center}
+#s38::before{content:'3';position:absolute;font-family:'Bebas Neue',sans-serif;font-size:clamp(300px,65vw,900px);color:rgba(168,85,247,.04);line-height:1;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none}
+@keyframes urgentPulse{0%,100%{box-shadow:0 0 0 0 rgba(168,85,247,.4)}70%{box-shadow:0 0 0 20px rgba(168,85,247,0)}}
+#s38 .rw{display:flex;flex-direction:column;align-items:center;gap:40px;z-index:2;position:relative;max-width:85vw}
+#s38 .r3-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.9vw,14px);letter-spacing:.5em;color:rgba(168,85,247,.6);text-transform:uppercase}
+#s38 .r3-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(70px,16vw,260px);color:var(--white);line-height:.82;letter-spacing:.04em;filter:drop-shadow(0 0 80px rgba(168,85,247,.5))}
+#s38 .r3-title span{color:var(--accent)}
+#s38 .r3-rule{width:clamp(60px,8vw,120px);height:3px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);border-radius:2px;animation:breathe 2s ease-in-out infinite}
+#s38 .r3-steps{display:flex;align-items:center;gap:0;position:relative}
+#s38 .r3-steps::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,rgba(168,85,247,.15),rgba(168,85,247,.4),rgba(168,85,247,.15))}
+#s38 .r3-step{display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 clamp(24px,4vw,60px);position:relative}
+#s38 .r3-dot{width:56px;height:56px;border-radius:50%;border:2px solid rgba(168,85,247,.3);background:#04020f;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;z-index:2;transition:all .3s}
+#s38 .r3-step.hl .r3-dot{background:rgba(168,85,247,.12);border-color:var(--accent);box-shadow:0 0 0 0 rgba(168,85,247,.4);animation:urgentPulse 2s ease-in-out infinite}
+#s38 .r3-step-num{font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.75vw,11px);letter-spacing:.3em;color:rgba(168,85,247,.35);text-transform:uppercase}
+#s38 .r3-step-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,3.5vw,56px);color:var(--white);line-height:1;letter-spacing:.02em}
+#s38 .r3-step.hl .r3-step-name{color:var(--accent);filter:drop-shadow(0 0 20px rgba(168,85,247,.4))}
+#s38 .r3-step-desc{font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.75vw,11px);color:rgba(245,245,243,.25);letter-spacing:.08em;max-width:160px;line-height:1.5}
+#s38 .r3-cta{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.9vw,13px);letter-spacing:.2em;color:rgba(245,245,243,.2);text-transform:uppercase}
+#s38 .r3-cta em{color:var(--accent);font-style:normal;opacity:.8}
+
+/* S39: PHASE 3 — centered hero announcement */
+#s39{background:#05031a;place-items:center;text-align:center;overflow:hidden}
+#s39::before{content:'';position:absolute;width:65vw;height:65vw;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.1),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+#s39::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);pointer-events:none}
+#s39 .ph-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;z-index:2;position:relative;max-width:75vw}
+#s39 .ph-badge{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.9vw,13px);letter-spacing:.35em;text-transform:uppercase;color:var(--accent);background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);padding:10px 28px;border-radius:100px}
+#s39 h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,11vw,160px);color:var(--white);line-height:.85;letter-spacing:.04em;filter:drop-shadow(0 0 60px rgba(168,85,247,.4))}
+#s39 .ph-rule{width:clamp(40px,5vw,80px);height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:2px}
+#s39 .ph-desc{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(16px,2.2vw,36px);color:rgba(245,245,243,.5);line-height:1.4;max-width:55vw}
+#s39 .ph-tags{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#s39 .ph-tag{font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.75vw,11px);letter-spacing:.1em;color:var(--accent);border:1px solid rgba(168,85,247,.2);padding:7px 18px;border-radius:100px;background:rgba(168,85,247,.04)}
+
+/* S40: PHASE 3 — VIDEO SCRIPT run-sheet */
+#s40{background:#06041a;padding:8vh 8vw;overflow:hidden;display:flex;flex-direction:column;gap:5vh}
+#s40::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);pointer-events:none}
+#s40::after{content:'';position:absolute;width:50vw;height:50vw;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.06),transparent 70%);bottom:-15%;right:-10%;pointer-events:none}
+#s40 .sc-head{display:flex;align-items:baseline;gap:20px;flex-shrink:0;position:relative;z-index:2}
+#s40 .sc-head h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5.5vw,90px);color:var(--white);line-height:1}
+#s40 .sc-steps{display:flex;gap:0;position:relative;z-index:2;flex:1;align-items:stretch}
+#s40 .sc-steps::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(168,85,247,.2),rgba(168,85,247,.2));transform:translateY(-50%)}
+#s40 .sc-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 2vw;text-align:center;position:relative}
+#s40 .sc-num{width:48px;height:48px;border-radius:50%;background:#06041a;border:2px solid rgba(168,85,247,.3);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:14px;color:rgba(168,85,247,.6);flex-shrink:0;z-index:2;position:relative}
+#s40 .sc-step.active .sc-num{background:var(--accent);border-color:var(--accent);color:var(--white);box-shadow:0 0 20px rgba(168,85,247,.5)}
+#s40 .sc-step-icon{font-size:clamp(28px,4vw,50px)}
+#s40 .sc-step-label{font-family:'IBM Plex Mono',monospace;font-size:clamp(8px,.75vw,11px);letter-spacing:.25em;color:rgba(168,85,247,.4);text-transform:uppercase}
+#s40 .sc-step-text{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(13px,1.3vw,20px);color:rgba(245,245,243,.55);line-height:1.4}
+#s40 .sc-footer{display:flex;align-items:center;justify-content:center;gap:12px;flex-shrink:0;position:relative;z-index:2;padding-top:2vh;border-top:1px solid rgba(168,85,247,.08)}
+#s40 .sc-footer span{font-family:'IBM Plex Mono',monospace;font-size:clamp(8px,.75vw,11px);letter-spacing:.15em;color:rgba(168,85,247,.4);text-transform:uppercase}
+#s40 .sc-footer strong{font-family:'IBM Plex Mono',monospace;font-size:clamp(8px,.75vw,11px);color:var(--accent);letter-spacing:.1em}
+
+/* S41: REEL/VLOG HERO */
+#s41{background:#04020f;place-items:center;text-align:center;overflow:hidden}
+#s41::before{content:'🎥';position:absolute;font-size:clamp(200px,40vw,600px);opacity:.04;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none;filter:grayscale(1)}
+#s41::after{content:'';position:absolute;width:60vw;height:60vw;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.12),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+@keyframes prizePop{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+#s41 .rv-wrap{display:flex;flex-direction:column;align-items:center;gap:32px;z-index:2;position:relative;max-width:80vw}
+#s41 .rv-badge{font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,.9vw,13px);letter-spacing:.4em;text-transform:uppercase;color:var(--accent);background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);padding:10px 28px;border-radius:100px}
+#s41 .rv-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(55px,13vw,210px);color:var(--white);line-height:.82;letter-spacing:.03em;filter:drop-shadow(0 0 60px rgba(168,85,247,.4))}
+#s41 .rv-title em{color:var(--accent);font-style:normal}
+#s41 .rv-rule{width:clamp(50px,6vw,100px);height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:2px;animation:breathe 2s ease-in-out infinite}
+#s41 .rv-prizes{display:flex;gap:24px;align-items:center;justify-content:center}
+#s41 .rv-prize{display:flex;flex-direction:column;align-items:center;gap:10px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:16px;padding:clamp(16px,2.5vw,32px) clamp(24px,4vw,60px);position:relative;overflow:hidden}
+#s41 .rv-prize::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.4),transparent)}
+#s41 .rv-prize-icon{font-size:clamp(28px,4vw,50px)}
+#s41 .rv-prize-type{font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.8vw,12px);letter-spacing:.3em;color:rgba(168,85,247,.5);text-transform:uppercase}
+#s41 .rv-prize-amt{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,110px);color:var(--accent);line-height:1;filter:drop-shadow(0 0 25px rgba(168,85,247,.5));animation:prizePop 3s ease-in-out infinite}
+#s41 .rv-sub{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(14px,1.8vw,28px);color:rgba(245,245,243,.35);line-height:1.4}
+
+/* S42: REEL/VLOG RULES */
+#s42{background:#06031a;padding:7vh 7vw;overflow:hidden;display:flex;flex-direction:column;gap:4vh}
+#s42::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);pointer-events:none}
+#s42::after{content:'';position:absolute;width:45vw;height:45vw;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.06),transparent 70%);bottom:-15%;right:-10%;pointer-events:none}
+#s42 .rr-head{display:flex;align-items:baseline;gap:20px;flex-shrink:0;position:relative;z-index:2}
+#s42 .rr-head h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,100px);color:var(--white);line-height:1}
+#s42 .rr-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;flex:1;position:relative;z-index:2}
+#s42 .rr-card{background:rgba(168,85,247,.02);border:1px solid rgba(168,85,247,.1);border-radius:14px;padding:clamp(18px,2.5vw,32px);display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+#s42 .rr-card::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.25),transparent)}
+#s42 .rr-card-icon{font-size:clamp(20px,3vw,36px)}
+#s42 .rr-card-title{font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.8vw,12px);letter-spacing:.25em;color:rgba(168,85,247,.45);text-transform:uppercase}
+#s42 .rr-card-text{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(13px,1.5vw,22px);color:rgba(245,245,243,.6);line-height:1.45}
+#s42 .rr-card-text strong{color:var(--accent);font-style:normal}
+#s42 .rr-tags{display:flex;flex-wrap:wrap;gap:10px;flex-shrink:0;position:relative;z-index:2}
+#s42 .rr-tag{font-family:'IBM Plex Mono',monospace;font-size:clamp(8px,.7vw,11px);letter-spacing:.1em;color:var(--accent);border:1px solid rgba(168,85,247,.2);padding:7px 18px;border-radius:100px;background:rgba(168,85,247,.04)}
+</style>
+
+<div class="s" id="s37">
+  <div class="pz-head">
+    <h2 class="anim-up">Prize Pool</h2>
+    <div class="label anim-up2" style="color:var(--accent);opacity:.5">UDBHAV’26 · ₹45,000</div>
+  </div>
+  <div class="pz-grid">
+    <div class="pz-card silver anim-up2">
+      <div class="pz-icon">🥈</div>
+      <div class="pz-rank">2nd Place</div>
+      <div class="pz-amount">₹10K</div>
+      <div class="pz-desc">Runner Up</div>
+    </div>
+    <div class="pz-card gold anim-up">
+      <div class="pz-icon">🏆</div>
+      <div class="pz-rank">1st Place</div>
+      <div class="pz-amount">₹20K</div>
+      <div class="pz-desc">Grand Champion</div>
+    </div>
+    <div class="pz-card bronze anim-up3">
+      <div class="pz-icon">🥉</div>
+      <div class="pz-rank">3rd Place</div>
+      <div class="pz-amount">₹7K</div>
+      <div class="pz-desc">Second Runner Up</div>
+    </div>
+  </div>
+  <div class="pz-total anim-up4">
+    <span>Total Prize Pool</span>
+    <strong>₹45,000</strong>
+    <span>+ Certificates & Mentorship</span>
+  </div>
+</div>
+
+<div class="s" id="s38">
+  <div class="rw">
+    <div class="r3-eyebrow anim-up">It's time — Final Round</div>
+    <div class="r3-title anim-up2">ROUND<br><span>THREE</span></div>
+    <div class="r3-rule anim-up3"></div>
+    <div class="r3-steps">
+      <div class="r3-step anim-up2">
+        <div class="r3-dot">🏗️</div>
+        <div class="r3-step-num">Step 01</div>
+        <div class="r3-step-name">Build</div>
+        <div class="r3-step-desc">Complete your project &amp; demo</div>
+      </div>
+      <div class="r3-step hl anim-up3">
+        <div class="r3-dot">🎬</div>
+        <div class="r3-step-num">Step 02</div>
+        <div class="r3-step-name">Record</div>
+        <div class="r3-step-desc">Film your solution video under 5 mins</div>
+      </div>
+      <div class="r3-step anim-up4">
+        <div class="r3-dot">📤</div>
+        <div class="r3-step-num">Step 03</div>
+        <div class="r3-step-name">Upload</div>
+        <div class="r3-step-desc">Post on LinkedIn with mandatory hashtags</div>
+      </div>
+    </div>
+    <div class="r3-cta anim-up5">See next slides for <em>full script &amp; guidelines →</em></div>
+  </div>
+</div>
+
+<div class="s" id="s39">
+  <div class="ph-wrap">
+    <div class="ph-badge anim-up">Phase 3 · Final Round</div>
+    <h2 class="anim-up2">LinkedIn<br>Video</h2>
+    <div class="ph-rule anim-up3"></div>
+    <div class="ph-desc anim-up3">Record a short video explaining your solution with a live demo — then upload it to LinkedIn. Under 5 minutes. Landscape mode.</div>
+    <div class="ph-tags anim-up4">
+      <span class="ph-tag">#UDBHAV26</span>
+      <span class="ph-tag">#ALTAschooloftechnology</span>
+      <span class="ph-tag">#SAGEUniversity</span>
+      <span class="ph-tag">#Hackathon</span>
+      <span class="ph-tag">#BuildInPublic</span>
+    </div>
+  </div>
+</div>
+
+<div class="s" id="s40">
+  <div class="sc-head">
+    <h2 class="anim-up">Script Structure</h2>
+    <div class="label anim-up2" style="color:var(--accent);opacity:.5">Phase 3 · 4 Sections · Under 5 min</div>
+  </div>
+  <div class="sc-steps">
+    <div class="sc-step anim-up">
+      <div class="sc-step-icon">👥</div>
+      <div class="sc-num">01</div>
+      <div class="sc-step-label">Intro</div>
+      <div class="sc-step-text">Team name, all members, event name &amp; venue</div>
+    </div>
+    <div class="sc-step anim-up2">
+      <div class="sc-step-icon">🧩</div>
+      <div class="sc-num">02</div>
+      <div class="sc-step-label">Problem</div>
+      <div class="sc-step-text">State your PS clearly in 1–2 sentences + real-world impact</div>
+    </div>
+    <div class="sc-step active anim-up3">
+      <div class="sc-step-icon">💡</div>
+      <div class="sc-num">03</div>
+      <div class="sc-step-label">Solution</div>
+      <div class="sc-step-text">Project name, what it does, how it works + tech stack</div>
+    </div>
+    <div class="sc-step anim-up4">
+      <div class="sc-step-icon">🖥️</div>
+      <div class="sc-num">04</div>
+      <div class="sc-step-label">Demo</div>
+      <div class="sc-step-text">Live screen recording · 2 to 3 minutes · show key features</div>
+    </div>
+  </div>
+  <div class="sc-footer anim-up5">
+    <span>Tag</span>
+    <strong>@Alta School of Technology</strong>
+    <span>&</span>
+    <strong>@Sage University</strong>
+    <span>on LinkedIn</span>
+    <span style="opacity:.3">·</span>
+    <span>Landscape</span>
+    <span style="opacity:.3">·</span>
+    <span>Speak confidently</span>
+    <span style="opacity:.3">·</span>
+    <span>Demo screen visible</span>
+  </div>
+</div>
+
+<div class="s" id="s41">
+  <div class="rv-wrap">
+    <div class="rv-badge anim-up">🎬 Creative Competition · UDBHAV'26</div>
+    <div class="rv-title anim-up2">REEL &<br><em>VLOG</em></div>
+    <div class="rv-rule anim-up3"></div>
+    <div class="rv-prizes">
+      <div class="rv-prize anim-up3">
+        <div class="rv-prize-icon">🎞️</div>
+        <div class="rv-prize-type">Reel Winner</div>
+        <div class="rv-prize-amt">₹2,100</div>
+      </div>
+      <div class="rv-prize anim-up4">
+        <div class="rv-prize-icon">📹</div>
+        <div class="rv-prize-type">Vlog Winner</div>
+        <div class="rv-prize-amt">₹2,100</div>
+      </div>
+    </div>
+    <div class="rv-sub anim-up5">Separate winners · Rewards by 28th April · Grab your phone &amp; get creative 🚀</div>
+  </div>
+</div>
+
+<div class="s" id="s42">
+  <div class="rr-head">
+    <h2 class="anim-up">How to Participate</h2>
+    <div class="label anim-up2" style="color:var(--accent);opacity:.5">Submit by 27th April</div>
+  </div>
+  <div class="rr-body">
+    <div class="rr-card anim-up2">
+      <div class="rr-card-icon">📋</div>
+      <div class="rr-card-title">Submit</div>
+      <div class="rr-card-text">A Google Form will be released — paste the <strong>link of your reel or vlog</strong> in the form. Deadline: <strong>27th April</strong></div>
+    </div>
+    <div class="rr-card anim-up3">
+      <div class="rr-card-icon">🏷️</div>
+      <div class="rr-card-title">Tag</div>
+      <div class="rr-card-text">Tag <strong>@ALTASchoolofTechnology</strong> and <strong>@SAGEUniversity</strong> in your post on Instagram / LinkedIn</div>
+    </div>
+    <div class="rr-card anim-up4">
+      <div class="rr-card-icon">🏆</div>
+      <div class="rr-card-title">Reward</div>
+      <div class="rr-card-text"><strong>₹2,100</strong> each — Reel &amp; Vlog are separate categories with <strong>separate winners</strong>. Handed over by 28th April.</div>
+    </div>
+  </div>
+  <div class="rr-tags anim-up5">
+    <span class="rr-tag">#ALTAschooloftechnology</span>
+    <span class="rr-tag">#SAGEuniversityindore</span>
+    <span class="rr-tag">#UDBHAV26</span>
+  </div>
+</div>
+
 <!-- ══ NAV & UI ══ -->
 <button class="nav-arr" id="arrL">&#8592;</button>
 <button class="nav-arr" id="arrR">&#8594;</button>
@@ -1919,12 +2305,10 @@ function run() {
 run();
 
 function handlePrev() {
-  if (ss[cur].id === 's15') { showQc(qcIdx - 1); elapsed = 0; bar.style.width = '0%'; }
-  else { go((cur - 1 + ss.length) % ss.length); }
+  go((cur - 1 + ss.length) % ss.length);
 }
 function handleNext() {
-  if (ss[cur].id === 's15') { showQc(qcIdx + 1); elapsed = 0; bar.style.width = '0%'; }
-  else { go((cur + 1) % ss.length); }
+  go((cur + 1) % ss.length);
 }
 document.getElementById('arrL').onclick = handlePrev;
 document.getElementById('arrR').onclick = handleNext;
@@ -1933,36 +2317,7 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowRight') handleNext();
 });
 
-/* ══════════════════════════
-   QUOTES CAROUSEL LOGIC
-══════════════════════════ */
-var qcIdx = 0;
-var qcItems = document.querySelectorAll('#qcData .q-item');
-var qcDisplay = document.getElementById('qcDisplay');
 
-function showQc(idx) {
-  if (!qcItems.length || !qcDisplay) return;
-  qcIdx = (idx + qcItems.length) % qcItems.length;
-  qcDisplay.innerHTML = qcItems[qcIdx].innerHTML;
-  
-  // Re-trigger animation
-  var txt = qcDisplay.querySelector('.qc-text');
-  var sub = qcDisplay.querySelector('.qc-sub');
-  if (txt) { txt.style.animation = 'none'; void txt.offsetWidth; txt.style.animation = 'fadeSlideUp 0.6s ease-out'; }
-  if (sub) { sub.style.animation = 'none'; void sub.offsetWidth; sub.style.animation = 'fadeSlideUp 0.6s ease-out 0.1s both'; }
-}
-
-if (document.getElementById('qcPrev')) {
-  document.getElementById('qcPrev').addEventListener('click', function(e) {
-    e.stopPropagation();
-    showQc(qcIdx - 1);
-  });
-  document.getElementById('qcNext').addEventListener('click', function(e) {
-    e.stopPropagation();
-    showQc(qcIdx + 1);
-  });
-  showQc(0);
-}
 
 /* ══════════════════════════
    SURVIVAL TIPS ROTATOR
@@ -2130,16 +2485,6 @@ var hackStart = new Date('2026-04-25T04:30:00Z').getTime();
 var psStart   = new Date('2026-04-25T05:15:00Z').getTime();
 var pageLoad  = Date.now();
 
-countdown(hackStart,
-  { d: document.getElementById('hDays'), h: document.getElementById('hHours'), m: document.getElementById('hMins'), s: document.getElementById('hSecs') },
-  document.getElementById('hMsg'), 'The hackathon has begun. Build something incredible.',
-  document.getElementById('hBar'), pageLoad
-);
-countdown(psStart,
-  { d: document.getElementById('psDays'), h: document.getElementById('psHours'), m: document.getElementById('psMins'), s: document.getElementById('psSecs') },
-  document.getElementById('psMsg'), 'Problem Statements are LIVE. Choose your battlefield.',
-  null, null
-);
 
 /* ══════════════════════════
    GLITCH TITLE — periodic
