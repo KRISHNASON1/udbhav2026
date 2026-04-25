@@ -105,6 +105,7 @@ import optMentorshipHandler    from './api/mentorship/opt.js';
 
 // ── App setup ────────────────────────────────────────────────────────────────
 const app  = express();
+app.set('trust proxy', 1); // Trust first proxy for accurate IP in rate limiting
 const PORT = process.env.PORT || 8080;
 const DIST = path.join(__dirname, 'dist');
 
@@ -188,7 +189,7 @@ const uploadLimiter = rateLimit({
 // Must be mounted BEFORE the general apiLimiter so it takes precedence for /api/admin/*
 const adminApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 2000,
+  max: 500000,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'Admin rate limit exceeded. Please wait a moment.' },
