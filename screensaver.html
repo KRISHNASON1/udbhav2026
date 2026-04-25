@@ -2290,8 +2290,6 @@ Worth it?                                 =  <span class="ok">ABSOLUTELY</span><
 </div>
 
 <!-- ══ NAV & UI ══ -->
-<button class="nav-arr" id="arrL">&#8592;</button>
-<button class="nav-arr" id="arrR">&#8594;</button>
 <div id="ui">
   <div id="dots"></div>
   <div id="bar"></div>
@@ -2301,7 +2299,7 @@ Worth it?                                 =  <span class="ok">ABSOLUTELY</span><
 /* ══════════════════════════
    SLIDE CONTROLLER
 ══════════════════════════ */
-var DUR = 13000, TICK = 80, cur = 0, elapsed = 0, tmr = null;
+var DUR = 600000, TICK = 80, cur = 0, elapsed = 0, tmr = null;
 var ss = document.querySelectorAll('.s');
 var bar = document.getElementById('bar');
 var dw = document.getElementById('dots');
@@ -2351,8 +2349,6 @@ function handlePrev() {
 function handleNext() {
   go((cur + 1) % ss.length);
 }
-document.getElementById('arrL').onclick = handlePrev;
-document.getElementById('arrR').onclick = handleNext;
 document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft') handlePrev();
   if (e.key === 'ArrowRight') handleNext();
