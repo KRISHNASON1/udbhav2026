@@ -153,8 +153,8 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
   message: { success: false, error: 'Too many requests. Please slow down.' },
   skip: (req) =>
-    req.path.startsWith('/api/admin/') ||
-    req.path.startsWith('/api/ps/'),
+    req.originalUrl.startsWith('/api/admin/') ||
+    req.originalUrl.startsWith('/api/ps/'),
 });
 
 // PS public limiter: very permissive — all teams poll /api/ps/status & /api/ps/list
