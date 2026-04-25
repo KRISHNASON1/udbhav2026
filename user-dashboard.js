@@ -462,8 +462,6 @@ const Dashboard = {
         const d = document.getElementById('ps-decrypting');
         const c = document.getElementById('ps-content');
         const noSel = document.getElementById('ps-no-selection');
-        const team = this.currentTeamData || {};
-        const hasPS = !!(team.ps && team.ps.title);
 
         if (d) {
             d.classList.remove('hidden');
@@ -472,9 +470,14 @@ const Dashboard = {
 
             setTimeout(() => {
                 d.classList.add('hidden');
+                // Re-read currentTeamData inside timeout — fetchStats may have completed by now
+                const freshTeam = this.currentTeamData || {};
+                const hasPS = !!(freshTeam.ps && freshTeam.ps.title);
                 if (hasPS) {
                     if (c) c.classList.remove('hidden');
+                    if (noSel) noSel.classList.add('hidden');
                 } else {
+                    if (c) c.classList.add('hidden');
                     if (noSel) noSel.classList.remove('hidden');
                 }
             }, 2000);
@@ -487,15 +490,14 @@ const Dashboard = {
         const releasedEl = document.getElementById('ps-released-info');
         const contentEl = document.getElementById('ps-content');
         const noSelEl = document.getElementById('ps-no-selection');
+        const countdownEl = document.getElementById('deployment-countdown');
 
-        // Always show the PS section (hide countdown)
+        // If team has a selected PS — always show it, regardless of psState
         if (ps && ps.title) {
-            // Show selected PS content
-            const countdownEl = document.getElementById('deployment-countdown');
             if (countdownEl) countdownEl.classList.add('hidden');
             if (releasedEl) releasedEl.classList.remove('hidden');
             if (contentEl) contentEl.classList.remove('hidden');
-            if (noSelEl) noSelEl.classList.add('hidden');
+            if (noSelEl) noSelEl.classList.add('hidden'); // ensure no-selection is ALWAYS hidden
 
             // Fill in PS details
             const domainLabel = document.getElementById('ps-domain-label');
@@ -527,28 +529,28 @@ const Dashboard = {
             }
 
             this.initializeIcons();
-        } else {
-            // No PS selected — check if countdown is already past or PS state is active/closed
-            const now = new Date().getTime();
-            if (now >= this.targetDate.getTime() || this.psState === 'active' || this.psState === 'closed') {
-                const countdownEl = document.getElementById('deployment-countdown');
-                if (countdownEl) countdownEl.classList.add('hidden');
-                if (releasedEl) releasedEl.classList.remove('hidden');
-                if (contentEl) contentEl.classList.add('hidden');
-                if (noSelEl) {
-                    noSelEl.classList.remove('hidden');
-                    if (this.psState === 'active') {
-                        this.renderPSSelectionGrid();
-                    } else if (this.psState === 'closed') {
-                        noSelEl.innerHTML = `
-                            <i data-lucide="lock" class="w-12 h-12 text-white/20 mx-auto mb-4"></i>
-                            <h3 class="text-xl font-black font-heading mb-2 text-white/60 uppercase">Selection Closed</h3>
-                            <p class="text-white/30 text-sm mb-6">The Problem Statement selection window has ended.</p>
-                        `;
-                    }
+            return; // early return — nothing else to do
+        }
+
+        // No PS selected — check if countdown is already past or PS state is active/closed
+        const now = new Date().getTime();
+        if (now >= this.targetDate.getTime() || this.psState === 'active' || this.psState === 'closed') {
+            if (countdownEl) countdownEl.classList.add('hidden');
+            if (releasedEl) releasedEl.classList.remove('hidden');
+            if (contentEl) contentEl.classList.add('hidden');
+            if (noSelEl) {
+                noSelEl.classList.remove('hidden');
+                if (this.psState === 'active') {
+                    this.renderPSSelectionGrid();
+                } else if (this.psState === 'closed') {
+                    noSelEl.innerHTML = `
+                        <i data-lucide="lock" class="w-12 h-12 text-white/20 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-black font-heading mb-2 text-white/60 uppercase">Selection Closed</h3>
+                        <p class="text-white/30 text-sm mb-6">The Problem Statement selection window has ended.</p>
+                    `;
                 }
-                this.initializeIcons();
             }
+            this.initializeIcons();
         }
     },
 
@@ -1077,8 +1079,12 @@ const Dashboard = {
             const data = await res.json();
             if (data.success) {
                 this.showToast('Payment receipt submitted! Verification in progress.');
-                await this.fetchStats(this.teamId); // Refresh data
-                this.openModal('mentorship'); // Re-render modal
+                // Optimistically update local state so modal shows 'pending' immediately
+                if (this.currentTeamData) {
+                    this.currentTeamData.mentorshipStatus = 'pending';
+                }
+                this.openModal('mentorship'); // Re-render modal with pending state
+                await this.fetchStats(this.teamId); // Refresh data in background
             } else {
                 throw new Error(data.error || 'Submission failed');
             }
@@ -1116,13 +1122,31 @@ const Dashboard = {
                 this._prepareSubmissionModal(action);
             }
 
-            if (action === 'mentorship') {
+                if (action === 'mentorship') {
                 const content = document.getElementById('mentor-modal-content');
                 if (!content) return;
 
                 const team = this.currentTeamData || {};
                 
-                if (team.mentorSession) {
+                // Check pending FIRST — before mentorSession — so a submitted-but-not-approved
+                // request always shows the pending state, regardless of mentorSession value.
+                if (team.mentorshipStatus === 'pending') {
+                    content.innerHTML = `
+                        <div class="py-6 space-y-4">
+                            <div class="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto border border-blue-500/20 mb-4">
+                                <i data-lucide="shield-check" class="w-10 h-10 text-blue-500 animate-pulse"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white uppercase tracking-tight">Request Sent!</h3>
+                            <p class="text-white/40 text-sm">Your payment receipt has been submitted. Our admins are verifying your ₹300 payment. This usually takes 2–4 hours.</p>
+                            ${team.mentorshipReceiptUrl ? `
+                                <div class="mt-4 pt-4 border-t border-white/5">
+                                    <p class="text-[9px] text-white/20 uppercase font-black tracking-widest mb-2">Submitted Receipt</p>
+                                    <img src="${team.mentorshipReceiptUrl}" class="w-full h-32 object-cover rounded-xl border border-white/10 opacity-50 hover:opacity-100 transition-all cursor-pointer" onclick="window.open(this.src)">
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else if (team.mentorSession) {
                     if (team.mentor && team.mentor.name) {
                         content.innerHTML = `
                             <div class="space-y-4">
@@ -1155,28 +1179,12 @@ const Dashboard = {
                             </div>
                         `;
                     }
-                } else if (team.mentorshipStatus === 'pending') {
-                    content.innerHTML = `
-                        <div class="py-6 space-y-4">
-                            <div class="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto border border-blue-500/20 mb-4">
-                                <i data-lucide="shield-check" class="w-10 h-10 text-blue-500 animate-pulse"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-white uppercase tracking-tight">Your request is pending</h3>
-                            <p class="text-white/40 text-sm">Our admins are verifying your ₹300 payment receipt. This usually takes 2-4 hours.</p>
-                            ${team.mentorshipReceiptUrl ? `
-                                <div class="mt-4 pt-4 border-t border-white/5">
-                                    <p class="text-[9px] text-white/20 uppercase font-black tracking-widest mb-2">Submitted Receipt</p>
-                                    <img src="${team.mentorshipReceiptUrl}" class="w-full h-32 object-cover rounded-xl border border-white/10 opacity-50 gray-scale hover:opacity-100 transition-all cursor-pointer" onclick="window.open(this.src)">
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
                 } else {
                     content.innerHTML = `
                         <div class="py-2">
                              <div class="flex flex-col items-center gap-4">
                                 <div class="w-full aspect-square max-w-[200px] bg-white p-3 rounded-2xl shadow-2xl">
-                                    <img src="/mentor-opt.jpeg" alt="Mentorship QR Code" class="w-full h-full object-contain">
+                                    <img src="/QR-300.jpeg" alt="Mentorship QR Code" class="w-full h-full object-contain">
                                 </div>
                                 <div class="text-center">
                                     <p class="text-white/40 text-xs uppercase tracking-widest mb-1">Fee: <span class="text-white font-black text-sm">₹300</span></p>
@@ -1204,7 +1212,6 @@ const Dashboard = {
                     receiptInput?.addEventListener('change', (e) => {
                         const file = e.target.files[0];
                         if (file) {
-                            // Validate file size (max 6MB before base64 encoding)
                             if (file.size > 6 * 1024 * 1024) {
                                 fileLabel.textContent = 'Upload Payment Receipt';
                                 submitBtn.disabled = true;

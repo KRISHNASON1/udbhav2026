@@ -68,7 +68,7 @@ async function run() {
     await Registration.deleteMany({ teamCode: { $regex: /^TEAM/ } });
     console.log('Cleaned up old TEAM prefixed dummy entries.');
 
-    for (let i = 1; i <= 15; i++) {
+    for (let i = 16; i <= 25; i++) {
       const code = `UDB-DUM${i}`;
       const teamName = `Dummy Team ${i}`;
       
@@ -126,7 +126,7 @@ async function run() {
       await Registration.findOneAndUpdate({ teamCode: code }, registrationData, { upsert: true, new: true });
     }
 
-    console.log('Successfully inserted 15 dummy teams to Atlas!');
+    console.log('Successfully inserted dummy teams 16 to 25 to Atlas!');
     process.exit(0);
   } catch (err) {
     console.error('Error:', err);
