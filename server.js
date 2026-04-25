@@ -222,6 +222,7 @@ const cleanRoutes = {
   '/winners':           'winners.html',
   '/sponsors':          'sponsors.html',
   '/code-of-conduct':   'code-of-conduct.html',
+  '/guidelines':        'guidelines.html',
   '/our-team':          'our-team.html',
   '/register':          'register.html',
   '/dashboard':         'user-dashboard.html',

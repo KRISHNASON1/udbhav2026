@@ -61,12 +61,10 @@ export async function getPSState() {
   let state;
   if (manualOverride) {
     state = manualStatus;
-  } else if (now < ENV_START) {
-    state = 'pre-drop';
-  } else if (now < ENV_END) {
-    state = 'active';
   } else {
-    state = 'closed';
+    // Per user request: The PS drop must ONLY be started manually.
+    // The ENV schedule is used strictly for the frontend countdown timer UI.
+    state = 'pre-drop';
   }
 
   _cache = {
